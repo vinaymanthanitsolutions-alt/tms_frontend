@@ -41,7 +41,7 @@ const Sidebar = ({ onNavigate }) => {
   const selectedButtonStyle = "bg-gray-200 text-black";
 
   return (
-    <aside className="w-[15%] h-200 px-5 py-4 border-r-2 border-gray-200">
+    <aside className="w-[15%] h-screen px-5 py-4 border-r-2 border-gray-200">
       <div className="flex gap-2 items-center ">
         <img src={manthanLogo} alt="Manthan Logo" className="w-8 h-auto " />
         <div className="text-xl font-semibold">Manthan</div>
