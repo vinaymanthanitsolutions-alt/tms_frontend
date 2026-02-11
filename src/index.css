@@ -1,0 +1,26 @@
+@import url("https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@200..700&family=Playfair:ital,opsz,wght@0,5..1200,300..900;1,5..1200,300..900&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Great+Vibes&family=Mrs+Saint+Delafield&family=Style+Script&family=Unna:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --breakpoint-lar:1100px;
+  --breakpoint-xxs:550px;
+  --font-anton: "Anton", "sans-serif";
+  --font-oswald: "Oswald", "sans-serif";      /*use this */
+  --font-playfair: "Playfair", serif;   
+  --font-geist: "Geist", sans-serif;          /*use this */
+  --font-mrs: "Mrs Saint Delafield", cursive;
+  --font-style: "Style Script", cursive;
+  --font-great: "Great Vibes", cursive;       /*use this */
+  --font-unna: "Unna", serif;    /*use this */
+}
+
+body {
+  font-family: var(--font-geist);
+}
+
+
+.text-outline-filled {
+  -webkit-text-stroke: 0.1px gray;
+  color: white;
+}
