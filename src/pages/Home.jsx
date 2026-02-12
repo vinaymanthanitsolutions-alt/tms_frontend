@@ -9,6 +9,7 @@ import Dashboard from "./superadminPages/Dashboard";
 import Report from "./superadminPages/Report";
 
 
+import ProjectManagerDashboard from "./ProjectManagerPages/ProjectManagerDashboard";
 import TeamLeadDashboard from "./teamleadPages/TeamLeadDashboard";
 import { DEMODATA } from "../data";
 import { Menu } from "lucide-react";
@@ -44,7 +45,7 @@ export default function Home() {
       // Vansh will implement project manager specific content here
       switch (currentPage) {
         case "Dashboard":
-          return <AdminDashboard />;
+          return <ProjectManagerDashboard />;
         case "Team":
           return <AdminTeam />;
         case "Report":
