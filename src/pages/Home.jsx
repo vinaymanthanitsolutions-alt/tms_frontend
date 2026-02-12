@@ -4,6 +4,12 @@ import Sidebar from "../components/Sidebar";
 import AdminTeam from "./adminPages/AdminTeam";
 import AdminReport from "./adminPages/AdminReport";
 import AdminDashboard from "./adminPages/AdminDashboard";
+import Dashboard from "./superadminPages/Dashboard";
+
+import Report from "./superadminPages/Report";
+
+
+import ProjectManagerDashboard from "./ProjectManagerPages/ProjectManagerDashboard";
 import TeamLeadDashboard from "./teamleadPages/TeamLeadDashboard";
 import RegisterEmployee from "../components/AdminComponents/RegisterEmployee";
 import { DEMODATA } from "../data";
@@ -43,7 +49,7 @@ export default function Home() {
       // Vansh will implement project manager specific content here
       switch (currentPage) {
         case "Dashboard":
-          return <AdminDashboard />;
+          return <ProjectManagerDashboard />;
         case "Team":
           return <AdminTeam setIsOpenAdminRegister={setIsOpenAdminRegister} />;
         case "Report":
@@ -65,23 +71,14 @@ export default function Home() {
           );
       }
     } else if (DEMODATA.role === "superadmin") {
-      //divyansh will implement super admin specific content here
+      //divya will implement super admin specific content here
       switch (currentPage) {
         case "Dashboard":
-          return <AdminDashboard />;
-        case "Team":
-          return <AdminTeam setIsOpenAdminRegister={setIsOpenAdminRegister} />;
+          return <Dashboard />;
+       
         case "Report":
-          return <AdminReport />;
-        case "Task":
-          return (
-            <div className="p-4">
-              <h2 className="text-xl font-semibold">Super Admin Tasks</h2>
-              <p className="text-gray-600 mt-2">
-                Task management for super administrators.
-              </p>
-            </div>
-          );
+          return <Report />;
+        
         default:
           return (
             <div className="p-4">

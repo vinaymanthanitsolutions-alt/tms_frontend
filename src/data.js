@@ -1,6 +1,6 @@
-export const DEMODATA = {
-    role:"admin"
-}
+//export const DEMODATA = {
+//  role:"admin"
+//}
 
 // export const DEMODATA = {
 //     role : "teamlead"
@@ -11,7 +11,7 @@ export const DEMODATA = {
 // };
 
 // export const DEMODATA = {
-//     role : "superadmin"
+//  role : "projectmanager"
 // }
 
 export const EMPLOYEES = [
@@ -61,3 +61,7 @@ export const EMPLOYEES = [
     password: "AdminPass654!",
   },
 ];
+
+export const DEMODATA = {
+  role: "superadmin",
+};
