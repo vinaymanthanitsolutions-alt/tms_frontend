@@ -10,7 +10,7 @@ const AdminTeam = () => {
 
   return (
     <div className="p-5">
-      <h1 className="text-2xl font-bold">Employee Management List</h1>
+      <h1 className="text-2xl font-semibold">Employee Management List</h1>
       <p className="text-sm text-emerald-600">Team</p>
 
       <div className="flex border-2 rounded-md border-gray-200 justify-between px-3 py-4 my-3">
@@ -30,7 +30,7 @@ const AdminTeam = () => {
         <div>
           <button className="bg-emerald-600 text-white px-4 py-2 rounded-md font-light hover:bg-emerald-700 transition flex gap-1 items-center">
             <Plus size={19} />
-            Add Employee
+            <div className="hidden md:block">Add Employee</div>
           </button>
         </div>
       </div>

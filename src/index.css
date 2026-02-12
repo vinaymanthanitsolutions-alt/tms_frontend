@@ -4,6 +4,7 @@
 
 @theme {
   --breakpoint-lar:1100px;
+  --breakpoint-xlar:1250px;
   --breakpoint-xxs:550px;
   --font-anton: "Anton", "sans-serif";
   --font-oswald: "Oswald", "sans-serif";      /*use this */
