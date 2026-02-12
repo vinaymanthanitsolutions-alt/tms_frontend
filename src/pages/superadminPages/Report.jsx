@@ -15,7 +15,7 @@ const initialAdmins = [
     name: "Neha Singh",
     email: "neha@gmail.com",
     phone: "9123456780",
-    status: "Inactive",
+    status: "Deactive",
   },
 ];
 
@@ -161,12 +161,15 @@ const Report = () => {
                 <td className="px-4 py-3">{admin.phone}</td>
                 <td className="px-4 py-3">
                   <span
-                    className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                      admin.status === "Active"
-                        ? "bg-green-100 text-green-700"
-                        : "bg-red-100 text-red-700"
+              className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                 admin.status === "Active"
+                ? "bg-green-100 text-green-700"
+                 : admin.status === "Suspended"
+                ? "bg-yellow-100 text-yellow-700"
+               : "bg-red-100 text-red-700"
                     }`}
                   >
+
                     {admin.status}
                   </span>
                 </td>
@@ -196,7 +199,8 @@ const Report = () => {
         </table>
       </div>
 
-   {/* 🔥 ADD ADMIN POPUP */}
+
+{/* 🔥 ADD ADMIN POPUP */}
 {isAddOpen && (
   <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
     <div className="bg-white w-200 max-w-4xl rounded-2xl border border-gray-200 shadow-md p-6 sm:p-8 relative">
@@ -231,14 +235,13 @@ const Report = () => {
           </label>
           <input
             type="text"
-            name="AdminCode"
+            name="adminCode"
             placeholder="e.g., ADM001"
-            value={newAdmin.AdminCode}
+            value={newAdmin.adminCode}
             onChange={handleAddChange}
-            className="w-full h-11 px-3 border border-gray-300 rounded-lg  outline-none"
+            className="w-full h-11 px-3 border border-gray-300 rounded-lg outline-none"
             required
           />
-        
         </div>
 
         {/* Name */}
@@ -248,11 +251,11 @@ const Report = () => {
           </label>
           <input
             type="text"
-            name="Name"
+            name="name"
             placeholder="e.g., John"
-            value={newAdmin.Name}
+            value={newAdmin.name}
             onChange={handleAddChange}
-            className="w-full h-11 px-3 border border-gray-300 rounded-lg  outline-none"
+            className="w-full h-11 px-3 border border-gray-300 rounded-lg outline-none"
             required
           />
         </div>
@@ -264,11 +267,11 @@ const Report = () => {
           </label>
           <input
             type="email"
-            name="Email"
+            name="email"
             placeholder="John@example.com"
-            value={newAdmin.Email}
+            value={newAdmin.email}
             onChange={handleAddChange}
-            className="w-full h-11 px-3 border border-gray-300 rounded-lg  outline-none"
+            className="w-full h-11 px-3 border border-gray-300 rounded-lg outline-none"
             required
           />
         </div>
@@ -280,18 +283,18 @@ const Report = () => {
           </label>
           <input
             type="text"
-            name="Contact"
+            name="phone"
             placeholder="e.g., 6789......"
-            value={newAdmin.Contact}
+            value={newAdmin.phone}
             onChange={(e) => {
               const value = e.target.value.replace(/\D/g, "");
               if (value.length <= 10) {
                 handleAddChange({
-                  target: { name: "Contact", value },
+                  target: { name: "phone", value },
                 });
               }
             }}
-            className="w-full h-11 px-3 border border-gray-300 rounded-lg  outline-none"
+            className="w-full h-11 px-3 border border-gray-300 rounded-lg outline-none"
             required
           />
         </div>
@@ -303,11 +306,11 @@ const Report = () => {
           </label>
           <input
             type="password"
-            name=" Password"
+            name="password"
             placeholder="Enter Password"
-            value={newAdmin.Password}
+            value={newAdmin.password}
             onChange={handleAddChange}
-            className="w-full h-11 px-3 border border-gray-300 rounded-lg  outline-none"
+            className="w-full h-11 px-3 border border-gray-300 rounded-lg outline-none"
             required
           />
           <p className="text-xs text-gray-400 mt-1">
@@ -321,10 +324,10 @@ const Report = () => {
             Department
           </label>
           <select
-            name="Department"
-            value={newAdmin.Department}
+            name="department"
+            value={newAdmin.department}
             onChange={handleAddChange}
-            className="w-full h-11 px-3 border border-gray-300 rounded-lg  outline-none"
+            className="w-full h-11 px-3 border border-gray-300 rounded-lg outline-none"
             required
           >
             <option value="">Select Department</option>
