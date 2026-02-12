@@ -5,10 +5,12 @@ import AdminTeam from "./adminPages/AdminTeam";
 import AdminReport from "./adminPages/AdminReport";
 import AdminDashboard from "./adminPages/AdminDashboard";
 import TeamLeadDashboard from "./teamleadPages/TeamLeadDashboard";
+import RegisterEmployee from "../components/AdminComponents/RegisterEmployee";
 import { DEMODATA } from "../data";
 import { Menu } from "lucide-react";
 
 export default function Home() {
+  const [isOpenAdminRegister, setIsOpenAdminRegister] = useState(false);
   const [currentPage, setCurrentPage] = useState("Dashboard");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -18,14 +20,16 @@ export default function Home() {
         case "Dashboard":
           return <AdminDashboard />;
         case "Team":
-          return <AdminTeam />;
+          return <AdminTeam setIsOpenAdminRegister={setIsOpenAdminRegister} />;
         case "Report":
           return <AdminReport />;
         case "Task":
           return (
             <div className="p-4">
               <h2 className="text-xl font-semibold">Admin Tasks</h2>
-              <p className="text-gray-600 mt-2">Task management for administrators.</p>
+              <p className="text-gray-600 mt-2">
+                Task management for administrators.
+              </p>
             </div>
           );
         default:
@@ -41,14 +45,16 @@ export default function Home() {
         case "Dashboard":
           return <AdminDashboard />;
         case "Team":
-          return <AdminTeam />;
+          return <AdminTeam setIsOpenAdminRegister={setIsOpenAdminRegister} />;
         case "Report":
           return <AdminReport />;
         case "Task":
           return (
             <div className="p-4">
               <h2 className="text-xl font-semibold">Project Manager Tasks</h2>
-              <p className="text-gray-600 mt-2">Task management for project managers.</p>
+              <p className="text-gray-600 mt-2">
+                Task management for project managers.
+              </p>
             </div>
           );
         default:
@@ -64,14 +70,16 @@ export default function Home() {
         case "Dashboard":
           return <AdminDashboard />;
         case "Team":
-          return <AdminTeam />;
+          return <AdminTeam setIsOpenAdminRegister={setIsOpenAdminRegister} />;
         case "Report":
           return <AdminReport />;
         case "Task":
           return (
             <div className="p-4">
               <h2 className="text-xl font-semibold">Super Admin Tasks</h2>
-              <p className="text-gray-600 mt-2">Task management for super administrators.</p>
+              <p className="text-gray-600 mt-2">
+                Task management for super administrators.
+              </p>
             </div>
           );
         default:
@@ -81,8 +89,7 @@ export default function Home() {
             </div>
           );
       }
-    } 
-    else if (DEMODATA.role === "teamlead") {
+    } else if (DEMODATA.role === "teamlead") {
       switch (currentPage) {
         case "Dashboard":
           return <TeamLeadDashboard />;
@@ -97,7 +104,9 @@ export default function Home() {
           return (
             <div className="p-4">
               <h2 className="text-xl font-semibold">Team Lead Reports</h2>
-              <p className="text-gray-600 mt-2">View team performance reports.</p>
+              <p className="text-gray-600 mt-2">
+                View team performance reports.
+              </p>
             </div>
           );
         default:
@@ -124,7 +133,7 @@ export default function Home() {
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
       />
-      <div className="flex-1 w-full">
+      <div className="flex-1 w-full relative">
         {/* Mobile Header with Hamburger */}
         <div className="lg:hidden flex items-center gap-4 px-4 py-3 border-b-2 border-gray-200 bg-white">
           <button
@@ -139,12 +148,18 @@ export default function Home() {
             <span className="text-lg font-semibold">Manthan</span>
           </div>
         </div>
+
+        {isOpenAdminRegister && (
+          <RegisterEmployee
+            isOpen={isOpenAdminRegister}
+            onClose={() => setIsOpenAdminRegister(false)}
+          />
+        )}
         
-        {/* Desktop Navbar */}
         <div className="hidden lg:block">
           <Navbar />
         </div>
-        
+
         {renderContent()}
       </div>
     </div>

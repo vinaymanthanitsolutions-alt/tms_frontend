@@ -1,7 +1,8 @@
 import React, { useRef } from "react";
 import { Search, Plus, Edit, Trash2 } from "lucide-react";
 
-const AdminTeam = () => {
+const AdminTeam = ({ setIsOpenAdminRegister }) => {
+  const [openRegister, setOpenRegister] = React.useState(false);
   const inputRef = useRef(null);
 
   const handleSearchClick = () => {
@@ -28,7 +29,7 @@ const AdminTeam = () => {
           />
         </div>
         <div>
-          <button className="bg-emerald-600 text-white px-4 py-2 rounded-md font-light hover:bg-emerald-700 transition flex gap-1 items-center">
+          <button className="bg-emerald-600 text-white px-4 py-2 rounded-md font-light hover:bg-emerald-700 transition flex gap-1 items-center" onClick={()=>{setIsOpenAdminRegister(true)}}>
             <Plus size={19} />
             <div className="hidden md:block">Add Employee</div>
           </button>
@@ -97,7 +98,6 @@ const AdminTeam = () => {
                 </div>
               </td>
             </tr>
-           
           </tbody>
         </table>
       </div>
