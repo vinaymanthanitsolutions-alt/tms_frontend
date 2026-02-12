@@ -1,24 +1,21 @@
 import React, { useState } from "react";
-import { Pencil, Trash2, X } from "lucide-react";
-import { Search } from "lucide-react";
-
+import { Pencil, Trash2, X, Search } from "lucide-react";
+import toast, { Toaster } from "react-hot-toast";
 
 const initialAdmins = [
   {
-    adminCode: "A001",
+    adminCode: "ADM001",
     name: "Rahul Sharma",
     email: "rahul@gmail.com",
     phone: "9876543210",
     status: "Active",
-    total: 25,
   },
   {
-    adminCode: "A002",
+    adminCode: "ADM002",
     name: "Neha Singh",
     email: "neha@gmail.com",
     phone: "9123456780",
     status: "Inactive",
-    total: 10,
   },
 ];
 
@@ -34,9 +31,14 @@ const Report = () => {
     name: "",
     email: "",
     phone: "",
+    password: "",
+    department: "",
     status: "Active",
-    total: "",
   });
+
+  /* 🔐 VALIDATIONS */
+  const validateAdminCode = (code) => /^ADM\d{3}$/.test(code);
+  const validatePhone = (phone) => /^[6-9]\d{9}$/.test(phone);
 
   const openEditModal = (admin) => {
     setEditAdmin({ ...admin });
@@ -44,10 +46,7 @@ const Report = () => {
   };
 
   const handleEditChange = (e) => {
-    setEditAdmin({
-      ...editAdmin,
-      [e.target.name]: e.target.value,
-    });
+    setEditAdmin({ ...editAdmin, [e.target.name]: e.target.value });
   };
 
   const handleUpdate = () => {
@@ -56,26 +55,46 @@ const Report = () => {
         a.adminCode === editAdmin.adminCode ? editAdmin : a
       )
     );
+    toast.success("Admin updated successfully ✅");
     setIsEditOpen(false);
   };
 
   const handleAddChange = (e) => {
-    setNewAdmin({
-      ...newAdmin,
-      [e.target.name]: e.target.value,
-    });
+    setNewAdmin({ ...newAdmin, [e.target.name]: e.target.value });
   };
 
-  const handleAddAdmin = () => {
+  const handleAddAdmin = (e) => {
+    e.preventDefault();
+
+    const { adminCode, name, email, phone, password, department } = newAdmin;
+
+    if (!adminCode || !name || !email || !phone || !password || !department) {
+      toast.error("Please fill all details ❌");
+      return;
+    }
+
+    if (!validateAdminCode(adminCode)) {
+      toast.error("Admin Code must be like ADM123 ❌");
+      return;
+    }
+
+    if (!validatePhone(phone)) {
+      toast.error("Phone must start from 6-9 & be 10 digits ❌");
+      return;
+    }
+
     setAdmins([...admins, newAdmin]);
+    toast.success("Admin added successfully ✅");
+
     setIsAddOpen(false);
     setNewAdmin({
       adminCode: "",
       name: "",
       email: "",
       phone: "",
+      password: "",
+      department: "",
       status: "Active",
-      total: "",
     });
   };
 
@@ -85,6 +104,7 @@ const Report = () => {
 
   return (
     <div className="min-h-screen bg-white p-6">
+      <Toaster position="top-right" />
 
       {/* 🔥 HEADER SECTION */}
       <div className="mb-6">
@@ -93,34 +113,29 @@ const Report = () => {
       </div>
 
       {/* 🔥 SEARCH + ADD BUTTON */}
-<div className="flex justify-between items-center mb-4 bg-white border border-gray-200 p-4 rounded-lg">
-  
-  {/* 🔍 SEARCH WITH ICON */}
-  <div className="relative w-1/4">
-    <Search
-      size={18}
-      className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-    />
-    <input
-      type="text"
-      placeholder="Search Admin..."
-      value={search}
-      onChange={(e) => setSearch(e.target.value)}
-      className="border border-gray-200 pl-10 pr-3 py-2 rounded w-full focus:outline-none  "
-    />
-  </div>
+      <div className="flex justify-between items-center mb-4 bg-white border border-gray-200 p-4 rounded-lg">
+        <div className="relative w-1/4">
+          <Search
+            size={18}
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+          />
+          <input
+            type="text"
+            placeholder="Search Admin..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="border border-gray-200 pl-10 pr-3 py-2 rounded w-full focus:outline-none"
+          />
+        </div>
 
-  {/* ADD BUTTON (unchanged) */}
-  <button
-    onClick={() => setIsAddOpen(true)}
-    className="bg-emerald-500 text-white px-5 py-2 rounded-lg"
-  >
-    + Add Admin
-  </button>
-</div>
+        <button
+          onClick={() => setIsAddOpen(true)}
+          className="bg-emerald-500 text-white px-5 py-2 rounded-lg"
+        >
+          + Add Admin
+        </button>
+      </div>
 
-
-        
 
       {/* 🔥 TABLE */}
       <div className="overflow-x-auto bg-white rounded-lg shadow">
@@ -132,7 +147,7 @@ const Report = () => {
               <th className="px-4 py-3 text-sm">Email</th>
               <th className="px-4 py-3 text-sm">Phone</th>
               <th className="px-4 py-3 text-sm">Status</th>
-              <th className="px-4 py-3 text-sm">Total</th>
+            
               <th className="px-4 py-3 text-sm">Action</th>
             </tr>
           </thead>
@@ -155,7 +170,7 @@ const Report = () => {
                     {admin.status}
                   </span>
                 </td>
-                <td className="px-4 py-3">{admin.total}</td>
+               
 
                 <td className="px-4 py-3 flex justify-center gap-3">
                   <button
@@ -164,12 +179,16 @@ const Report = () => {
                   >
                     <Pencil size={16} />
                   </button>
-                  <button
-                    onClick={() => alert("Delete dummy")}
-                    className="text-gray-500 p-2"
-                  >
-                    <Trash2 size={16} />
-                  </button>
+                 <button
+                onClick={() => {
+                setAdmins(admins.filter((a) => a.adminCode !== admin.adminCode));
+                toast.success("Admin deleted successfully ✅");
+             }}
+            className="text-gray-500 p-2"
+           >
+              <Trash2 size={16} />
+             </button>
+
                 </td>
               </tr>
             ))}
@@ -207,13 +226,13 @@ const Report = () => {
       >
         {/* Admin Code */}
         <div>
-          <label className="block mb-1 text-sm text-gray-600">
-            Admin Code
+          <label className="block mb-1 text-sm ">
+            Admin Code *
           </label>
           <input
             type="text"
             name="AdminCode"
-            placeholder="A001"
+            placeholder="e.g., ADM001"
             value={newAdmin.AdminCode}
             onChange={handleAddChange}
             className="w-full h-11 px-3 border border-gray-300 rounded-lg  outline-none"
@@ -224,13 +243,13 @@ const Report = () => {
 
         {/* Name */}
         <div>
-          <label className="block mb-1 text-sm text-gray-600">
+          <label className="block mb-1 text-sm ">
             Admin Name
           </label>
           <input
             type="text"
             name="Name"
-            placeholder="Admin Name"
+            placeholder="e.g., John"
             value={newAdmin.Name}
             onChange={handleAddChange}
             className="w-full h-11 px-3 border border-gray-300 rounded-lg  outline-none"
@@ -240,13 +259,13 @@ const Report = () => {
 
         {/* Email */}
         <div>
-          <label className="block mb-1 text-sm text-gray-600">
+          <label className="block mb-1 text-sm ">
             Email
           </label>
           <input
             type="email"
             name="Email"
-            placeholder="admin@gmail.com"
+            placeholder="John@example.com"
             value={newAdmin.Email}
             onChange={handleAddChange}
             className="w-full h-11 px-3 border border-gray-300 rounded-lg  outline-none"
@@ -256,13 +275,13 @@ const Report = () => {
 
         {/* Contact */}
         <div>
-          <label className="block mb-1 text-sm text-gray-600">
+          <label className="block mb-1 text-sm ">
             Contact
           </label>
           <input
             type="text"
             name="Contact"
-            placeholder="0123456789"
+            placeholder="e.g., 6789......"
             value={newAdmin.Contact}
             onChange={(e) => {
               const value = e.target.value.replace(/\D/g, "");
@@ -279,13 +298,13 @@ const Report = () => {
 
         {/* Password */}
         <div>
-          <label className="block mb-1 text-sm text-gray-600">
+          <label className="block mb-1 text-sm ">
             Password
           </label>
           <input
             type="password"
-            name="Password"
-            placeholder="Password"
+            name=" Password"
+            placeholder="Enter Password"
             value={newAdmin.Password}
             onChange={handleAddChange}
             className="w-full h-11 px-3 border border-gray-300 rounded-lg  outline-none"
@@ -298,7 +317,7 @@ const Report = () => {
 
         {/* Department */}
         <div>
-          <label className="block mb-1 text-sm text-gray-600">
+          <label className="block mb-1 text-sm ">
             Department
           </label>
           <select
@@ -313,6 +332,9 @@ const Report = () => {
             <option value="IT">IT</option>
             <option value="Sales">Sales</option>
           </select>
+          <p className="text-xs text-gray-400 mt-1">
+            Select a department first
+          </p>
         </div>
 
         {/* BUTTON */}
@@ -344,16 +366,46 @@ const Report = () => {
             <h2 className="text-lg font-semibold mb-4">Edit Admin</h2>
 
             <div className="grid grid-cols-2 gap-4">
+              <div>
+              <label className="block mb-1 text-sm ">
+            Admin Code *
+          </label>
               <input name="adminCode" value={editAdmin.adminCode} disabled className="border border-gray-200 p-2 rounded bg-gray-100" />
+              </div>
+               <div>
+              <label className="block mb-1 text-sm ">
+            Admin Name *
+          </label>
               <input name="name" value={editAdmin.name} onChange={handleEditChange} className="border border-gray-200 p-2 rounded " />
+              </div>
+               <div>
+              <label className="block mb-1 text-sm ">
+            Email *
+          </label>
               <input name="email" value={editAdmin.email} onChange={handleEditChange} className="border border-gray-200 p-2 rounded" />
+              </div>
+               <div>
+              <label className="block mb-1 text-sm ">
+            Contact *
+          </label>
               <input name="phone" value={editAdmin.phone} onChange={handleEditChange} className="border border-gray-200 p-2 rounded" />
+              </div>
+               <div>
+              <label className="block mb-1 text-sm ">
+           Status *
+          </label>
               <select name="status" value={editAdmin.status} onChange={handleEditChange} className="border border-gray-200 p-2 rounded">
                 <option>Active</option>
                 <option>Inactive</option>
                 <option>Suspended</option>
               </select>
-              <input name="total" value={editAdmin.total} onChange={handleEditChange} className="border border-gray-200 p-2 rounded" />
+              </div>
+              <div>
+              <label className="block mb-1 text-sm ">
+            Role *
+          </label>
+              <input type="text" name="role" value="Admin" disabled className="border border-gray-200 p-2 rounded bg-gray-100" />
+              </div>
             </div>
 
             <button

@@ -6,7 +6,8 @@ const Dashboard = () => {
   return (
        <div>
         {/* Dashboard Cards */}
-        <div className="grid grid-cols-4 px-4 py-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 px-4 py-4 gap-4">
+
           <div className="bg-white border-2 border-gray-200 rounded-lg p-4">
             <div className="flex items-center gap-2">
               <UsersRound
