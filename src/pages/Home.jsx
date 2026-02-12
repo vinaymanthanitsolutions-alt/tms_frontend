@@ -4,6 +4,10 @@ import Sidebar from "../components/Sidebar";
 import AdminTeam from "./adminPages/AdminTeam";
 import AdminReport from "./adminPages/AdminReport";
 import AdminDashboard from "./adminPages/AdminDashboard";
+import Dashboard from "./superadminPages/Dashboard";
+import AddAdmin from "./superadminPages/AddAdmin";
+import Report from "./superadminPages/Report";
+
 
 export default function Home({ children }) {
   const [currentPage, setCurrentPage] = useState("Dashboard");
@@ -12,16 +16,12 @@ export default function Home({ children }) {
     switch (currentPage) {
       case "Dashboard":
         return children;
-      case "Team":
-        return <AdminTeam />;
+      case "Add":
+        return <AddAdmin />;
       case "Report":
-        return <AdminReport />;
-      default:
-        return (
-          <div className="p-4">
-            <h2 className="text-xl font-semibold">Page Under Construction</h2>
-          </div>
-        );
+        return <Report />;
+      
+        
     }
   };
 

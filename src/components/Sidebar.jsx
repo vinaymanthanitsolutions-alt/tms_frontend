@@ -64,18 +64,12 @@ const Sidebar = ({ onNavigate }) => {
         </div>
         <div
           className={`${menuItemsStyle} ${activeButton.Team ? selectedButtonStyle : ""}`}
-          onClick={() => handleButtonClick("Team")}
+          onClick={() => handleButtonClick("Add")}
         >
           <Users size={20} />
-          <span>Team</span>
+          <span>Add</span>
         </div>
-        <div
-          className={`${menuItemsStyle} ${activeButton.Task ? selectedButtonStyle : ""}`}
-          onClick={() => handleButtonClick("Task")}
-        >
-          <ClipboardList size={20} />
-          <span>Task</span>
-        </div>
+       
       </div>
       <div className="text-xs mt-7 text-gray-600 mb-4">General</div>
       <div className="flex flex-col gap-1">

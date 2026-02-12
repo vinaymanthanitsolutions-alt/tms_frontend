@@ -4,13 +4,24 @@ import UserLogin from './pages/UserLogin'
 
 import Home from './pages/Home'
 import AdminDashboard from './pages/adminPages/AdminDashboard'
+import Dashboard from './pages/superadminPages/Dashboard'
+
+
+
+
+
 
 const App = () => {
   return (
+
+     
+       
        <Routes>
-        <Route path='/' element={<AdminDashboard/>}/>
+        <Route path='/' element={<Dashboard/>}/>
         <Route path='/login' element={<UserLogin/>}/>
+         
       </Routes>
+     
   )
 }
 
