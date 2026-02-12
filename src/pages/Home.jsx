@@ -35,7 +35,54 @@ export default function Home() {
             </div>
           );
       }
-    } else if (DEMODATA.role === "teamlead") {
+    } else if (DEMODATA.role === "projectmanager") {
+      // Vansh will implement project manager specific content here
+      switch (currentPage) {
+        case "Dashboard":
+          return <AdminDashboard />;
+        case "Team":
+          return <AdminTeam />;
+        case "Report":
+          return <AdminReport />;
+        case "Task":
+          return (
+            <div className="p-4">
+              <h2 className="text-xl font-semibold">Project Manager Tasks</h2>
+              <p className="text-gray-600 mt-2">Task management for project managers.</p>
+            </div>
+          );
+        default:
+          return (
+            <div className="p-4">
+              <h2 className="text-xl font-semibold">Page Under Construction</h2>
+            </div>
+          );
+      }
+    } else if (DEMODATA.role === "superadmin") {
+      //divyansh will implement super admin specific content here
+      switch (currentPage) {
+        case "Dashboard":
+          return <AdminDashboard />;
+        case "Team":
+          return <AdminTeam />;
+        case "Report":
+          return <AdminReport />;
+        case "Task":
+          return (
+            <div className="p-4">
+              <h2 className="text-xl font-semibold">Super Admin Tasks</h2>
+              <p className="text-gray-600 mt-2">Task management for super administrators.</p>
+            </div>
+          );
+        default:
+          return (
+            <div className="p-4">
+              <h2 className="text-xl font-semibold">Page Under Construction</h2>
+            </div>
+          );
+      }
+    } 
+    else if (DEMODATA.role === "teamlead") {
       switch (currentPage) {
         case "Dashboard":
           return <TeamLeadDashboard />;

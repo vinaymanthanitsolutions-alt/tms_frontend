@@ -82,7 +82,82 @@ const Sidebar = ({ onNavigate, isOpen, onClose }) => {
           </div>
         </>
       );
-    } else if (DEMODATA.role === "teamlead") {
+    }
+    else if (DEMODATA.role === "superadmin") {
+      return (
+        <>
+          <div
+            className={`${menuItemsStyle} ${activeButton.Dashboard ? selectedButtonStyle : ""}`}
+            onClick={() => handleButtonClick("Dashboard")}
+          >
+            <House size={20} />
+            <span>Dashboard</span>
+          </div>
+          <div
+            className={`${menuItemsStyle} ${activeButton.Report ? selectedButtonStyle : ""}`}
+            onClick={() => handleButtonClick("Report")}
+          >
+            <ChartNoAxesCombined size={20} />
+            <span>Report</span>
+          </div>
+          <div
+            className={`${menuItemsStyle} ${activeButton.Team ? selectedButtonStyle : ""}`}
+            onClick={() => handleButtonClick("Team")}
+          >
+            <Users size={20} />
+            <span>Team</span>
+          </div>
+          <div
+            className={`${menuItemsStyle} ${activeButton.Task ? selectedButtonStyle : ""}`}
+            onClick={() => handleButtonClick("Task")}
+          >
+            <ClipboardList size={20} />
+            <span>Task</span>
+          </div>
+        </>
+      );
+    }else if (DEMODATA.role === "projectmanager") {
+      return (
+        <>
+          <div
+            className={`${menuItemsStyle} ${activeButton.Dashboard ? selectedButtonStyle : ""}`}
+            onClick={() => handleButtonClick("Dashboard")}
+          >
+            <House size={20} />
+            <span>Dashboard</span>
+          </div>
+          <div
+            className={`${menuItemsStyle} ${activeButton.Report ? selectedButtonStyle : ""}`}
+            onClick={() => handleButtonClick("Report")}
+          >
+            <ChartNoAxesCombined size={20} />
+            <span>Report</span>
+          </div>
+          <div
+            className={`${menuItemsStyle} ${activeButton.Team ? selectedButtonStyle : ""}`}
+            onClick={() => handleButtonClick("Team")}
+          >
+            <Users size={20} />
+            <span>Team</span>
+          </div>
+          <div
+            className={`${menuItemsStyle} ${activeButton.Task ? selectedButtonStyle : ""}`}
+            onClick={() => handleButtonClick("Task")}
+          >
+            <ClipboardList size={20} />
+            <span>Task</span>
+          </div>
+          <div
+            className={`${menuItemsStyle} ${activeButton.Project ? selectedButtonStyle : ""}`}
+            onClick={() => handleButtonClick("Project")}
+          >
+            <ClipboardList size={20} />
+            <span>Project</span>
+          </div>
+        </>
+      );
+    }
+    else if (DEMODATA.role === "teamlead") {
       return (
         <>
           <div
