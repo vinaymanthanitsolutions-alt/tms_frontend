@@ -4,6 +4,7 @@ import Sidebar from "../components/Sidebar";
 import AdminTeam from "./adminPages/AdminTeam";
 import AdminReport from "./adminPages/AdminReport";
 import AdminDashboard from "./adminPages/AdminDashboard";
+import ProjectManagerDashboard from "./ProjectManagerPages/ProjectManagerDashboard";
 import TeamLeadDashboard from "./teamleadPages/TeamLeadDashboard";
 import { DEMODATA } from "../data";
 import { Menu } from "lucide-react";
@@ -39,7 +40,7 @@ export default function Home() {
       // Vansh will implement project manager specific content here
       switch (currentPage) {
         case "Dashboard":
-          return <AdminDashboard />;
+          return <ProjectManagerDashboard />;
         case "Team":
           return <AdminTeam />;
         case "Report":
