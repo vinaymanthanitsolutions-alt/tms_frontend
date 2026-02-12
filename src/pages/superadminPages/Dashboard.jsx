@@ -1,22 +1,21 @@
 import React from "react";
-import Home from "../Home";
 import { UsersRound } from "lucide-react";
+import DashboardChart from "./DashboardChart";
 
 const Dashboard = () => {
   return (
-    <Home>
        <div>
         {/* Dashboard Cards */}
         <div className="grid grid-cols-4 px-4 py-4 gap-4">
           <div className="bg-white border-2 border-gray-200 rounded-lg p-4">
             <div className="flex items-center gap-2">
               <UsersRound
-                className="text-orange-500 bg-orange-200 p-2 rounded"
+                className="text-green-500 bg-green-200 p-2 rounded"
                 size={35}
               />
               <div>Total Admin</div>
             </div>
-            <div className="mt-2 text-xl font-medium">20</div>
+            <div className="mt-2 text-xl font-medium">40</div>
           </div>
           <div className="bg-white border-2 border-gray-200 rounded-lg p-4">
             <div className="flex items-center gap-2">
@@ -24,19 +23,19 @@ const Dashboard = () => {
                 className="text-blue-500 bg-blue-200 p-2 rounded"
                 size={35}
               />
-              <div>Completed Project</div>
+              <div>Active Admin</div>
             </div>
-            <div className="mt-2 text-xl font-medium">7</div>
+            <div className="mt-2 text-xl font-medium">33</div>
           </div>
           <div className="bg-white border-2 border-gray-200 rounded-lg p-4">
             <div className="flex items-center gap-2">
               <UsersRound
-                className="text-green-500 bg-green-200 p-2 rounded"
+                className="text-red-500 bg-red-200 p-2 rounded"
                 size={35}
               />
-              <div>Pending Project</div>
+              <div>Deactive Admin</div>
             </div>
-            <div className="mt-2 text-xl font-medium">2</div>
+            <div className="mt-2 text-xl font-medium">5</div>
           </div>
           <div className="bg-white border-2 border-gray-200 rounded-lg p-4">
             <div className="flex items-center gap-2">
@@ -44,15 +43,15 @@ const Dashboard = () => {
                 className="text-yellow-500 bg-yellow-200 p-2 rounded"
                 size={35}
               />
-              <div>In month</div>
+              <div>Suspended</div>
             </div>
             <div className="mt-2 text-xl font-medium">2</div>
           </div>
 
           {/* Recent Projects */}
         </div>
+        <DashboardChart/>
       </div>
-    </Home>
      
   );
 };
