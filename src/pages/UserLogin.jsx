@@ -104,7 +104,7 @@ export default function UserLogin() {
             {/* Background Image */}
             <div
               className="absolute inset-0 bg-cover bg-center"
-              style={{ backgroundImage: "url('/login-wallpaper.jpg')" }}
+              style={{ backgroundImage: "url('/task_login.jiff')" }}
             />
 
             {/* Overlay */}

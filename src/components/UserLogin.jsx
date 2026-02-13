@@ -140,12 +140,12 @@ export default function UserLogin() {
           </div>
 
           {/* RIGHT IMAGE CARD */}
-          <div className="relative hidden lg:flex items-center justify-center rounded-r-3xl overflow-hidden min-h-[500px]">
+          <div className="relative hidden lg:flex items-center justify-center rounded-r-3xl overflow-hidden min-h-125">
 
             {/* Background */}
             <div
               className="absolute inset-0 bg-cover bg-center"
-              style={{ backgroundImage: "url('/login-wallpaper.jpg')" }}
+              style={{ backgroundImage: "url('/task_loginn.jpg')" }}
             />
 
             {/* Overlay */}
@@ -169,7 +169,7 @@ export default function UserLogin() {
                   Secure employee access to internal systems and digital platforms.
                 </p>
               </div>
-
+{/* 
               <div className="text-center">
                 <span
                   className="text-3xl xl:text-4xl text-gray-200 opacity-80"
@@ -177,7 +177,7 @@ export default function UserLogin() {
                 >
                   Innovate
                 </span>
-              </div>
+              </div> */}
 
               <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 sm:p-5 max-w-md">
                 <h3

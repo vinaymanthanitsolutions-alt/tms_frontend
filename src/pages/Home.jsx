@@ -15,6 +15,7 @@ import RegisterEmployee from "../components/AdminComponents/RegisterEmployee";
 import { DEMODATA } from "../data";
 import { Menu } from "lucide-react";
 import ProjectManagerProject from "./ProjectManagerPages/ProjectManagerProject";
+import PMTask from "./ProjectManagerPages/PMTask";
 
 export default function Home() {
   const [isOpenAdminRegister, setIsOpenAdminRegister] = useState(false);
@@ -59,14 +60,15 @@ export default function Home() {
           return <ProjectManagerProject />;
         
         case "Task":
-          return (
-            <div className="p-4">
-              <h2 className="text-xl font-semibold">Project Manager Tasks</h2>
-              <p className="text-gray-600 mt-2">
-                Task management for project managers.
-              </p>
-            </div>
-          );
+          return <PMTask />;
+          // (
+          //   <div className="p-4">
+          //     <h2 className="text-xl font-semibold">Project Manager Tasks</h2>
+          //     <p className="text-gray-600 mt-2">
+          //       Task management for project managers.
+          //     </p>
+          //   </div>
+          // );
         default:
           return (
             <div className="p-4">

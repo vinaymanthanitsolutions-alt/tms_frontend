@@ -60,3 +60,8 @@ export const validatePhoneNumber = (phoneNumber) => {
   // Must have exactly 10 digits and first digit should be 6 or greater
   return /^[6-9]\d{9}$/.test(phone);
 };
+
+export const validateTeamId = (teamId) => {
+  const id = String(teamId).trim();
+  return /^T\d{3,5}$/.test(id);
+};

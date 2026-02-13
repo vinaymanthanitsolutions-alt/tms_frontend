@@ -1,20 +1,30 @@
 import React, { useEffect, useState } from "react";
 import { Plus, X } from "lucide-react";
+import { validateTeamId } from "../../validation/validators";
 
-const AddProject = ({ onClose }) => {
-  const [title, setTitle] = useState("");
+const CreateTeam = ({ onClose }) => {
+  const [teamTitle, setTeamTitle] = useState("");
+  const [teamId, setTeamId] = useState("");
   const [projectId, setProjectId] = useState("");
   const [deadline, setDeadline] = useState("");
   const [description, setDescription] = useState("");
 
+  const [projects, setProjects] = useState([]);
   const [teamLeads, setTeamLeads] = useState([]);
   const [developers, setDevelopers] = useState([]);
 
   const [selectedTL, setSelectedTL] = useState(null);
   const [selectedMembers, setSelectedMembers] = useState([]);
   const [showTLDropdown, setShowTLDropdown] = useState(false);
+  const [teamIdError, setTeamIdError] = useState("");
 
   useEffect(() => {
+    setProjects([
+      { id: "PR101", name: "E-Commerce Platform" },
+      { id: "PR102", name: "CRM System" },
+      { id: "PR103", name: "HR Management Tool" }
+    ]);
+
     setTeamLeads([
       { id: 1, name: "Rahul Sharma", email: "rahul@email.com" },
       { id: 2, name: "Ankit Verma", email: "ankit@email.com" }
@@ -33,13 +43,31 @@ const AddProject = ({ onClose }) => {
   };
 
   const handleSelectMember = (member) => {
-    if (!selectedMembers.find((item) => item.id === member.id)) {
+    if (!selectedMembers.find((m) => m.id === member.id)) {
       setSelectedMembers([...selectedMembers, member]);
     }
   };
 
+  const handleRemoveMember = (id) => {
+    setSelectedMembers(selectedMembers.filter((m) => m.id !== id));
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    if (!validateTeamId(teamId)) {
+      setTeamIdError(
+        "Team ID must start with 'T' followed by 3-5 digits (e.g. T123)"
+      );
+      return;
+    } else {
+      setTeamIdError("");
+    }
+
+    if (!projectId) {
+      alert("Please select a Project");
+      return;
+    }
 
     if (!selectedTL) {
       alert("Please select a Team Leader");
@@ -51,7 +79,7 @@ const AddProject = ({ onClose }) => {
       return;
     }
 
-    alert("Project Created Successfully 🎉");
+    alert("Team Created Successfully 🎉");
     onClose();
   };
 
@@ -60,11 +88,10 @@ const AddProject = ({ onClose }) => {
       onSubmit={handleSubmit}
       className="bg-white p-6 rounded-lg shadow-sm space-y-6 max-h-[85vh] overflow-y-auto"
     >
-
-      {/* Modal Header */}
+      {/* Header */}
       <div className="flex items-center justify-between pb-4 border-b border-gray-200">
         <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
-          Add Project
+          Create New Team
         </h2>
 
         <button
@@ -76,35 +103,69 @@ const AddProject = ({ onClose }) => {
         </button>
       </div>
 
-      {/* Title + Project ID + Deadline */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      {/* Top Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
 
+        {/* Team Title */}
         <div>
           <label className="text-xs font-medium text-gray-600 uppercase tracking-wide">
-            Title
+            Team Title
           </label>
           <input
             type="text"
             required
+            value={teamTitle}
+            onChange={(e) => setTeamTitle(e.target.value)}
             className="w-full mt-1 border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
           />
         </div>
 
+        {/* Team ID */}
         <div>
           <label className="text-xs font-medium text-gray-600 uppercase tracking-wide">
-            Project ID
+            Team ID
           </label>
           <input
             type="text"
             required
-            className="w-full mt-1 border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500"
+            value={teamId}
+            onChange={(e) => {
+              const value = e.target.value.toUpperCase();
+              setTeamId(value);
+              setTeamIdError("");
+            }}
+            className={`w-full mt-1 border rounded-md p-2 text-sm focus:outline-none focus:ring-1 ${
+              teamIdError
+                ? "border-red-500 focus:ring-red-500"
+                : "border-gray-300 focus:ring-emerald-500"
+            }`}
+          />
+          {teamIdError && (
+            <p className="text-xs text-red-500 mt-1">{teamIdError}</p>
+          )}
+        </div>
+
+        {/* Project Dropdown */}
+        <div>
+          <label className="text-xs font-medium text-gray-600 uppercase tracking-wide">
+            Project
+          </label>
+          <select
+            required
             value={projectId}
             onChange={(e) => setProjectId(e.target.value)}
-          />
+            className="w-full mt-1 border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500"
+          >
+            <option value="">Select Project</option>
+            {projects.map((project) => (
+              <option key={project.id} value={project.id}>
+                {project.id} - {project.name}
+              </option>
+            ))}
+          </select>
         </div>
 
+        {/* Deadline */}
         <div>
           <label className="text-xs font-medium text-gray-600 uppercase tracking-wide">
             Deadline
@@ -112,9 +173,9 @@ const AddProject = ({ onClose }) => {
           <input
             type="date"
             required
-            className="w-full mt-1 border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500"
             value={deadline}
             onChange={(e) => setDeadline(e.target.value)}
+            className="w-full mt-1 border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500"
           />
         </div>
 
@@ -128,9 +189,9 @@ const AddProject = ({ onClose }) => {
         <textarea
           required
           rows="3"
-          className="w-full mt-1 border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
+          className="w-full mt-1 border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500"
         />
       </div>
 
@@ -162,7 +223,7 @@ const AddProject = ({ onClose }) => {
         )}
 
         {selectedTL && (
-          <div className="mt-3 bg-emerald-100 text-emerald-700 px-3 py-2 rounded-md text-sm inline-block ">
+          <div className="mt-3 bg-emerald-100 text-emerald-700 px-3 py-2 rounded-md text-sm inline-block">
             <div className="font-medium">{selectedTL.name}</div>
             <div className="text-xs">{selectedTL.email}</div>
           </div>
@@ -191,18 +252,24 @@ const AddProject = ({ onClose }) => {
           {selectedMembers.map((member) => (
             <div
               key={member.id}
-              className="bg-blue-100 text-blue-700 px-3 py-2 rounded-md text-sm"
+              className="bg-blue-100 text-blue-700 px-3 py-2 rounded-md text-sm flex items-center gap-2"
             >
-              <div className="font-medium">{member.name}</div>
-              <div className="text-xs">{member.email}</div>
+              <div>
+                <div className="font-medium">{member.name}</div>
+                <div className="text-xs">{member.email}</div>
+              </div>
+              <X
+                size={14}
+                className="cursor-pointer"
+                onClick={() => handleRemoveMember(member.id)}
+              />
             </div>
           ))}
         </div>
       </div>
 
-      {/* Footer Buttons */}
+      {/* Footer */}
       <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
-
         <button
           type="button"
           onClick={onClose}
@@ -215,13 +282,11 @@ const AddProject = ({ onClose }) => {
           type="submit"
           className="px-5 py-2 text-sm rounded-md bg-emerald-500 text-white hover:bg-emerald-600 transition"
         >
-          Create Project
+          Create Team
         </button>
-
       </div>
-
     </form>
   );
 };
 
-export default AddProject;
+export default CreateTeam;
