@@ -8,6 +8,7 @@ import ProjectManagerDashboard from "./ProjectManagerPages/ProjectManagerDashboa
 import TeamLeadDashboard from "./teamleadPages/TeamLeadDashboard";
 import { DEMODATA } from "../data";
 import { Menu } from "lucide-react";
+import ProjectManagerProject from "./ProjectManagerPages/ProjectManagerProject";
 
 export default function Home() {
   const [currentPage, setCurrentPage] = useState("Dashboard");
@@ -45,6 +46,9 @@ export default function Home() {
           return <AdminTeam />;
         case "Report":
           return <AdminReport />;
+        case "Project":
+          return <ProjectManagerProject />;
+        
         case "Task":
           return (
             <div className="p-4">
