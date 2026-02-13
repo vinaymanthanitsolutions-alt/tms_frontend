@@ -10,9 +10,9 @@
 //   role: "projectmanager",
 // };
 
-export const DEMODATA = {
- role : "projectmanager"
-}
+//export const DEMODATA = {
+ //role : "projectmanager"
+//}
 
 export const EMPLOYEES = [
   {
@@ -62,6 +62,6 @@ export const EMPLOYEES = [
   },
 ];
 
-// export const DEMODATA = {
-//   role: "superadmin",
-// };
+ export const DEMODATA = {
+   role: "superadmin",
+};

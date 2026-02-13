@@ -74,6 +74,7 @@ const adminsPerPage = 5;
   department: editAdmin.department || "HEAD",
   role: "ADMIN",
   manager_id: editAdmin.manager_id || "SA001",
+  status : editAdmin.status,
 }),
         
       }
@@ -213,7 +214,7 @@ const totalPages = Math.ceil(filteredAdmins.length / adminsPerPage);
 
 
   return (
-    <div className=" bg-gray-50 p-2">
+    <div className=" min-h-screen bg-gray-50 p-4 sm:p-6">
       <Toaster position="top-right" />
 
       {/*  HEADER SECTION */}
@@ -223,8 +224,9 @@ const totalPages = Math.ceil(filteredAdmins.length / adminsPerPage);
       </div>
 
       {/*  SEARCH + ADD BUTTON */}
-      <div className="flex justify-between items-center mb-4 bg-white border border-gray-200 p-4 rounded-lg">
-        <div className="relative w-1/4">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4 bg-white border border-gray-200 p-4 rounded-lg">
+
+        <div className="relative w-full sm:w-1/3 lg:w-1/4">
           <Search
             size={18}
             className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
@@ -248,8 +250,8 @@ const totalPages = Math.ceil(filteredAdmins.length / adminsPerPage);
 
 
       {/*  TABLE */}
-      <div className="overflow-x-auto bg-white rounded-lg shadow">
-        <table className="min-w-full border border-gray-200">
+      <div className="w-full overflow-x-auto bg-white rounded-lg shadow">
+       <table className="min-w-full border border-gray-200">
           <thead className="bg-gray-200">
             <tr>
               <th className="px-4 py-3 text-sm">Admin Code</th>
@@ -352,8 +354,8 @@ const totalPages = Math.ceil(filteredAdmins.length / adminsPerPage);
 
 {/*  ADD ADMIN POPUP */}
 {isAddOpen && (
-  <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
-    <div className="bg-white w-200 max-w-4xl rounded-2xl border border-gray-200 shadow-md p-6 sm:p-8 relative">
+  <div className="fixed inset-0 bg-black/40 flex justify-center items-center p-4 z-50 overflow-y-auto">
+    <div className="bg-white w-full max-w-4xl rounded-2xl border border-gray-200 shadow-md p-6 sm:p-8 relative">
 
       {/* CLOSE */}
       <button
@@ -507,69 +509,99 @@ const totalPages = Math.ceil(filteredAdmins.length / adminsPerPage);
 
       {/*  EDIT POPUP */}
       {isEditOpen && (
-        <div className="fixed inset-0 bg-black/40 flex justify-center items-center ">
-          <div className="bg-white w-full max-w-lg rounded-xl p-6 relative">
-            <button
-              onClick={() => setIsEditOpen(false)}
-              className="absolute top-3 right-3"
-            >
-              <X />
-            </button>
+   <div className="fixed inset-0 bg-black/40 flex justify-center items-center p-4 z-50 overflow-y-auto">
+    <div className="bg-white w-full max-w-2xl rounded-xl p-6 relative">
 
-            <h2 className="text-lg font-semibold mb-4">Edit Admin</h2>
+      <button
+        onClick={() => setIsEditOpen(false)}
+        className="absolute top-3 right-3 cursor-pointer"
+      >
+        <X />
+      </button>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-              <label className="block mb-1 text-sm ">
-            Admin Code *
-          </label>
-              <input name="adminCode" value={editAdmin.adminCode} disabled className="border border-gray-200 p-2 rounded bg-gray-100" />
-              </div>
-               <div>
-              <label className="block mb-1 text-sm ">
-            Admin Name *
-          </label>
-              <input name="name" value={editAdmin.name} onChange={handleEditChange} className="border border-gray-200 p-2 rounded " />
-              </div>
-               <div>
-              <label className="block mb-1 text-sm ">
-            Email *
-          </label>
-              <input name="email" value={editAdmin.email} onChange={handleEditChange} className="border border-gray-200 p-2 rounded" />
-              </div>
-               <div>
-              <label className="block mb-1 text-sm ">
-            Contact *
-          </label>
-              <input name="phone" value={editAdmin.phone} onChange={handleEditChange} className="border border-gray-200 p-2 rounded" />
-              </div>
-               <div>
-              <label className="block mb-1 text-sm ">
-           Status *
-          </label>
-              <select name="status" value={editAdmin.status} onChange={handleEditChange} className="border border-gray-200 p-2 rounded">
-                <option>ACTIVE</option>
-                <option>INACTIVE</option>
-                <option>SUSPENDED</option>
-              </select>
-              </div>
-              <div>
-              <label className="block mb-1 text-sm ">
-            Role *
-          </label>
-              <input type="text" name="role" value="ADMIN" disabled className="border border-gray-200 p-2 rounded bg-gray-100" />
-              </div>
-            </div>
+      <h2 className="text-lg font-semibold mb-4">Edit Admin</h2>
 
-            <button
-              onClick={handleUpdate}
-              className="mt-5 w-full bg-emerald-500 text-white py-2 rounded-lg"
-            >
-              Update Admin
-            </button>
-          </div>
+      {/* Responsive Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+
+        <div>
+          <label className="block mb-1 text-sm">Admin Code *</label>
+          <input
+            name="adminCode"
+            value={editAdmin.adminCode}
+            disabled
+            className="border border-gray-200 p-2 rounded w-full bg-gray-100"
+          />
         </div>
-      )}
+
+        <div>
+          <label className="block mb-1 text-sm">Admin Name *</label>
+          <input
+            name="name"
+            value={editAdmin.name}
+            onChange={handleEditChange}
+            className="border border-gray-200 p-2 rounded w-full outline-gray-300"
+          />
+        </div>
+
+        <div>
+          <label className="block mb-1 text-sm">Email *</label>
+          <input
+            name="email"
+            value={editAdmin.email}
+            onChange={handleEditChange}
+            className="border border-gray-200 p-2 rounded w-full outline-gray-300"
+          />
+        </div>
+
+        <div>
+          <label className="block mb-1 text-sm">Contact *</label>
+          <input
+            name="phone"
+            value={editAdmin.phone}
+            onChange={handleEditChange}
+            className="border border-gray-200 p-2 rounded w-full outline-gray-300"
+          />
+        </div>
+
+        <div>
+          <label className="block mb-1 text-sm">Status *</label>
+          <select
+            name="status"
+            value={editAdmin.status}
+            onChange={handleEditChange}
+            className="border border-gray-200 p-2 rounded w-full outline-gray-300"
+          >
+            <option>ACTIVE</option>
+            <option>INACTIVE</option>
+            <option>SUSPENDED</option>
+          </select>
+        </div>
+
+        <div>
+          <label className="block mb-1 text-sm">Role *</label>
+          <input
+            type="text"
+            name="role"
+            value="ADMIN"
+            disabled
+            className="border border-gray-200 p-2 rounded w-full bg-gray-100"
+          />
+        </div>
+
+      </div>
+
+      <button
+        onClick={handleUpdate}
+        className="mt-6 w-full bg-emerald-500 text-white py-2 rounded-lg hover:bg-emerald-600 transition"
+      >
+        Update Admin
+      </button>
+
+    </div>
+  </div>
+)}
+
     </div>
   );
 };
