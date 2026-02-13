@@ -1,26 +1,27 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+
 import { Pencil, Trash2, X, Search } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 
-const initialAdmins = [
+{/*const initialAdmins = [
   {
     adminCode: "ADM001",
     name: "Rahul Sharma",
     email: "rahul@gmail.com",
     phone: "9876543210",
-    status: "Active",
+    status: "ACTIVE",
   },
   {
     adminCode: "ADM002",
     name: "Neha Singh",
     email: "neha@gmail.com",
     phone: "9123456780",
-    status: "Deactive",
+    status: "INACTIVE",
   },
-];
+];*/}
 
 const Report = () => {
-  const [admins, setAdmins] = useState(initialAdmins);
+ const [admins, setAdmins] = useState([]);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [editAdmin, setEditAdmin] = useState(null);
@@ -33,11 +34,11 @@ const Report = () => {
     phone: "",
     password: "",
     department: "",
-    status: "Active",
+    status: "ACTIVE",
   });
 
   /* 🔐 VALIDATIONS */
-  const validateAdminCode = (code) => /^ADM\d{3}$/.test(code);
+  const validateAdminCode = (code) => /^A\d{3}$/.test(code);
   const validatePhone = (phone) => /^[6-9]\d{9}$/.test(phone);
 
   const openEditModal = (admin) => {
@@ -63,30 +64,59 @@ const Report = () => {
     setNewAdmin({ ...newAdmin, [e.target.name]: e.target.value });
   };
 
-  const handleAddAdmin = (e) => {
-    e.preventDefault();
+ 
+  const handleAddAdmin = async (e) => {
+  e.preventDefault();
 
-    const { adminCode, name, email, phone, password, department } = newAdmin;
+  const { adminCode, name, email, phone, password, department } = newAdmin;
 
-    if (!adminCode || !name || !email || !phone || !password || !department) {
-      toast.error("Please fill all details ❌");
-      return;
+  if (!adminCode || !name || !email || !phone || !password || !department) {
+    toast.error("Please fill all details");
+    return;
+  }
+
+  if (!validateAdminCode(adminCode)) {
+    toast.error("Admin Code must be like A001");
+    return;
+  }
+
+  if (!validatePhone(phone)) {
+    toast.error("Phone must start from 6-9 & be 10 digits");
+    return;
+  }
+
+  try {
+    const response = await fetch("http://localhost:8080/signup", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        emp_id: adminCode,
+        emp_name: name,
+        email: email,
+        phone: phone,
+        password: password,
+        department: department,
+        role: "ADMIN",
+        manager_id: "SA001"   // keep static or change if dynamic
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to register admin");
     }
 
-    if (!validateAdminCode(adminCode)) {
-      toast.error("Admin Code must be like ADM123 ❌");
-      return;
-    }
+    // ✅ Add admin after successful API call
+    fetchAdmins();
 
-    if (!validatePhone(phone)) {
-      toast.error("Phone must start from 6-9 & be 10 digits ❌");
-      return;
-    }
 
-    setAdmins([...admins, newAdmin]);
     toast.success("Admin added successfully ✅");
 
     setIsAddOpen(false);
+
     setNewAdmin({
       adminCode: "",
       name: "",
@@ -94,13 +124,68 @@ const Report = () => {
       phone: "",
       password: "",
       department: "",
-      status: "Active",
+      status: "ACTIVE",
+      
     });
-  };
 
-  const filteredAdmins = admins.filter((admin) =>
-    admin.name.toLowerCase().includes(search.toLowerCase())
-  );
+  } catch (error) {
+    console.error(error);
+    toast.error(error.message || "Something went wrong");
+  }
+};
+
+
+useEffect(() => {
+  fetchAdmins();
+}, []);
+
+const fetchAdmins = async () => {
+  try {
+    const response = await fetch("http://localhost:8080/emp/SA001");
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch admins");
+    }
+
+    console.log("API RESPONSE:", data); // 🔥 keep this to check structure
+
+    // 🔥 Handle all possible backend formats
+    let adminArray = [];
+
+    if (Array.isArray(data)) {
+      adminArray = data;
+    } else if (Array.isArray(data.employees)) {
+      adminArray = data.employees;
+    } else if (Array.isArray(data.subordinates)) {
+      adminArray = data.subordinates;
+    } else if (data.emp_id) {
+      adminArray = [data];
+    }
+
+    const formattedData = adminArray.map((emp) => ({
+      adminCode: emp.emp_id || "",
+      name: emp.emp_name || "",
+      email: emp.email || "",
+      phone: emp.phone || "",
+      status: emp.status || "ACTIVE",
+    }));
+
+    setAdmins(formattedData);
+
+  } catch (error) {
+    console.error(error);
+    toast.error("Failed to load admins");
+  }
+};
+
+
+
+
+ const filteredAdmins = admins.filter((admin) =>
+  (admin.name || "").toLowerCase().includes((search || "").toLowerCase())
+);
+
 
   return (
     <div className="min-h-screen bg-white p-6">
@@ -162,9 +247,9 @@ const Report = () => {
                 <td className="px-4 py-3">
                   <span
               className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                 admin.status === "Active"
+                 admin.status === "ACTIVE"
                 ? "bg-green-100 text-green-700"
-                 : admin.status === "Suspended"
+                 : admin.status === "SUSPENDED"
                 ? "bg-yellow-100 text-yellow-700"
                : "bg-red-100 text-red-700"
                     }`}
@@ -236,7 +321,7 @@ const Report = () => {
           <input
             type="text"
             name="adminCode"
-            placeholder="e.g., ADM001"
+            placeholder="e.g., A001"
             value={newAdmin.adminCode}
             onChange={handleAddChange}
             className="w-full h-11 px-3 border border-gray-300 rounded-lg outline-none"
@@ -331,9 +416,9 @@ const Report = () => {
             required
           >
             <option value="">Select Department</option>
-            <option value="Head">Head</option>
+            <option value="Head">HEAD</option>
             <option value="IT">IT</option>
-            <option value="Sales">Sales</option>
+            <option value="Sales">SALES</option>
           </select>
           <p className="text-xs text-gray-400 mt-1">
             Select a department first
@@ -398,16 +483,16 @@ const Report = () => {
            Status *
           </label>
               <select name="status" value={editAdmin.status} onChange={handleEditChange} className="border border-gray-200 p-2 rounded">
-                <option>Active</option>
-                <option>Inactive</option>
-                <option>Suspended</option>
+                <option>ACTIVE</option>
+                <option>INACTIVE</option>
+                <option>SUSPENDED</option>
               </select>
               </div>
               <div>
               <label className="block mb-1 text-sm ">
             Role *
           </label>
-              <input type="text" name="role" value="Admin" disabled className="border border-gray-200 p-2 rounded bg-gray-100" />
+              <input type="text" name="role" value="ADMIN" disabled className="border border-gray-200 p-2 rounded bg-gray-100" />
               </div>
             </div>
 

@@ -34,7 +34,7 @@ const Dashboard = () => {
                 className="text-red-500 bg-red-200 p-2 rounded"
                 size={35}
               />
-              <div>Deactive Admin</div>
+              <div>Inactive Admin</div>
             </div>
             <div className="mt-2 text-xl font-medium">5</div>
           </div>

@@ -13,17 +13,17 @@ import {
 
 /*  DUMMY DATA */
 const pieData = [
-  { name: "Total Admin", value: 40 },
-  { name: "Active Admin", value: 33 },
-  { name: "Deactive Admin", value: 5 },
-  {name: "Suspended" , value:2}
+  { name: "TOTAL ADMIN", value: 40 },
+  { name: "ACTIVE ADMIN", value: 33 },
+  { name: "INACTIVE ADMIN", value: 5 },
+  {name: "SUSPENDED" , value:2}
 ];
 
 const barData = [
-  { month: "Jan", Active : 4, Deactive: 2 },
-  { month: "Feb", Active: 6, Deactive: 3 },
-  { month: "Mar", Active: 8, Deactive: 4 },
-  { month: "Apr", Active: 10, Deactive: 5 },
+  { month: "Jan", ACTIVE : 4, INACTIVE: 2 },
+  { month: "Feb",ACTIVE: 6, INACTIVE: 3 },
+  { month: "Mar", ACTIVE: 8,INACTIVE: 4 },
+  { month: "Apr", ACTIVE: 10, INACTIVE: 5 },
 ];
 
 const COLORS = ["#10B981", "#3B82F6", "#EF4444","#FFEB3B"]; // green, blue, red
@@ -76,8 +76,8 @@ export default function DashboardChart() {
               <YAxis />
               <Tooltip />
               <Legend />
-              <Bar dataKey="Active" fill="#10B981" />
-              <Bar dataKey="Deactive" fill="#EF4444" />
+              <Bar dataKey="ACTIVE" fill="#10B981" />
+              <Bar dataKey="INACTIVE" fill="#EF4444" />
             </BarChart>
           </ResponsiveContainer>
         </div>
