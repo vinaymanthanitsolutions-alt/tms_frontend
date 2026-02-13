@@ -6,8 +6,8 @@ import {
   Bar,
   XAxis,
   YAxis,
-  Tooltip,
-  Legend,
+  Tooltip,  //Shows popup on hover
+  Legend, 
   ResponsiveContainer,
 } from "recharts";
 
@@ -26,14 +26,14 @@ const barData = [
   { month: "Apr", ACTIVE: 10, INACTIVE: 5 },
 ];
 
-const COLORS = ["#10B981", "#3B82F6", "#EF4444","#FFEB3B"]; // green, blue, red
+const COLORS = ["#10B981", "#3B82F6", "#EF4444","#FFEB3B"]; // green, blue, red, yellow
 
 export default function DashboardChart() {
   return (
-    <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+    <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-6  bg-gray-50 h-106">
 
-      {/* 🔵 LEFT : PIE CHART */}
-      <div className="bg-white p-6 rounded-xl ml-5  border border-gray-200">
+      {/*   PIE CHART */}
+      <div className="bg-white p-6 rounded-xl ml-5 mt-6 border border-gray-200">
         <h2 className="text-lg font-semibold mb-4">
           Admin Overview
         </h2>
@@ -47,7 +47,7 @@ export default function DashboardChart() {
                 nameKey="name"
                 innerRadius={50}
                 outerRadius={90}
-                paddingAngle={5}
+                paddingAngle={2}
               >
                 {pieData.map((entry, index) => (
                   <Cell
@@ -63,8 +63,8 @@ export default function DashboardChart() {
         </div>
       </div>
 
-      {/* 🟢 RIGHT : BAR CHART */}
-      <div className="bg-white p-6 rounded-xl border border-gray-200">
+      {/*  BAR CHART */}
+      <div className="bg-white p-6 rounded-xl border mt-6 border-gray-200">
         <h2 className="text-lg font-semibold mb-4">
           Monthly Admin Status
         </h2>

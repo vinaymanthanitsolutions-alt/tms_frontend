@@ -26,6 +26,8 @@ const Report = () => {
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [editAdmin, setEditAdmin] = useState(null);
   const [search, setSearch] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+const adminsPerPage = 5; 
 
   const [newAdmin, setNewAdmin] = useState({
     adminCode: "",
@@ -37,7 +39,7 @@ const Report = () => {
     status: "ACTIVE",
   });
 
-  /* 🔐 VALIDATIONS */
+  /*  VALIDATIONS */
   const validateAdminCode = (code) => /^A\d{3}$/.test(code);
   const validatePhone = (phone) => /^[6-9]\d{9}$/.test(phone);
 
@@ -50,41 +52,60 @@ const Report = () => {
     setEditAdmin({ ...editAdmin, [e.target.name]: e.target.value });
   };
 
-  const handleUpdate = () => {
-    setAdmins((prev) =>
-      prev.map((a) =>
-        a.adminCode === editAdmin.adminCode ? editAdmin : a
-      )
+ //update
+ const handleUpdate = async () => {
+  try {
+    if (!editAdmin) return;
+
+    const response = await fetch(
+      `http://localhost:8080/emp/${editAdmin.adminCode}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          
+  emp_id: editAdmin.adminCode,
+  emp_name: editAdmin.name,
+  email: editAdmin.email,
+  phone: editAdmin.phone,
+  password: editAdmin.password || "Default@123",
+  department: editAdmin.department || "HEAD",
+  role: "ADMIN",
+  manager_id: editAdmin.manager_id || "SA001",
+}),
+        
+      }
     );
-    toast.success("Admin updated successfully ✅");
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(errorText || "Failed to update employee");
+    }
+
+    const data = await response.json();
+    console.log("UPDATE RESPONSE:", data);
+
+    alert("Admin Updated Successfully ✅");
+
+    fetchAdmins();
     setIsEditOpen(false);
-  };
+
+  } catch (error) {
+    console.error("Update Error:", error);
+    alert("Update Failed ❌");
+  }
+};
+
+
 
   const handleAddChange = (e) => {
     setNewAdmin({ ...newAdmin, [e.target.name]: e.target.value });
   };
 
  
-  const handleAddAdmin = async (e) => {
-  e.preventDefault();
-
-  const { adminCode, name, email, phone, password, department } = newAdmin;
-
-  if (!adminCode || !name || !email || !phone || !password || !department) {
-    toast.error("Please fill all details");
-    return;
-  }
-
-  if (!validateAdminCode(adminCode)) {
-    toast.error("Admin Code must be like A001");
-    return;
-  }
-
-  if (!validatePhone(phone)) {
-    toast.error("Phone must start from 6-9 & be 10 digits");
-    return;
-  }
-
+ const handleAddAdmin = async () => {
   try {
     const response = await fetch("http://localhost:8080/signup", {
       method: "POST",
@@ -92,47 +113,36 @@ const Report = () => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        emp_id: adminCode,
-        emp_name: name,
-        email: email,
-        phone: phone,
-        password: password,
-        department: department,
+        emp_id: newAdmin.adminCode,
+        emp_name: newAdmin.name,
+        email: newAdmin.email,
+        phone: newAdmin.phone,
+        password: newAdmin.password,
+        department: newAdmin.department,
         role: "ADMIN",
-        manager_id: "SA001"   // keep static or change if dynamic
+        manager_id: newAdmin.manager_id || "SA001",
       }),
     });
 
-    const data = await response.json();
-
     if (!response.ok) {
-      throw new Error(data.message || "Failed to register admin");
+      const errorText = await response.text();
+      throw new Error(errorText || "Failed to register admin");
     }
 
-    // ✅ Add admin after successful API call
-    fetchAdmins();
+    const data = await response.json();
+    console.log("SIGNUP RESPONSE:", data);
 
+    alert("Admin Registered Successfully ✅");
 
-    toast.success("Admin added successfully ✅");
-
+    fetchAdmins();   
     setIsAddOpen(false);
 
-    setNewAdmin({
-      adminCode: "",
-      name: "",
-      email: "",
-      phone: "",
-      password: "",
-      department: "",
-      status: "ACTIVE",
-      
-    });
-
   } catch (error) {
-    console.error(error);
-    toast.error(error.message || "Something went wrong");
+    console.error("Signup Error:", error);
+    alert("Registration Failed ❌");
   }
 };
+
 
 
 useEffect(() => {
@@ -148,9 +158,9 @@ const fetchAdmins = async () => {
       throw new Error("Failed to fetch admins");
     }
 
-    console.log("API RESPONSE:", data); // 🔥 keep this to check structure
+    console.log("API RESPONSE:", data); 
 
-    // 🔥 Handle all possible backend formats
+    //  Handle all possible backend formats
     let adminArray = [];
 
     if (Array.isArray(data)) {
@@ -185,19 +195,34 @@ const fetchAdmins = async () => {
  const filteredAdmins = admins.filter((admin) =>
   (admin.name || "").toLowerCase().includes((search || "").toLowerCase())
 );
+//pagination 
+
+// Calculate indexes
+const indexOfLastAdmin = currentPage * adminsPerPage;
+const indexOfFirstAdmin = indexOfLastAdmin - adminsPerPage;
+
+// Current page data
+const currentAdmins = filteredAdmins.slice(
+  indexOfFirstAdmin,
+  indexOfLastAdmin
+);
+
+// Total pages
+const totalPages = Math.ceil(filteredAdmins.length / adminsPerPage);
+
 
 
   return (
-    <div className="min-h-screen bg-white p-6">
+    <div className=" bg-gray-50 p-2">
       <Toaster position="top-right" />
 
-      {/* 🔥 HEADER SECTION */}
+      {/*  HEADER SECTION */}
       <div className="mb-6">
         <h1 className="text-2xl font-bold">Admin Report</h1>
         <p className="text-sm text-emerald-600 mt-1">Admin</p>
       </div>
 
-      {/* 🔥 SEARCH + ADD BUTTON */}
+      {/*  SEARCH + ADD BUTTON */}
       <div className="flex justify-between items-center mb-4 bg-white border border-gray-200 p-4 rounded-lg">
         <div className="relative w-1/4">
           <Search
@@ -222,7 +247,7 @@ const fetchAdmins = async () => {
       </div>
 
 
-      {/* 🔥 TABLE */}
+      {/*  TABLE */}
       <div className="overflow-x-auto bg-white rounded-lg shadow">
         <table className="min-w-full border border-gray-200">
           <thead className="bg-gray-200">
@@ -238,7 +263,7 @@ const fetchAdmins = async () => {
           </thead>
 
           <tbody>
-            {filteredAdmins.map((admin, index) => (
+            {currentAdmins.map((admin, index) => (
               <tr key={index} className="text-center border-b border border-gray-200 hover:bg-gray-50">
                 <td className="px-4 py-3">{admin.adminCode}</td>
                 <td className="px-4 py-3">{admin.name}</td>
@@ -267,11 +292,33 @@ const fetchAdmins = async () => {
                   >
                     <Pencil size={16} />
                   </button>
+
+                  
                  <button
-                onClick={() => {
-                setAdmins(admins.filter((a) => a.adminCode !== admin.adminCode));
-                toast.success("Admin deleted successfully ✅");
-             }}
+               onClick={async () => {
+  try {
+    const response = await fetch(
+      `http://localhost:8080/emp/${admin.adminCode}`,
+      {
+        method: "DELETE",
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to delete admin");
+    }
+
+    toast.success("Admin deleted successfully ✅");
+
+    //  Refresh list from backend
+    fetchAdmins();
+
+  } catch (error) {
+    console.error(error);
+    toast.error("Delete failed");
+  }
+}}
+
             className="text-gray-500 p-2"
            >
               <Trash2 size={16} />
@@ -284,8 +331,26 @@ const fetchAdmins = async () => {
         </table>
       </div>
 
+      {/* PAGINATION */}
+<div className="flex justify-end mt-4 gap-2">
+  {Array.from({ length: totalPages }, (_, index) => (
+    <button
+      key={index}
+      onClick={() => setCurrentPage(index + 1)}
+      className={`px-3  rounded border border-gray-200 ${
+        currentPage === index + 1
+          ? "bg-emerald-500 text-white"
+          : "bg-white text-gray-700"
+      }`}
+    >
+      {index + 1}
+    </button>
+  ))}
+</div>
 
-{/* 🔥 ADD ADMIN POPUP */}
+
+
+{/*  ADD ADMIN POPUP */}
 {isAddOpen && (
   <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
     <div className="bg-white w-200 max-w-4xl rounded-2xl border border-gray-200 shadow-md p-6 sm:p-8 relative">
@@ -416,9 +481,9 @@ const fetchAdmins = async () => {
             required
           >
             <option value="">Select Department</option>
-            <option value="Head">HEAD</option>
+            <option value="HEAD">HEAD</option>
             <option value="IT">IT</option>
-            <option value="Sales">SALES</option>
+            <option value="SALES">SALES</option>
           </select>
           <p className="text-xs text-gray-400 mt-1">
             Select a department first
@@ -440,7 +505,7 @@ const fetchAdmins = async () => {
 )}
 
 
-      {/* 🔥 EDIT POPUP */}
+      {/*  EDIT POPUP */}
       {isEditOpen && (
         <div className="fixed inset-0 bg-black/40 flex justify-center items-center ">
           <div className="bg-white w-full max-w-lg rounded-xl p-6 relative">

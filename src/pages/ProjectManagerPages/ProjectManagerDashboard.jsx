@@ -12,30 +12,30 @@ const ProjectManagerDashboard = () => {
     pendingProjects: 0,
   });
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await fetch("http://localhost:5000/pm-dashboard");
-        const data = await res.json();
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const res = await fetch("http://localhost:5000/pm-dashboard");
+  //       const data = await res.json();
 
-        setProjects(data.projects || []);
-        setUpcoming(data.upcomingDeadlines || []);
-        setStats(data.stats || {});
-      } catch (error) {
-        console.log(error);
-      }
-    };
+  //       setProjects(data.projects || []);
+  //       setUpcoming(data.upcomingDeadlines || []);
+  //       setStats(data.stats || {});
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   };
 
-    fetchData();
-  }, []);
+  //   fetchData();
+  // }, []);
 
   return (
     <>
       {/* MAIN WRAPPER */}
-      <div className="h-screen overflow-hidden px-4 sm:px-6 lg:px-10 py-4 space-y-6">
+<div className="overflow-hidden px-4 sm:px-6 lg:px-10 py-4 space-y-6 ">
 
         {/* 🔹 TOP CARDS */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 ">
           {[
             {
               label: "Total Team Leaders",
@@ -92,7 +92,7 @@ const ProjectManagerDashboard = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
           {/* LEFT DIV - TOTAL PROJECTS */}
-          <div className="bg-white rounded-lg shadow-sm p-4 lg:col-span-2 max-h-80 flex flex-col">
+          <div className="bg-white rounded-lg shadow-sm p-4 lg:col-span-2 max-h-80 flex flex-col ">
             <h2
               className="text-sm tracking-wide text-gray-500 mb-3"
               style={{ fontFamily: "var(--font-oswald)" }}
