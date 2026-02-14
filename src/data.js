@@ -1,5 +1,5 @@
 //export const DEMODATA = {
-//  role:"admin"
+ //role:"admin"
 //}
 
 // export const DEMODATA = {
