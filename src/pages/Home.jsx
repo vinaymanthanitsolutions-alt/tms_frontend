@@ -13,6 +13,8 @@ import TeamLeadDashboard from "./teamleadPages/TeamLeadDashboard";
 import RegisterEmployee from "../components/AdminComponents/RegisterEmployee";
 import { DEMODATA } from "../data";
 import { Menu } from "lucide-react";
+import ProjectManagerProject from "./ProjectManagerPages/ProjectManagerProject";
+import PMTask from "./ProjectManagerPages/PMTask";
 
 export default function Home() {
   const [isOpenAdminRegister, setIsOpenAdminRegister] = useState(false);

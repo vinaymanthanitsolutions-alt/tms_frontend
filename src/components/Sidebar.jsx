@@ -27,7 +27,6 @@ const Sidebar = ({ onNavigate, isOpen, onClose }) => {
       for (const key in prevState) {
         newState[key] = key === buttonName;
       }
-
       return newState;
     });
 
