@@ -8,7 +8,6 @@ import Dashboard from "./superadminPages/Dashboard";
 
 import Report from "./superadminPages/Report";
 
-
 import ProjectManagerDashboard from "./ProjectManagerPages/ProjectManagerDashboard";
 import TeamLeadDashboard from "./teamleadPages/TeamLeadDashboard";
 import RegisterEmployee from "../components/AdminComponents/RegisterEmployee";
@@ -19,108 +18,122 @@ export default function Home() {
   const [isOpenAdminRegister, setIsOpenAdminRegister] = useState(false);
   const [currentPage, setCurrentPage] = useState("Dashboard");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [refreshEmployees, setRefreshEmployees] = useState(0);
+  const [editEmployee, setEditEmployee] = useState(null);
+
+  const handleRegistrationSuccess = () => {
+    setRefreshEmployees((prev) => prev + 1);
+    setEditEmployee(null);
+  };
+
+  const adminPages = {
+    Dashboard: () => <AdminDashboard />,
+    Team: () => (
+      <AdminTeam
+        setIsOpenAdminRegister={setIsOpenAdminRegister}
+        setEditEmployee={setEditEmployee}
+        refreshKey={refreshEmployees}
+      />
+    ),
+    Report: () => <AdminReport />,
+    Task: () => (
+      <div className="p-4">
+        <h2 className="text-xl font-semibold">Admin Tasks</h2>
+        <p className="text-gray-600 mt-2">
+          Task management for administrators.
+        </p>
+      </div>
+    ),
+    default: () => (
+      <div className="p-4">
+        <h2 className="text-xl font-semibold">Page Under Construction</h2>
+      </div>
+    ),
+  };
+
+  // Project Manager 
+  const projectManagerPages = {
+    Dashboard: () => <ProjectManagerDashboard />,
+    Team: () => (
+      <AdminTeam
+        setIsOpenAdminRegister={setIsOpenAdminRegister}
+        setEditEmployee={setEditEmployee}
+        refreshKey={refreshEmployees}
+      />
+    ),
+    Report: () => <AdminReport />,
+    Task: () => (
+      <div className="p-4">
+        <h2 className="text-xl font-semibold">Project Manager Tasks</h2>
+        <p className="text-gray-600 mt-2">
+          Task management for project managers.
+        </p>
+      </div>
+    ),
+    default: () => (
+      <div className="p-4">
+        <h2 className="text-xl font-semibold">Page Under Construction</h2>
+      </div>
+    ),
+  };
+
+  // Super Admin 
+  const superAdminPages = {
+    Dashboard: () => <Dashboard />,
+    Report: () => <Report />,
+    default: () => (
+      <div className="p-4">
+        <h2 className="text-xl font-semibold">Page Under Construction</h2>
+      </div>
+    ),
+  };
+
+  // Team Lead 
+  const teamLeadPages = {
+    Dashboard: () => <TeamLeadDashboard />,
+    Task: () => (
+      <div className="p-4">
+        <h2 className="text-xl font-semibold">Team Lead Tasks</h2>
+        <p className="text-gray-600 mt-2">Manage your team's tasks.</p>
+      </div>
+    ),
+    Report: () => (
+      <div className="p-4">
+        <h2 className="text-xl font-semibold">Team Lead Reports</h2>
+        <p className="text-gray-600 mt-2">View team performance reports.</p>
+      </div>
+    ),
+    default: () => (
+      <div className="p-4">
+        <h2 className="text-xl font-semibold">Page Under Construction</h2>
+      </div>
+    ),
+  };
+
+  // Default page mapping
+  const defaultPages = {
+    default: () => (
+      <div className="p-4">
+        <h2 className="text-xl font-semibold">Unknown Role</h2>
+        <p className="text-gray-600 mt-2">Please contact administrator.</p>
+      </div>
+    ),
+  };
+
+  const rolePageMap = {
+    admin: adminPages,
+    projectmanager: projectManagerPages,
+    superadmin: superAdminPages,
+    teamlead: teamLeadPages,
+    default: defaultPages,
+  };
 
   const renderContent = () => {
-    if (DEMODATA.role === "admin") {
-      switch (currentPage) {
-        case "Dashboard":
-          return <AdminDashboard />;
-        case "Team":
-          return <AdminTeam setIsOpenAdminRegister={setIsOpenAdminRegister} />;
-        case "Report":
-          return <AdminReport />;
-        case "Task":
-          return (
-            <div className="p-4">
-              <h2 className="text-xl font-semibold">Admin Tasks</h2>
-              <p className="text-gray-600 mt-2">
-                Task management for administrators.
-              </p>
-            </div>
-          );
-        default:
-          return (
-            <div className="p-4">
-              <h2 className="text-xl font-semibold">Page Under Construction</h2>
-            </div>
-          );
-      }
-    } else if (DEMODATA.role === "projectmanager") {
-      // Vansh will implement project manager specific content here
-      switch (currentPage) {
-        case "Dashboard":
-          return <ProjectManagerDashboard />;
-        case "Team":
-          return <AdminTeam setIsOpenAdminRegister={setIsOpenAdminRegister} />;
-        case "Report":
-          return <AdminReport />;
-        case "Task":
-          return (
-            <div className="p-4">
-              <h2 className="text-xl font-semibold">Project Manager Tasks</h2>
-              <p className="text-gray-600 mt-2">
-                Task management for project managers.
-              </p>
-            </div>
-          );
-        default:
-          return (
-            <div className="p-4">
-              <h2 className="text-xl font-semibold">Page Under Construction</h2>
-            </div>
-          );
-      }
-    } else if (DEMODATA.role === "superadmin") {
-      //divya will implement super admin specific content here
-      switch (currentPage) {
-        case "Dashboard":
-          return <Dashboard />;
-       
-        case "Report":
-          return <Report />;
-        
-        default:
-          return (
-            <div className="p-4">
-              <h2 className="text-xl font-semibold">Page Under Construction</h2>
-            </div>
-          );
-      }
-    } else if (DEMODATA.role === "teamlead") {
-      switch (currentPage) {
-        case "Dashboard":
-          return <TeamLeadDashboard />;
-        case "Task":
-          return (
-            <div className="p-4">
-              <h2 className="text-xl font-semibold">Team Lead Tasks</h2>
-              <p className="text-gray-600 mt-2">Manage your team's tasks.</p>
-            </div>
-          );
-        case "Report":
-          return (
-            <div className="p-4">
-              <h2 className="text-xl font-semibold">Team Lead Reports</h2>
-              <p className="text-gray-600 mt-2">
-                View team performance reports.
-              </p>
-            </div>
-          );
-        default:
-          return (
-            <div className="p-4">
-              <h2 className="text-xl font-semibold">Page Under Construction</h2>
-            </div>
-          );
-      }
-    } else {
-      return (
-        <div className="p-4">
-          <h2 className="text-xl font-semibold">Unknown Role</h2>
-          <p className="text-gray-600 mt-2">Please contact administrator.</p>
-        </div>
-      );
-    }
+    const userRole = DEMODATA.role || "default";
+    const pageMap = rolePageMap[userRole] || rolePageMap.default;
+    const pageComponent = pageMap[currentPage] || pageMap.default;
+
+    return pageComponent();
   };
 
   return (
@@ -149,10 +162,15 @@ export default function Home() {
         {isOpenAdminRegister && (
           <RegisterEmployee
             isOpen={isOpenAdminRegister}
-            onClose={() => setIsOpenAdminRegister(false)}
+            onClose={() => {
+              setIsOpenAdminRegister(false);
+              setEditEmployee(null);
+            }}
+            onSuccess={handleRegistrationSuccess}
+            editData={editEmployee}
           />
         )}
-        
+
         <div className="hidden lg:block">
           <Navbar />
         </div>
