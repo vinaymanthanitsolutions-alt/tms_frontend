@@ -16,6 +16,7 @@ import { DEMODATA } from "../data";
 import { Menu } from "lucide-react";
 import ProjectManagerProject from "./ProjectManagerPages/ProjectManagerProject";
 import PMTask from "./ProjectManagerPages/PMTask";
+import ProjectReport from "./ProjectManagerPages/ProjectReport";
 
 export default function Home() {
   const [isOpenAdminRegister, setIsOpenAdminRegister] = useState(false);
@@ -52,10 +53,10 @@ export default function Home() {
       switch (currentPage) {
         case "Dashboard":
           return <ProjectManagerDashboard />;
-        case "Team":
-          return <AdminTeam setIsOpenAdminRegister={setIsOpenAdminRegister} />;
+        // case "Team":
+        //   return <AdminTeam setIsOpenAdminRegister={setIsOpenAdminRegister} />;
         case "Report":
-          return <AdminReport />;
+          return <ProjectReport />;
         case "Project":
           return <ProjectManagerProject />;
         

@@ -120,13 +120,13 @@ const Sidebar = ({ onNavigate, isOpen, onClose }) => {
             <ChartNoAxesCombined size={20} />
             <span>Report</span>
           </div>
-          <div
+          {/* <div
             className={`${menuItemsStyle} ${activeButton.Team ? selectedButtonStyle : ""}`}
             onClick={() => handleButtonClick("Team")}
           >
             <Users size={20} />
             <span>Team</span>
-          </div>
+          </div> */}
           <div
             className={`${menuItemsStyle} ${activeButton.Task ? selectedButtonStyle : ""}`}
             onClick={() => handleButtonClick("Task")}
