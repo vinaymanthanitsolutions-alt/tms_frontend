@@ -117,6 +117,15 @@ const Sidebar = ({ onNavigate, isOpen, onClose }) => {
           <ChartNoAxesCombined size={20} />
           <span>Report</span>
         </div>
+
+         <div
+           className={`${menuItemsStyle} ${activeButton.Admin ? selectedButtonStyle : ""}`}
+          onClick={() => handleButtonClick("Admin")}
+        >
+          <Users size={20} />
+          <span>Admin's</span>
+        </div>
+
       </>
     );
   };

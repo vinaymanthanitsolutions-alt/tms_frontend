@@ -1,38 +1,62 @@
-import {
- PieChart,
+import { 
+  PieChart,
   Pie,
   Cell,
   BarChart,
   Bar,
   XAxis,
   YAxis,
-  Tooltip,  //Shows popup on hover
-  Legend, 
+  Tooltip,
+  Legend,
   ResponsiveContainer,
 } from "recharts";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
-/*  DUMMY DATA */
-const pieData = [
-  { name: "TOTAL ADMIN", value: 40 },
-  { name: "ACTIVE ADMIN", value: 33 },
-  { name: "INACTIVE ADMIN", value: 5 },
-  {name: "SUSPENDED" , value:2}
-];
-
-const barData = [
-  { month: "Jan", ACTIVE : 4, INACTIVE: 2 },
-  { month: "Feb",ACTIVE: 6, INACTIVE: 3 },
-  { month: "Mar", ACTIVE: 8,INACTIVE: 4 },
-  { month: "Apr", ACTIVE: 10, INACTIVE: 5 },
-];
-
-const COLORS = ["#10B981", "#3B82F6", "#EF4444","#FFEB3B"]; // green, blue, red, yellow
+const COLORS = ["#10B981", "#3B82F6", "#EF4444", "#FFEB3B"];
 
 export default function DashboardChart() {
-  return (
-    <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-6  bg-gray-50 h-106">
 
-      {/*   PIE CHART */}
+  const [pieData, setPieData] = useState([]);
+  const [barData, setBarData] = useState([]);
+
+  useEffect(() => {
+    fetchCounts();
+  }, []);
+
+  const fetchCounts = async () => {
+  try {
+    const res = await axios.get("http://localhost:8080/empCounts");
+
+    console.log("API RESPONSE:", res.data);
+
+    const counts = res.data.data; // 🔥 important
+
+    setPieData([
+      { name: "TOTAL ADMIN", value: counts.total_employees || 0 },
+      { name: "ACTIVE ADMIN", value: counts.active || 0 },
+      { name: "INACTIVE ADMIN", value: counts.inactive || 0 },
+      { name: "SUSPENDED", value: counts.suspended || 0 },
+    ]);
+
+    setBarData([
+      {
+        month: "Status",
+        ACTIVE: counts.active || 0,
+        INACTIVE: counts.inactive || 0,
+      },
+    ]);
+
+  } catch (error) {
+    console.error("Error fetching employee counts:", error);
+  }
+};
+
+
+  return (
+    <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-6 bg-gray-50 h-106">
+
+      {/* PIE CHART */}
       <div className="bg-white p-6 rounded-xl ml-5 mt-6 border border-gray-200">
         <h2 className="text-lg font-semibold mb-4">
           Admin Overview
@@ -63,7 +87,7 @@ export default function DashboardChart() {
         </div>
       </div>
 
-      {/*  BAR CHART */}
+      {/* BAR CHART */}
       <div className="bg-white p-6 rounded-xl border mt-6 border-gray-200">
         <h2 className="text-lg font-semibold mb-4">
           Monthly Admin Status

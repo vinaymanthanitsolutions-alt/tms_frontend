@@ -211,7 +211,7 @@ export default function UserLogin() {
       onClose={() => setShowOtp(false)}
       onVerified={() => {
         setShowOtp(false);
-        navigate("/dashboard");   
+        
       }}
     />
   </div>

@@ -7,6 +7,7 @@ import AdminDashboard from "./adminPages/AdminDashboard";
 import Dashboard from "./superadminPages/Dashboard";
 
 import Report from "./superadminPages/Report";
+import Admin from "./superadminPages/Admin"
 
 import ProjectManagerDashboard from "./ProjectManagerPages/ProjectManagerDashboard";
 import TeamLeadDashboard from "./teamleadPages/TeamLeadDashboard";
@@ -83,6 +84,7 @@ export default function Home() {
   const superAdminPages = {
     Dashboard: () => <Dashboard />,
     Report: () => <Report />,
+    Admin: () => <Admin />,
     default: () => (
       <div className="p-4">
         <h2 className="text-xl font-semibold">Page Under Construction</h2>
