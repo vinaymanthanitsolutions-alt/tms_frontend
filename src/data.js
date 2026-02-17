@@ -13,10 +13,6 @@
 export const DEMODATA = {
  role : "projectmanager"
 }
-// export const DEMODATA = {
-//   role: "superadmin",
-// };
-
 
 export const EMPLOYEES = [
   {
