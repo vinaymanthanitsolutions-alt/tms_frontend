@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { X } from "lucide-react";
+import toast from "react-hot-toast";
 
 const CreateTask = ({ isOpen, onClose, onAddTask }) => {
-  const [taskID, setTaskID] = useState("");
+  const [teamID, setTeamID] = useState("");
   const [taskName, setTaskName] = useState("");
   const [teamLeader, setTeamLeader] = useState("");
   const [description, setDescription] = useState("");
@@ -19,21 +20,21 @@ const CreateTask = ({ isOpen, onClose, onAddTask }) => {
     e.preventDefault();
 
     onAddTask({
-      taskID,
+      teamID,
       taskName,
       teamLeader,
       description,
       deadline,
     });
 
-    alert("Task Added Successfully 🎉");
+    toast.success("Task Added Successfully 🎉");
 
     resetForm();
     onClose();
   };
 
   const resetForm = () => {
-    setTaskID("");
+    setTeamID("");
     setTaskName("");
     setTeamLeader("");
     setDescription("");
@@ -64,15 +65,15 @@ const CreateTask = ({ isOpen, onClose, onAddTask }) => {
           {/* Top Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-            {/* Task ID */}
+            {/* Team ID */}
             <div>
               <label className="text-xs font-medium text-gray-600 uppercase tracking-wide">
-                Task ID
+                Team ID
               </label>
               <input
                 type="text"
-                value={taskID}
-                onChange={(e) => setTaskID(e.target.value)}
+                value={teamID}
+                onChange={(e) => setTeamID(e.target.value)}
                 required
                 className="w-full mt-2 border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500"
               />

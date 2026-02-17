@@ -29,6 +29,7 @@ export default function UserLogin() {
       }
 
       alert("Login Successful ✅");
+      localStorage.setItem("userId", response.data.userId);
     } catch (err) {
       setError(err.message || "Invalid credentials");
     } finally {
