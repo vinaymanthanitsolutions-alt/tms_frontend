@@ -9,6 +9,13 @@ import { Settings } from "lucide-react";
 import { MessageCircleQuestionMark } from "lucide-react";
 import { X } from "lucide-react";
 import { DEMODATA } from "../data";
+import {
+  
+  FolderKanban,
+  
+  ChevronDown
+} from "lucide-react";
+
 
 const Sidebar = ({ onNavigate, isOpen, onClose }) => {
   const [activeButton, setActiveButton] = React.useState({
@@ -86,61 +93,74 @@ const Sidebar = ({ onNavigate, isOpen, onClose }) => {
 
   // SuperAdmin menu rendering function
   const renderSuperAdminMenu = () => {
-    return (
-      <>
-        <div
-          className={`${menuItemsStyle} ${activeButton.Dashboard ? selectedButtonStyle : ""}`}
-          onClick={() => handleButtonClick("Dashboard")}
-        >
-          <House size={20} />
-          <span>Dashboard</span>
-        </div>
+  return (
+    <>
+      <div
+        className={`${menuItemsStyle} ${
+          activeButton.Dashboard ? selectedButtonStyle : ""
+        }`}
+        onClick={() => handleButtonClick("Dashboard")}
+      >
+        <House size={20} />
+        <span>Dashboard</span>
+      </div>
 
-            <div
-  className={`${menuItemsStyle} ${activeButton.Report ? selectedButtonStyle : ""} relative`}
-  onClick={() => {
-    setShowReportDropdown(!showReportDropdown);
-  }}
->
-  <ChartNoAxesCombined size={20} />
-  <span>Report</span>
+      {/* REPORT MENU */}
+      <div>
+  <div
+    className={`${menuItemsStyle} ${
+      activeButton.Report ? selectedButtonStyle : ""
+    } flex items-center justify-between`}
+    onClick={() => {
+      setShowReportDropdown(!showReportDropdown);
+    }}
+  >
+    <div className="flex items-center gap-2">
+      <ChartNoAxesCombined size={20} />
+      <span>Report</span>
+    </div>
+    <ChevronDown size={16} />
+  </div>
 
   {showReportDropdown && (
-    <div className="absolute left-0 top-12 w-44 bg-white  rounded-md z-50">
+    <div className="ml-8 mt-2 space-y-1">
 
       {/* USERS REPORT */}
       <div
-        className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+        className="px-4 py-2 text-sm hover:bg-gray-100 rounded cursor-pointer flex items-center gap-2"
         onClick={(e) => {
           e.stopPropagation();
           handleButtonClick("UsersReport");
-          setShowReportDropdown(false);
+          
         }}
       >
+        <Users size={16} />
         Users
       </div>
 
       {/* PROJECT REPORT */}
       <div
-        className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+        className="px-4 py-2 text-sm hover:bg-gray-100 rounded cursor-pointer flex items-center gap-2"
         onClick={(e) => {
           e.stopPropagation();
           handleButtonClick("ProjectReport");
-          setShowReportDropdown(false);
+          
         }}
       >
+        <FolderKanban size={16} />
         Project
       </div>
 
       {/* TASK REPORT */}
       <div
-        className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+        className="px-4 py-2 text-sm hover:bg-gray-100 rounded cursor-pointer flex items-center gap-2"
         onClick={(e) => {
           e.stopPropagation();
           handleButtonClick("TaskReport");
-          setShowReportDropdown(false);
+          
         }}
       >
+        <ClipboardList size={16} />
         Task
       </div>
 
@@ -149,18 +169,22 @@ const Sidebar = ({ onNavigate, isOpen, onClose }) => {
 </div>
 
 
+      {/* ADMIN MENU */}
+      <div
+        className={`${menuItemsStyle} ${
+          activeButton.Admin ? selectedButtonStyle : ""
+        }`}
+        onClick={() => handleButtonClick("Admin")}
+      >
+        <Users size={20} />
+        <span>Admin's</span>
+      </div>
+    </>
+  );
+};
 
-         <div
-           className={`${menuItemsStyle} ${activeButton.Admin ? selectedButtonStyle : ""}`}
-          onClick={() => handleButtonClick("Admin")}
-        >
-          <Users size={20} />
-          <span>Admin's</span>
-        </div>
 
-      </>
-    );
-  };
+
 
   // ProjectManager menu rendering function
   const renderProjectManagerMenu = () => {
@@ -180,13 +204,7 @@ const Sidebar = ({ onNavigate, isOpen, onClose }) => {
           <ChartNoAxesCombined size={20} />
           <span>Report</span>
         </div>
-        <div
-          className={`${menuItemsStyle} ${activeButton.Team ? selectedButtonStyle : ""}`}
-          onClick={() => handleButtonClick("Team")}
-        >
-          <Users size={20} />
-          <span>Team</span>
-        </div>
+
         <div
           className={`${menuItemsStyle} ${activeButton.Task ? selectedButtonStyle : ""}`}
           onClick={() => handleButtonClick("Task")}

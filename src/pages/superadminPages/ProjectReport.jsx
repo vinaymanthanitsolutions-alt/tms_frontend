@@ -65,45 +65,35 @@ const ProjectReport = () => {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-semibold">Project Details</h1>
-          <p className="text-sm text-emerald-600">Project</p>
+          <p className="text-sm text-gray-500 mb-6">Project's work under the admin</p>
         </div>
        
       </div>
 
       {/* TABLE */}
-      <table className="w-full border border-gray-200 mt-5 rounded-md overflow-hidden">
-        <thead>
-          <tr className="bg-gray-100">
-            <th className="pl-8 py-3 text-left text-xs font-medium border-b">
-              Admin Id
-            </th>
-            <th className="pl-8 py-3 text-left text-xs font-medium border-b">
-              Project Name
-            </th>
-            <th className="px-4 py-3 text-left text-xs font-medium border-b">
-              Status
-            </th>
-            <th className="px-4 py-3 text-left text-xs font-medium border-b">
-              Manager
-            </th>
-            <th className="px-4 py-3 text-left text-xs font-medium border-b">
-              Deadline
-            </th>
-            <th className="px-4 py-3 text-left text-xs font-medium border-b">
-              Progress
-            </th>
-          </tr>
-        </thead>
+     <div className="bg-white rounded-xl shadow border border-gray-200 overflow-x-auto">
+        <table className="w-full text-left border-collapse">
+          <thead className="bg-gray-100 text-gray-600 text-sm uppercase ">
+            <tr>
+              <th className="p-4">Admin Id</th>
+              <th className="p-4">Project Name</th>
+              <th className="p-4">Status</th>
+              <th className="p-4">Manager</th>
+              <th className="p-4">Deadline</th>
+              <th className="p-4">Progress</th>
+              
+            </tr>
+          </thead>
 
         <tbody>
           {projects.map((project, index) => (
-            <tr key={index} className="border-b">
+            <tr key={index} className="border border-gray-200 ">
               {/* ✅ Admin ID FIXED */}
-              <td className="pl-8 py-3 text-sm">
+              <td className="pl-8 py-3 font-medium">
                 {project.adminId}
               </td>
 
-              <td className="px-4 py-3 text-sm flex items-center gap-3">
+              <td className="px-4 py-3 font-medium flex items-center gap-3">
                 <Rocket
                   size={30}
                   className="px-2 py-2 rounded bg-blue-200 text-blue-500"
@@ -116,9 +106,9 @@ const ProjectReport = () => {
                 </div>
               </td>
 
-              <td className="px-4 py-3 text-sm">
+              <td className="px-4 py-3 font-medium">
                 <span
-                  className={`px-2 py-1 rounded-xl text-xs font-medium ${
+                  className={`px-2 py-1 rounded-xl  font-medium ${
                     project.status === "Active"
                       ? "bg-green-200 text-green-700"
                       : project.status === "Overdue"
@@ -132,15 +122,15 @@ const ProjectReport = () => {
                 </span>
               </td>
 
-              <td className="px-4 py-3 text-sm">
+              <td className="px-4 py-3 font-medium">
                 {project.manager}
               </td>
 
-              <td className="px-4 py-3 text-sm">
+              <td className="px-4 py-3 font-medium">
                 {project.deadline}
               </td>
 
-              <td className="px-4 py-3 text-sm">
+              <td className="px-4 py-3 font-medium">
                 <div className="w-full bg-gray-200 rounded-full h-2">
                   <div
                     className="bg-green-500 h-2 rounded-full"
@@ -155,6 +145,7 @@ const ProjectReport = () => {
           ))}
         </tbody>
       </table>
+      </div>
        
       
     </div>

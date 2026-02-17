@@ -36,11 +36,12 @@ const User = () => {
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
-      <h2 className="text-2xl font-semibold mb-6">Employee's Details</h2>
+      <h2 className="text-2xl font-semibold ">Employee's Details</h2>
+      <h2 className="text-sm text-gray-500  mb-6">Task assign to team leader</h2>
 
       <div className="bg-white rounded-xl shadow border border-gray-200 overflow-x-auto">
         <table className="w-full text-left border-collapse">
-          <thead className="bg-gray-100 text-gray-600 text-sm uppercase">
+          <thead className="bg-gray-100 text-gray-600 text-sm uppercase ">
             <tr>
               <th className="p-4">Emp ID</th>
               <th className="p-4">Name</th>
@@ -56,14 +57,14 @@ const User = () => {
             {users.map((user, index) => (
               <tr
                 key={index}
-                className="border-t hover:bg-gray-50 transition border-gray-200"
+                className="border-t hover:bg-gray-50 transition border-gray-200 "
               >
                 <td className="p-4 font-medium">{user.emp_id}</td>
 
                 {/* Name + Email */}
                 <td className="p-4">
                   <div className="font-medium">{user.emp_name}</div>
-                  <div className="text-sm text-gray-500">
+                  <div className="text-sm  text-gray-500">
                     {user.email}
                   </div>
                 </td>

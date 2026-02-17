@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import Home from "../Home";
 import { UsersRound, Proportions, CircleCheck } from "lucide-react";
 
+import { getTeamCounts, getProjectCounts } from "../../services/dashboardService";
+
 const ProjectManagerDashboard = () => {
   const [projects, setProjects] = useState([]);
   const [upcoming, setUpcoming] = useState([]);
@@ -12,27 +14,34 @@ const ProjectManagerDashboard = () => {
     pendingProjects: 0,
   });
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const res = await fetch("http://localhost:5000/pm-dashboard");
-  //       const data = await res.json();
+useEffect(() => {
+  const fetchDashboardStats = async () => {
+    try {
+      const pmId = "PM001";
 
-  //       setProjects(data.projects || []);
-  //       setUpcoming(data.upcomingDeadlines || []);
-  //       setStats(data.stats || {});
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   };
+      const teamData = await getTeamCounts(pmId);
+      const projectData = await getProjectCounts(pmId);
 
-  //   fetchData();
-  // }, []);
+      setStats({
+        totalTL: teamData.total_teams,
+        totalProjects: projectData.total_projects,
+        activeProjects: projectData.active,
+        pendingProjects: projectData.planning,
+      });
+
+    } catch (error) {
+      console.log("Failed to load dashboard stats");
+    }
+  };
+
+  fetchDashboardStats();
+}, []);
+
 
   return (
     <>
       {/* MAIN WRAPPER */}
-<div className="overflow-hidden px-4 sm:px-6 lg:px-10 py-4 space-y-6 ">
+<div className="overflow-hidden bg-gray-200 h-[calc(100vh-4.35rem)] px-4 sm:px-6 lg:px-10 py-4 space-y-6 ">
 
         {/* 🔹 TOP CARDS */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 ">
@@ -143,6 +152,18 @@ const ProjectManagerDashboard = () => {
               </table>
             </div>
           </div>
+
+{/* 🔹 PROJECT TRENDS */}
+{/* <div className="bg-white rounded-lg shadow-sm p-4">
+  <h2
+    className="text-sm tracking-wide text-gray-500 mb-4"
+    style={{ fontFamily: "var(--font-oswald)" }}
+  >
+    PROJECT TRENDS (LAST 6 MONTHS)
+  </h2>
+
+  <ProjectTrendChart />
+</div> */}
 
           {/* RIGHT DIV - UPCOMING DEADLINES */}
           <div className="bg-white rounded-lg shadow-sm p-4 max-h-180 flex flex-col">

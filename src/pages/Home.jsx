@@ -18,6 +18,7 @@ import { DEMODATA } from "../data";
 import { Menu } from "lucide-react";
 import ProjectManagerProject from "./ProjectManagerPages/ProjectManagerProject";
 import PMTask from "./ProjectManagerPages/PMTask";
+// import ProjectReport from "./ProjectManagerPages/ProjectReport";
 import AdminProject from "./adminPages/AdminProject";
 
 export default function Home() {
@@ -55,21 +56,13 @@ export default function Home() {
   // Project Manager
   const projectManagerPages = {
     Dashboard: () => <ProjectManagerDashboard />,
-    Team: () => (
-      <AdminTeam
-        setIsOpenAdminRegister={setIsOpenAdminRegister}
-        setEditEmployee={setEditEmployee}
-        refreshKey={refreshEmployees}
-      />
+    Project: () => (
+      <ProjectManagerProject />
     ),
-    Report: () => <AdminReport />,
+    Report: () => <div></div>,
+
     Task: () => (
-      <div className="p-4">
-        <h2 className="text-xl font-semibold">Project Manager Tasks</h2>
-        <p className="text-gray-600 mt-2">
-          Task management for project managers.
-        </p>
-      </div>
+     <PMTask/>
     ),
     default: () => (
       <div className="p-4">
@@ -147,7 +140,7 @@ export default function Home() {
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
       />
-      <div className="flex-1 w-full relative">
+      <div className="flex-1 w-full relative ">
         {/* Mobile Header with Hamburger */}
         <div className="lg:hidden flex items-center gap-4 px-4 py-3 border-b-2 border-gray-200 bg-white">
           <button
@@ -164,7 +157,7 @@ export default function Home() {
         </div>
 
         {isOpenAdminRegister && (
-          <RegisterEmployee
+          <RegisterEmployee 
             isOpen={isOpenAdminRegister}
             onClose={() => {
               setIsOpenAdminRegister(false);
@@ -178,6 +171,7 @@ export default function Home() {
         <div className="hidden lg:block">
           <Navbar />
         </div>
+
 
         {renderContent()}
       </div>

@@ -48,7 +48,7 @@ const adminsPerPage = 5;
     status: "ACTIVE",
   });
 
-  /*  VALIDATIONS */
+
   const validateAdminCode = (code) => /^A\d{3}$/.test(code);
   const validatePhone = (phone) => /^[6-9]\d{9}$/.test(phone);
 
@@ -61,7 +61,7 @@ const adminsPerPage = 5;
     setEditAdmin({ ...editAdmin, [e.target.name]: e.target.value });
   };
 
- //update
+ 
  const handleUpdate = async () => {
   try {
     if (!editAdmin) return;
@@ -189,7 +189,7 @@ const fetchAdmins = async () => {
 
     setAdmins(formattedData);
 
-    // 🔥 backend pagination use karo
+   
     setTotalPages(data.pagination?.total_pages || 1);
 
   } catch (error) {
@@ -323,15 +323,15 @@ useEffect(() => {
       {/*  TABLE */}
       <div className="w-full overflow-x-auto bg-white rounded-lg shadow">
        <table className="min-w-full border border-gray-200">
-          <thead className="bg-gray-200">
+          <thead className="bg-gray-200 text-center">
             <tr>
-              <th className="px-4 py-3 text-sm">Admin Code</th>
-              <th className="px-4 py-3 text-sm">Admin Name</th>
-              <th className="px-4 py-3 text-sm">Email</th>
-              <th className="px-4 py-3 text-sm">Phone</th>
-              <th className="px-4 py-3 text-sm">Status</th>
+              <th className="px-4 py-3 text-sm text-gray-600">ADMIN CODE</th>
+              <th className="px-4 py-3 text-sm text-gray-600">ADMIN NAME</th>
+              <th className="px-4 py-3 text-sm text-gray-600">EMAIL</th>
+              <th className="px-4 py-3 text-sm text-gray-600">PHONE</th>
+              <th className="px-4 py-3 text-sm text-gray-600">STATUS</th>
             
-              <th className="px-4 py-3 text-sm">Action</th>
+              <th className="px-4 py-3 text-sm text-gray-700">ACTION</th>
             </tr>
           </thead>
 
