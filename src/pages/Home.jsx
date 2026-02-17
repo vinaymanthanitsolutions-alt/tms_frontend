@@ -16,6 +16,7 @@ import { DEMODATA } from "../data";
 import { Menu } from "lucide-react";
 import ProjectManagerProject from "./ProjectManagerPages/ProjectManagerProject";
 import PMTask from "./ProjectManagerPages/PMTask";
+import AdminProject from "./adminPages/AdminProject";
 
 export default function Home() {
   const [isOpenAdminRegister, setIsOpenAdminRegister] = useState(false);
@@ -39,13 +40,8 @@ export default function Home() {
       />
     ),
     Report: () => <AdminReport />,
-    Task: () => (
-      <div className="p-4">
-        <h2 className="text-xl font-semibold">Admin Tasks</h2>
-        <p className="text-gray-600 mt-2">
-          Task management for administrators.
-        </p>
-      </div>
+    Project: () => (
+      <AdminProject/>
     ),
     default: () => (
       <div className="p-4">
@@ -54,7 +50,7 @@ export default function Home() {
     ),
   };
 
-  // Project Manager 
+  // Project Manager
   const projectManagerPages = {
     Dashboard: () => <ProjectManagerDashboard />,
     Team: () => (
@@ -80,7 +76,7 @@ export default function Home() {
     ),
   };
 
-  // Super Admin 
+  // Super Admin
   const superAdminPages = {
     Dashboard: () => <Dashboard />,
     Report: () => <Report />,
@@ -92,7 +88,7 @@ export default function Home() {
     ),
   };
 
-  // Team Lead 
+  // Team Lead
   const teamLeadPages = {
     Dashboard: () => <TeamLeadDashboard />,
     Task: () => (

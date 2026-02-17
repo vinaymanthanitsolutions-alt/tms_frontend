@@ -38,10 +38,41 @@ export const registerEmployee = async (employeeData) => {
   }
 };
 
-export const getEmployeeById = async (empId) => {
+export const getEmployeeById = async (
+  empId,
+  status = "ACTIVE",
+  page = 1,
+  limit = 5,
+  search = "",
+) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/emp/${empId}`);
-    return { success: true, data: response.data.employees || [] };
+    console.log("Calling API with params:", {
+      emp_id: empId,
+      status,
+      page,
+      limit,
+      search,
+    });
+
+    const response = await axios.get(`${API_BASE_URL}/emp`, {
+      params: {
+        emp_id: empId,
+        status: status,
+        page: page,
+        limit: limit,
+        search: search,
+      },
+    });
+
+    console.log("Raw API Response:", response.data);
+
+    return {
+      success: true,
+      data: response.data.data || [],
+      totalPages: response.data.pagination?.total_pages || 1,
+      currentPage: response.data.pagination?.page || page,
+      totalEmployees: response.data.pagination?.total || 0,
+    };
   } catch (error) {
     console.error("Error fetching employee:", error);
 
@@ -95,6 +126,7 @@ export const updateEmployee = async (empId, employeeData) => {
       department: employeeData.department.toUpperCase(),
       role: employeeData.role.toUpperCase(),
       manager_id: employeeData.managerId || "A001",
+      status: employeeData.status || "ACTIVE",
     };
 
     // Only include password if it's provided
