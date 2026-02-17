@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { Plus, Search, Pencil, Trash2 } from "lucide-react";
+import { Plus, Search, Pencil, Trash2, X } from "lucide-react";
 import CreateTask from "./CreateTask";
+import toast from "react-hot-toast";
 
 const PMTask = () => {
     const [searchTerm, setSearchTerm] = useState("");
@@ -13,41 +14,11 @@ const PMTask = () => {
     const itemsPerPage = 5;
 
     const [tasks] = useState([
-        {
-            teamID: "TM001",
-            title: "Design Login UI",
-            project: "CRM System",
-            assignedTo: "Alice",
-            status: "In Progress",
-        },
-        {
-            teamID: "TM002",
-            title: "API Integration",
-            project: "HR Portal",
-            assignedTo: "Bob",
-            status: "Pending",
-        },
-        {
-            teamID: "TM003",
-            title: "Fix Mobile Bug",
-            project: "Mobile App",
-            assignedTo: "Mike",
-            status: "Completed",
-        },
-        {
-            teamID: "TM004",
-            title: "Create Dashboard",
-            project: "AI Platform",
-            assignedTo: "Emma",
-            status: "In Progress",
-        },
-        {
-            teamID: "TM005",
-            title: "Testing Module",
-            project: "ERP System",
-            assignedTo: "David",
-            status: "Pending",
-        },
+        { teamID: "TM001", title: "Design Login UI", project: "CRM System", assignedTo: "Alice", status: "In Progress" },
+        { teamID: "TM002", title: "API Integration", project: "HR Portal", assignedTo: "Bob", status: "Pending" },
+        { teamID: "TM003", title: "Fix Mobile Bug", project: "Mobile App", assignedTo: "Mike", status: "Completed" },
+        { teamID: "TM004", title: "Create Dashboard", project: "AI Platform", assignedTo: "Emma", status: "In Progress" },
+        { teamID: "TM005", title: "Testing Module", project: "ERP System", assignedTo: "David", status: "Pending" },
     ]);
 
     const filteredTasks = tasks.filter((task) => {
@@ -66,30 +37,30 @@ const PMTask = () => {
     const getStatusBadge = (status) => {
         switch (status) {
             case "Completed":
-                return "bg-gray-300 text-gray-800";
+                return "bg-green-100 text-green-700 border border-green-300";
             case "In Progress":
-                return "bg-gray-200 text-gray-700";
+                return "bg-blue-100 text-blue-700 border border-blue-300";
             case "Pending":
-                return "bg-gray-100 text-gray-600";
+                return "bg-yellow-100 text-yellow-700 border border-yellow-300";
             default:
-                return "bg-gray-100 text-gray-600";
+                return "bg-gray-100 text-gray-600 border border-gray-300";
         }
     };
 
-    const handleEditTask = (e) => {
-        e.preventDefault();
-        alert("Task updated successfully");
-        setShowEditModal(false);
-    };
+   const handleEditTask = (e) => {
+    e.preventDefault();
+    toast.success("Task updated successfully ✅");
+    setShowEditModal(false);
+};
 
-    const handleDeleteTask = () => {
-        alert("Task deleted successfully");
-        setShowDeleteModal(false);
-        setSelectedTask(null);
-    };
+  const handleDeleteTask = () => {
+    toast.success("Task deleted successfully 🗑️");
+    setShowDeleteModal(false);
+    setSelectedTask(null);
+};
 
     return (
-        <div className="bg-gray-100 p-4 sm:p-6 font-geist text-gray-700">
+        <div className="bg-gray-200 h-[calc(100vh-4.35rem)] p-4 sm:p-6 font-geist text-gray-700">
 
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div className="flex items-center bg-white rounded-lg shadow px-4 py-2 w-full sm:w-72 border border-gray-200">
@@ -121,8 +92,8 @@ const PMTask = () => {
                         <thead className="bg-gray-200 sticky top-0 z-10 ">
                             <tr className="border-b border-gray-300">
                                 <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wide">Team ID</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wide">Title</th>
-                                <th className="px-6 py-3 text-left text-xs font-mediumuppercase tracking-wide">Project</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wide">Task Title</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wide">Project Name</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wide">Assigned To</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wide">Status</th>
                                 <th className="px-6 py-3 text-center text-xs font-medium uppercase tracking-wide">Actions</th>
@@ -136,27 +107,30 @@ const PMTask = () => {
                                     <td className="px-6 py-3">{task.project}</td>
                                     <td className="px-6 py-3">{task.assignedTo}</td>
                                     <td className="px-6 py-3">
-                                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusBadge(task.status)}`}>
+                                        <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusBadge(task.status)}`}>
                                             {task.status}
                                         </span>
                                     </td>
                                     <td className="px-6 py-3 flex justify-center gap-3">
-                                        <Pencil
-                                            className="text-gray-600 cursor-pointer hover:scale-110 transition"
-                                            size={18}
+                                        <button
+                                            className="p-2 bg-blue-100 text-blue-600 rounded-full hover:bg-blue-200 transition"
                                             onClick={() => {
                                                 setSelectedTask(task);
                                                 setShowEditModal(true);
                                             }}
-                                        />
-                                        <Trash2
-                                            className="text-gray-600 cursor-pointer hover:scale-110 transition"
-                                            size={18}
+                                        >
+                                            <Pencil size={16} />
+                                        </button>
+
+                                        <button
+                                            className="p-2 bg-red-100 text-red-600 rounded-full hover:bg-red-200 transition"
                                             onClick={() => {
                                                 setSelectedTask(task);
                                                 setShowDeleteModal(true);
                                             }}
-                                        />
+                                        >
+                                            <Trash2 size={16} />
+                                        </button>
                                     </td>
                                 </tr>
                             ))}
@@ -190,18 +164,18 @@ const PMTask = () => {
                     </button>
                 </div>
             </div>
+               <CreateTask isOpen={showModal} onClose={() => setShowModal(false)} onAddTask={() => { setShowModal(false); }} />
 
-            <CreateTask
-                isOpen={showModal}
-                onClose={() => setShowModal(false)}
-                onAddTask={() => {
-                    setShowModal(false);
-                }}
-            />
-
+            {/* Edit Modal */}
             {showEditModal && selectedTask && (
                 <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-lg shadow-lg p-6 max-w-2xl w-full mx-4">
+                    <div className="bg-white rounded-lg shadow-lg p-6 max-w-2xl w-full mx-4 relative">
+                        <button
+                            onClick={() => setShowEditModal(false)}
+                            className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+                        >
+                            <X size={20} />
+                        </button>
                         <h2 className="text-lg font-bold mb-4">Edit Task</h2>
                         <form onSubmit={handleEditTask}>
                             <div className="grid grid-cols-2 gap-4">
@@ -243,16 +217,23 @@ const PMTask = () => {
                 </div>
             )}
 
+            {/* Delete Modal */}
             {showDeleteModal && selectedTask && (
                 <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-lg shadow-lg p-6 max-w-md w-full mx-4">
+                    <div className="bg-white rounded-lg shadow-lg p-6 max-w-md w-full mx-4 relative">
+                        <button
+                            onClick={() => setShowDeleteModal(false)}
+                            className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+                        >
+                            <X size={20} />
+                        </button>
                         <h2 className="text-lg font-bold mb-4">Delete Task</h2>
                         <p className="text-gray-600 mb-6">Are you sure you want to delete "{selectedTask.title}"?</p>
                         <div className="flex gap-3 justify-end">
                             <button onClick={() => setShowDeleteModal(false)} className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">
                                 Cancel
                             </button>
-                            <button onClick={handleDeleteTask} className="px-4 py-2 bg-emerald-500 text-white rounded hover:bg-emerald-700">
+                            <button onClick={handleDeleteTask} className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">
                                 Delete
                             </button>
                         </div>

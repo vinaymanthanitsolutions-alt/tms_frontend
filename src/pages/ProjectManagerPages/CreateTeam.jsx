@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Plus, X } from "lucide-react";
 import { validateTeamId } from "../../validation/validators";
+import { getProjectsByPM ,getEmployeesByPM} from "../../services/projectService";
+import toast from "react-hot-toast";
 
 const CreateTeam = ({ onClose }) => {
-  const [teamTitle, setTeamTitle] = useState("");
   const [teamId, setTeamId] = useState("");
   const [projectId, setProjectId] = useState("");
-  const [deadline, setDeadline] = useState("");
-  const [description, setDescription] = useState("");
 
   const [projects, setProjects] = useState([]);
   const [teamLeads, setTeamLeads] = useState([]);
@@ -18,23 +17,60 @@ const CreateTeam = ({ onClose }) => {
   const [showTLDropdown, setShowTLDropdown] = useState(false);
   const [teamIdError, setTeamIdError] = useState("");
 
+  // useEffect(() => {
+  //   setTeamLeads([
+  //     { id: 1, name: "Rahul Sharma", email: "rahul@email.com" },
+  //     { id: 2, name: "Ankit Verma", email: "ankit@email.com" }
+  //   ]);
+
+  //   setDevelopers([
+  //     { id: 3, name: "Priya Singh", email: "priya@email.com", role: "Developer" },
+  //     { id: 4, name: "Aman Gupta", email: "aman@email.com", role: "Developer" },
+  //     { id: 5, name: "Sneha Jain", email: "sneha@email.com", role: "Tester" }
+  //   ]);
+  // }, []);
+
   useEffect(() => {
-    setProjects([
-      { id: "PR101", name: "E-Commerce Platform" },
-      { id: "PR102", name: "CRM System" },
-      { id: "PR103", name: "HR Management Tool" }
-    ]);
+  const fetchEmployees = async () => {
+    try {
+      const pmId = "PM010";  // use correct PM ID
 
-    setTeamLeads([
-      { id: 1, name: "Rahul Sharma", email: "rahul@email.com" },
-      { id: 2, name: "Ankit Verma", email: "ankit@email.com" }
-    ]);
+      const employees = await getEmployeesByPM(pmId);
 
-    setDevelopers([
-      { id: 3, name: "Priya Singh", email: "priya@email.com", role: "Developer" },
-      { id: 4, name: "Aman Gupta", email: "aman@email.com", role: "Developer" },
-      { id: 5, name: "Sneha Jain", email: "sneha@email.com", role: "Tester" }
-    ]);
+      // Separate by role
+      const teamLeaders = employees.filter(
+        (emp) => emp.role === "TEAM_LEADER"
+      );
+
+      const devAndTesters = employees.filter(
+        (emp) =>
+          emp.role === "DEVELOPER" ||
+          emp.role === "TESTER"
+      );
+
+      setTeamLeads(teamLeaders);
+      setDevelopers(devAndTesters);
+
+    } catch (error) {
+      console.log("Failed to load employees");
+    }
+  };
+
+  fetchEmployees();
+}, []);
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const pmId = "PM001";
+        const data = await getProjectsByPM(pmId);
+        setProjects(data);
+      } catch (error) {
+        console.log("Failed to load projects");
+      }
+    };
+
+    fetchProjects();
   }, []);
 
   const handleSelectTL = (tl) => {
@@ -43,14 +79,16 @@ const CreateTeam = ({ onClose }) => {
   };
 
   const handleSelectMember = (member) => {
-    if (!selectedMembers.find((m) => m.id === member.id)) {
+    if (!selectedMembers.find((m) => m.emp_id === member.emp_id)) {
       setSelectedMembers([...selectedMembers, member]);
     }
   };
 
-  const handleRemoveMember = (id) => {
-    setSelectedMembers(selectedMembers.filter((m) => m.id !== id));
-  };
+ const handleRemoveMember = (empId) => {
+  setSelectedMembers(
+    selectedMembers.filter((m) => m.emp_id !== empId)
+  );
+};
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -65,21 +103,21 @@ const CreateTeam = ({ onClose }) => {
     }
 
     if (!projectId) {
-      alert("Please select a Project");
+       toast.error("Please select a Project");
       return;
     }
 
     if (!selectedTL) {
-      alert("Please select a Team Leader");
+      toast.error("Please select a Team Leader");
       return;
     }
 
     if (selectedMembers.length === 0) {
-      alert("Please select at least one Developer or Tester");
+       toast.error("Please select at least one Developer or Tester");
       return;
     }
 
-    alert("Team Created Successfully 🎉");
+    toast.success("Team Created Successfully 🎉");
     onClose();
   };
 
@@ -104,21 +142,7 @@ const CreateTeam = ({ onClose }) => {
       </div>
 
       {/* Top Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-
-        {/* Team Title */}
-        <div>
-          <label className="text-xs font-medium text-gray-600 uppercase tracking-wide">
-            Team Title
-          </label>
-          <input
-            type="text"
-            required
-            value={teamTitle}
-            onChange={(e) => setTeamTitle(e.target.value)}
-            className="w-full mt-1 border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500"
-          />
-        </div>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
 
         {/* Team ID */}
         <div>
@@ -158,41 +182,13 @@ const CreateTeam = ({ onClose }) => {
           >
             <option value="">Select Project</option>
             {projects.map((project) => (
-              <option key={project.id} value={project.id}>
-                {project.id} - {project.name}
+              <option key={project.project_id} value={project.project_id}>
+                {project.project_id} - {project.name}
               </option>
             ))}
           </select>
         </div>
 
-        {/* Deadline */}
-        <div>
-          <label className="text-xs font-medium text-gray-600 uppercase tracking-wide">
-            Deadline
-          </label>
-          <input
-            type="date"
-            required
-            value={deadline}
-            onChange={(e) => setDeadline(e.target.value)}
-            className="w-full mt-1 border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500"
-          />
-        </div>
-
-      </div>
-
-      {/* Description */}
-      <div>
-        <label className="text-xs font-medium text-gray-600 uppercase tracking-wide">
-          Description
-        </label>
-        <textarea
-          required
-          rows="3"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          className="w-full mt-1 border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500"
-        />
       </div>
 
       {/* Team Leader */}
@@ -212,11 +208,11 @@ const CreateTeam = ({ onClose }) => {
           <div className="mt-2 border border-gray-200 rounded-md p-2 bg-gray-50">
             {teamLeads.map((tl) => (
               <div
-                key={tl.id}
+                key={tl.emp_id}
                 onClick={() => handleSelectTL(tl)}
                 className="cursor-pointer hover:bg-gray-100 p-2 rounded text-sm text-gray-600"
               >
-                {tl.name}
+                {tl.emp_name}
               </div>
             ))}
           </div>
@@ -224,7 +220,7 @@ const CreateTeam = ({ onClose }) => {
 
         {selectedTL && (
           <div className="mt-3 bg-emerald-100 text-emerald-700 px-3 py-2 rounded-md text-sm inline-block">
-            <div className="font-medium">{selectedTL.name}</div>
+            <div className="font-medium">{selectedTL.emp_name}</div>
             <div className="text-xs">{selectedTL.email}</div>
           </div>
         )}
@@ -239,11 +235,11 @@ const CreateTeam = ({ onClose }) => {
         <div className="mt-2 border border-gray-200 rounded-md p-2 bg-gray-50 max-h-40 overflow-y-auto">
           {developers.map((member) => (
             <div
-              key={member.id}
+            key={member.emp_id}
               onClick={() => handleSelectMember(member)}
               className="cursor-pointer hover:bg-gray-100 p-2 rounded text-sm text-gray-600"
             >
-              {member.name} ({member.role})
+              {member.emp_name} ({member.role})
             </div>
           ))}
         </div>
@@ -251,17 +247,17 @@ const CreateTeam = ({ onClose }) => {
         <div className="flex flex-wrap gap-3 mt-3">
           {selectedMembers.map((member) => (
             <div
-              key={member.id}
+              key={member.emp_id}
               className="bg-blue-100 text-blue-700 px-3 py-2 rounded-md text-sm flex items-center gap-2"
             >
               <div>
-                <div className="font-medium">{member.name}</div>
+                <div className="font-medium">{member.emp_name}</div>
                 <div className="text-xs">{member.email}</div>
               </div>
               <X
                 size={14}
                 className="cursor-pointer"
-                onClick={() => handleRemoveMember(member.id)}
+                onClick={() => handleRemoveMember(member.emp_id)}
               />
             </div>
           ))}

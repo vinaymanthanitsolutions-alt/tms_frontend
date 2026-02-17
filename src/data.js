@@ -1,18 +1,22 @@
 // export const DEMODATA = {
-//  role:"superadmin"
+//  role:"admin"
 // }
 
 // export const DEMODATA = {
 //     role : "teamlead"
 // }
 
-export const DEMODATA = {
-  role: "projectmanager",
-};
-
 // export const DEMODATA = {
-//  role : "projectmanager"
-// }
+//   role: "projectmanager",
+// };
+
+export const DEMODATA = {
+ role : "projectmanager"
+}
+// export const DEMODATA = {
+//   role: "superadmin",
+// };
+
 
 export const EMPLOYEES = [
   {
@@ -62,6 +66,3 @@ export const EMPLOYEES = [
   },
 ];
 
-// export const DEMODATA = {
-//   role: "superadmin",
-// };

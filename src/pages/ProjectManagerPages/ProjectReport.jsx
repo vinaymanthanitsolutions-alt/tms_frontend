@@ -2,7 +2,7 @@ import React from 'react'
 
 const ProjectReport = () => {
   return (
-    <div>Under Construction</div>
+    <div className='bg-gray-200 h-[calc(100vh-4.35rem)] '>Under Construction</div>
   )
 }
 

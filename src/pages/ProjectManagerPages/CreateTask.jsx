@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { X } from "lucide-react";
+import toast from "react-hot-toast";
 
 const CreateTask = ({ isOpen, onClose, onAddTask }) => {
   const [teamID, setTeamID] = useState("");
@@ -26,7 +27,7 @@ const CreateTask = ({ isOpen, onClose, onAddTask }) => {
       deadline,
     });
 
-    alert("Task Added Successfully 🎉");
+    toast.success("Task Added Successfully 🎉");
 
     resetForm();
     onClose();

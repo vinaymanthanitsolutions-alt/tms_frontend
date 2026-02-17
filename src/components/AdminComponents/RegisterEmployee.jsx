@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import toast from "react-hot-toast";
 import {
@@ -7,9 +7,14 @@ import {
   validateEmployeeCode,
   validatePhoneNumber,
 } from "../../validation/validators";
-import { registerEmployee } from "../../services/AdminServices";
+import { registerEmployee, updateEmployee } from "../../services/AdminServices";
 
-export default function RegisterEmployee({ isOpen, onClose }) {
+export default function RegisterEmployee({
+  isOpen,
+  onClose,
+  onSuccess,
+  editData,
+}) {
   const [formData, setFormData] = useState({
     empCode: "",
     empName: "",
@@ -18,29 +23,49 @@ export default function RegisterEmployee({ isOpen, onClose }) {
     department: "",
     role: "",
     password: "",
+    managerId: "A001",
   });
 
   const [errors, setErrors] = useState({});
 
+  useEffect(() => {
+    if (editData) {
+      setFormData({
+        empCode: editData.emp_id || "",
+        empName: editData.emp_name || "",
+        email: editData.email || "",
+        phone: editData.phone || "",
+        department: editData.department || "",
+        role: editData.role || "",
+        password: "",
+        managerId: editData.manager_id || "A001",
+      });
+    } else {
+      setFormData({
+        empCode: "",
+        empName: "",
+        email: "",
+        phone: "",
+        department: "",
+        role: "",
+        password: "",
+        managerId: "A001",
+      });
+    }
+  }, [editData]);
+
   const getRoleOptions = () => {
     switch (formData.department) {
       case "HEAD":
-        return [
-          { value: "SUPER_ADMIN", label: "Super Admin" },
-          { value: "ADMIN", label: "Admin" },
-        ];
+        return [{ value: "ADMIN", label: "Admin" }];
       case "IT":
         return [
           { value: "PROJECT_MANAGER", label: "Project Manager" },
-          { value: "TEAM_LEADER", label: "Team Leader" },
           { value: "DEVELOPER", label: "Developer" },
           { value: "TESTER", label: "Tester" },
         ];
       case "SALES":
-        return [
-          { value: "PROJECT_MANAGER", label: "Project Manager" },
-          { value: "TEAM_LEADER", label: "Team Leader" },
-        ];
+        return [{ value: "PROJECT_MANAGER", label: "Project Manager" }];
       default:
         return [];
     }
@@ -49,7 +74,6 @@ export default function RegisterEmployee({ isOpen, onClose }) {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    // If department changes, reset role
     if (name === "department") {
       setFormData((prev) => ({
         ...prev,
@@ -105,9 +129,10 @@ export default function RegisterEmployee({ isOpen, onClose }) {
       newErrors.role = "Role is required";
     }
 
-    if (!formData.password.trim()) {
+    // Password is required for new employee, optional for edit
+    if (!editData && !formData.password.trim()) {
       newErrors.password = "Password is required";
-    } else {
+    } else if (formData.password.trim()) {
       const passwordValidation = validatePassword(formData.password);
       if (!passwordValidation.isValid) {
         newErrors.password = passwordValidation.errors[0];
@@ -129,11 +154,29 @@ export default function RegisterEmployee({ isOpen, onClose }) {
       return;
     }
 
-    // Call API to register employee
-    const result = await registerEmployee(formData);
+    let result;
+
+    if (editData) {
+      // Update existing employee
+      console.log(
+        "Updating employee with empCode:",
+        formData.empCode,
+        "and data:",
+        formData,
+      );
+      result = await updateEmployee(formData.empCode, formData);
+      if (result.success) {
+        toast.success("Employee updated successfully!");
+      }
+    } else {
+      // Register new employee
+      result = await registerEmployee(formData);
+      if (result.success) {
+        toast.success("Employee registered successfully!");
+      }
+    }
 
     if (result.success) {
-      toast.success("Employee registered successfully!");
       setFormData({
         empCode: "",
         empName: "",
@@ -142,10 +185,17 @@ export default function RegisterEmployee({ isOpen, onClose }) {
         department: "",
         role: "",
         password: "",
+        managerId: "A001",
       });
       onClose();
+      if (onSuccess) {
+        onSuccess();
+      }
     } else {
-      toast.error(result.error || "Failed to register employee");
+      toast.error(
+        result.error ||
+          `Failed to ${editData ? "update" : "register"} employee`,
+      );
     }
   };
 
@@ -155,7 +205,9 @@ export default function RegisterEmployee({ isOpen, onClose }) {
     <div className="fixed lg:absolute  inset-0 w-full h-full bg-black/60 flex items-center justify-center z-50">
       <div className="bg-white w-full max-w-3xl p-6 rounded-xl shadow-lg max-h-[90vh] overflow-y-auto m-4">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-bold">Add Employee</h2>
+          <h2 className="text-xl font-bold">
+            {editData ? "Edit Employee" : "Add Employee"}
+          </h2>
           <button
             onClick={onClose}
             className="text-gray-500 hover:text-gray-700 transition"
@@ -175,9 +227,10 @@ export default function RegisterEmployee({ isOpen, onClose }) {
                 name="empCode"
                 value={formData.empCode}
                 onChange={handleChange}
+                disabled={editData ? true : false}
                 className={`w-full px-3 py-2 border rounded-md outline-none focus:ring-2 focus:ring-emerald-500 ${
                   errors.empCode ? "border-red-500" : "border-gray-300"
-                }`}
+                } ${editData ? "bg-gray-100 cursor-not-allowed" : ""}`}
                 placeholder="e.g., EMP001"
               />
               {errors.empCode && (
@@ -300,7 +353,8 @@ export default function RegisterEmployee({ isOpen, onClose }) {
 
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Password *
+                Password{" "}
+                {editData ? "(Optional - leave blank to keep current)" : "*"}
               </label>
               <input
                 type="password"
@@ -310,7 +364,11 @@ export default function RegisterEmployee({ isOpen, onClose }) {
                 className={`w-full px-3 py-2 border rounded-md outline-none focus:ring-2 focus:ring-emerald-500 ${
                   errors.password ? "border-red-500" : "border-gray-300"
                 }`}
-                placeholder="Enter password"
+                placeholder={
+                  editData
+                    ? "Leave blank to keep current password"
+                    : "Enter password"
+                }
               />
               {errors.password && (
                 <p className="text-red-500 text-xs mt-1">{errors.password}</p>
@@ -330,7 +388,7 @@ export default function RegisterEmployee({ isOpen, onClose }) {
               type="submit"
               className="flex-1 bg-emerald-600 text-white px-4 py-2 rounded-md hover:bg-emerald-700 transition"
             >
-              Register
+              {editData ? "Update" : "Register"}
             </button>
           </div>
         </form>
