@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
+
 import manthanLogo from "/manthanlogo.png";
 import { House } from "lucide-react";
 import { ChartNoAxesCombined } from "lucide-react";
@@ -19,6 +20,8 @@ const Sidebar = ({ onNavigate, isOpen, onClose }) => {
     Settings: false,
     Help: false,
   });
+
+  const [showReportDropdown, setShowReportDropdown] = useState(false);
 
   function handleButtonClick(buttonName) {
     setActiveButton((prevState) => {
@@ -92,13 +95,60 @@ const Sidebar = ({ onNavigate, isOpen, onClose }) => {
           <House size={20} />
           <span>Dashboard</span>
         </div>
-        <div
-          className={`${menuItemsStyle} ${activeButton.Report ? selectedButtonStyle : ""}`}
-          onClick={() => handleButtonClick("Report")}
-        >
-          <ChartNoAxesCombined size={20} />
-          <span>Report</span>
-        </div>
+
+            <div
+  className={`${menuItemsStyle} ${activeButton.Report ? selectedButtonStyle : ""} relative`}
+  onClick={() => {
+    setShowReportDropdown(!showReportDropdown);
+  }}
+>
+  <ChartNoAxesCombined size={20} />
+  <span>Report</span>
+
+  {showReportDropdown && (
+    <div className="absolute left-0 top-12 w-44 bg-white  rounded-md z-50">
+
+      {/* USERS REPORT */}
+      <div
+        className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+        onClick={(e) => {
+          e.stopPropagation();
+          handleButtonClick("UsersReport");
+          setShowReportDropdown(false);
+        }}
+      >
+        Users
+      </div>
+
+      {/* PROJECT REPORT */}
+      <div
+        className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+        onClick={(e) => {
+          e.stopPropagation();
+          handleButtonClick("ProjectReport");
+          setShowReportDropdown(false);
+        }}
+      >
+        Project
+      </div>
+
+      {/* TASK REPORT */}
+      <div
+        className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+        onClick={(e) => {
+          e.stopPropagation();
+          handleButtonClick("TaskReport");
+          setShowReportDropdown(false);
+        }}
+      >
+        Task
+      </div>
+
+    </div>
+  )}
+</div>
+
+
 
          <div
            className={`${menuItemsStyle} ${activeButton.Admin ? selectedButtonStyle : ""}`}

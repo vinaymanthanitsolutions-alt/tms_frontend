@@ -6,7 +6,9 @@ import AdminReport from "./adminPages/AdminReport";
 import AdminDashboard from "./adminPages/AdminDashboard";
 import Dashboard from "./superadminPages/Dashboard";
 
-import Report from "./superadminPages/Report";
+import UsersReport from "./superadminPages/UsersReport";
+import TaskReport from "./superadminPages/TaskReport";
+import ProjectReport from "./superadminPages/ProjectReport";
 import Admin from "./superadminPages/Admin"
 
 import ProjectManagerDashboard from "./ProjectManagerPages/ProjectManagerDashboard";
@@ -79,7 +81,9 @@ export default function Home() {
   // Super Admin
   const superAdminPages = {
     Dashboard: () => <Dashboard />,
-    Report: () => <Report />,
+    UsersReport: () => <UsersReport />,
+    ProjectReport: () => <ProjectReport />,
+    TaskReport: () => <TaskReport />,
     Admin: () => <Admin />,
     default: () => (
       <div className="p-4">

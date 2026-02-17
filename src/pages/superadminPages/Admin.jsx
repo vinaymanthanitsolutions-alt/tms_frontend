@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 
 import { Pencil, Trash2, X, Search } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
+import { Filter, ChevronDown } from "lucide-react";
+import { useRef } from "react";
+
 
 {/*const initialAdmins = [
   {
@@ -29,6 +32,9 @@ const Admin = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 const [statusFilter, setStatusFilter] = useState("ALL");
+const [showFilterDropdown, setShowFilterDropdown] = useState(false);
+const dropdownRef = useRef(null);
+
 
 const adminsPerPage = 5; 
 
@@ -192,6 +198,20 @@ const fetchAdmins = async () => {
   }
 };
 
+useEffect(() => {
+  const handleClickOutside = (event) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      setShowFilterDropdown(false);
+    }
+  };
+
+  document.addEventListener("mousedown", handleClickOutside);
+  return () => {
+    document.removeEventListener("mousedown", handleClickOutside);
+  };
+}, []);
+
+
 
   return (
     <div className=" min-h-screen bg-gray-50 p-4 sm:p-6">
@@ -203,30 +223,101 @@ const fetchAdmins = async () => {
         <p className="text-sm text-emerald-600 mt-1">Admin</p>
       </div>
 
-      {/*  SEARCH + ADD BUTTON */}
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4 bg-white border border-gray-200 p-4 rounded-lg">
+    
+      {/*  SEARCH + FILTER + ADD BUTTON */}
+<div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4 bg-white border border-gray-200 p-4 rounded-lg">
 
-        <div className="relative w-full sm:w-1/3 lg:w-1/4">
-          <Search
-            size={18}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-          />
-          <input
-            type="text"
-            placeholder="Search Admin..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="border border-gray-200 pl-10 pr-3 py-2 rounded w-full focus:outline-none"
-          />
+  {/* SEARCH */}
+  <div className="relative w-full sm:w-1/3 lg:w-1/4">
+    <Search
+      size={18}
+      className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+    />
+    <input
+      type="text"
+      placeholder="Search Admin..."
+      value={search}
+      onChange={(e) => setSearch(e.target.value)}
+      className="border border-gray-200 pl-10 pr-3 py-2 rounded w-full focus:outline-none"
+    />
+  </div>
+
+  <div className="flex items-center gap-3">
+
+    {/* FILTER DROPDOWN */}
+    <div className="relative" ref={dropdownRef}>
+      <button
+        onClick={() => setShowFilterDropdown(!showFilterDropdown)}
+        className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition"
+      >
+        <Filter size={16} />
+        <span className="text-sm font-medium">
+          {statusFilter === "ALL" ? "All Admins" : statusFilter}
+        </span>
+        <ChevronDown
+          size={16}
+          className={`transition-transform ${
+            showFilterDropdown ? "rotate-180" : ""
+          }`}
+        />
+      </button>
+
+      {showFilterDropdown && (
+        <div className="absolute right-0 mt-2 w-44 bg-white border border-gray-200 rounded-md shadow-lg z-10">
+          <button
+            onClick={() => {
+              setStatusFilter("ALL");
+              setCurrentPage(1);
+              setShowFilterDropdown(false);
+            }}
+            className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+          >
+            All Admins
+          </button>
+          <button
+            onClick={() => {
+              setStatusFilter("ACTIVE");
+              setCurrentPage(1);
+              setShowFilterDropdown(false);
+            }}
+            className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+          >
+            Active
+          </button>
+          <button
+            onClick={() => {
+              setStatusFilter("INACTIVE");
+              setCurrentPage(1);
+              setShowFilterDropdown(false);
+            }}
+            className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+          >
+            Inactive
+          </button>
+          <button
+            onClick={() => {
+              setStatusFilter("SUSPENDED");
+              setCurrentPage(1);
+              setShowFilterDropdown(false);
+            }}
+            className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+          >
+            Suspended
+          </button>
         </div>
+      )}
+    </div>
 
-        <button
-          onClick={() => setIsAddOpen(true)}
-          className="bg-emerald-500 text-white px-5 py-2 rounded-lg"
-        >
-          + Add Admin
-        </button>
-      </div>
+    {/* ADD BUTTON */}
+    <button
+      onClick={() => setIsAddOpen(true)}
+      className="bg-emerald-500 text-white px-5 py-2 rounded-lg"
+    >
+      + Add Admin
+    </button>
+  </div>
+</div>
+
 
 
       {/*  TABLE */}
