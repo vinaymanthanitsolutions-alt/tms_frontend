@@ -284,7 +284,7 @@ const AdminTeam = ({ setIsOpenAdminRegister, setEditEmployee, refreshKey }) => {
                 <th className="uppercase text-gray-500 px-4 py-3 text-left text-xs font-medium border-b border-gray-200">
                   Status
                 </th>
-                <th className="uppercase text-gray-500 px-4 py-3 text-center text-xs font-medium border-b border-gray-200">
+                <th className="uppercase text-gray-500 px-4 py-3 text-left text-xs font-medium border-b border-gray-200">
                   Actions
                 </th>
               </tr>
@@ -324,10 +324,12 @@ const AdminTeam = ({ setIsOpenAdminRegister, setEditEmployee, refreshKey }) => {
                     </td>
                     <td className="px-4 py-3 text-sm border-b border-gray-200">
                       <span
-                        className={`px-2 py-1 rounded text-sm ${
+                        className={`px-2 py-1 rounded-xl text-xs font-medium ${
                           employee.status === "ACTIVE"
-                            ? "bg-green-100 text-green-800"
-                            : "bg-red-100 text-red-800"
+                            ? "bg-green-200 text-green-700"
+                            : employee.status === "SUSPENDED"
+                              ? "bg-red-200 text-red-700"
+                              : "bg-gray-200 text-gray-700"
                         }`}
                       >
                         {employee.status}
