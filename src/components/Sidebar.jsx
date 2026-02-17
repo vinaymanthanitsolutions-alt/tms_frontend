@@ -8,15 +8,14 @@ import { Settings } from "lucide-react";
 import { MessageCircleQuestionMark } from "lucide-react";
 import { X } from "lucide-react";
 import { DEMODATA } from "../data";
-import { ChevronRight } from "lucide-react";
 
 const Sidebar = ({ onNavigate, isOpen, onClose }) => {
-  const [isAdminTeamExpanded, setIsAdminTeamExpanded] = React.useState(false);
   const [activeButton, setActiveButton] = React.useState({
     Dashboard: true,
     Report: false,
     Team: false,
     Task: false,
+    Project: false,
     Settings: false,
     Help: false,
   });
@@ -65,35 +64,18 @@ const Sidebar = ({ onNavigate, isOpen, onClose }) => {
           <span>Report</span>
         </div>
         <div
-          className={`${menuItemsStyle}`}
-          onClick={() => {
-            setIsAdminTeamExpanded((prev) => !prev);
-          }}
+          className={`${menuItemsStyle} ${activeButton.Team ? selectedButtonStyle : ""}`}
+          onClick={() => handleButtonClick("Team")}
         >
           <Users size={20} />
           <span>Employee's</span>
         </div>
-        {isAdminTeamExpanded && (
-          <>
-            <div
-              className={`${menuItemsStyle} ml-8 ${activeButton.Team ? selectedButtonStyle : ""}`}
-              onClick={() => handleButtonClick("Team")}
-            >
-              <ChevronRight size={15} />
-              <span className="text-sm">Accounts</span>
-            </div>
-            <div className={`${menuItemsStyle} ml-8`}>
-              <ChevronRight size={15} />
-              <span className="text-sm">Suspended A/C</span>
-            </div>
-          </>
-        )}
         <div
-          className={`${menuItemsStyle} ${activeButton.Task ? selectedButtonStyle : ""}`}
-          onClick={() => handleButtonClick("Task")}
+          className={`${menuItemsStyle} ${activeButton.Project ? selectedButtonStyle : ""}`}
+          onClick={() => handleButtonClick("Project")}
         >
           <ClipboardList size={20} />
-          <span>Task</span>
+          <span>Project</span>
         </div>
       </>
     );

@@ -10,9 +10,9 @@ export const DEMODATA = {
 //   role: "projectmanager",
 // };
 
-export const DEMODATA = {
- role : "projectmanager"
-}
+// export const DEMODATA = {
+//  role : "projectmanager"
+// }
 
 export const EMPLOYEES = [
   {
