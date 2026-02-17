@@ -15,18 +15,13 @@ import ProjectManagerDashboard from "./pages/ProjectManagerPages/ProjectManagerD
 const App = () => {
   return (
     <>
-   
-
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<UserLogin />} />
       <Route path="/register" element={<UserRegister />} />
        <Route path="/admin-dashboard" element={<AdminDashboard />} />
         <Route path="/projectmanager-dashboard" element={<ProjectManagerDashboard />} />
-         <Route path="/superadmin-dashboard" element={<Dashboard />} />
-     
-
-     
+         <Route path="/superadmin-dashboard" element={<Dashboard />} /> 
     </Routes>
      
       </>
