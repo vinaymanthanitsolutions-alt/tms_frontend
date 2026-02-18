@@ -65,3 +65,78 @@ export const validateTeamId = (teamId) => {
   const id = String(teamId).trim();
   return /^T\d{3,5}$/.test(id);
 };
+
+/**
+ * Validates project code format (P001, P002, etc.)
+ * @param {string} projectCode - The project code to validate
+ * @returns {string} - Error message or empty string if valid
+ */
+export const validateProjectCode = (projectCode) => {
+  if (!projectCode || projectCode.trim() === "") {
+    return "Project code is required";
+  }
+
+  const projectCodeRegex = /^P\d+$/;
+  if (!projectCodeRegex.test(projectCode.trim())) {
+    return "Project code must start with 'P' followed by numbers (e.g., P001, P1234)";
+  }
+
+  return "";
+};
+
+/**
+ * Validates project title (max 8 words)
+ * @param {string} title - The project title to validate
+ * @returns {string} - Error message or empty string if valid
+ */
+export const validateProjectTitle = (title) => {
+  if (!title || title.trim() === "") {
+    return "Project title is required";
+  }
+
+  const wordCount = title.trim().split(/\s+/).length;
+  if (wordCount > 8) {
+    return "Project title must not exceed 8 words";
+  }
+
+  return "";
+};
+
+/**
+ * Validates project description (minimum 80 words)
+ * @param {string} description - The project description to validate
+ * @returns {string} - Error message or empty string if valid
+ */
+export const validateProjectDescription = (description) => {
+  if (!description || description.trim() === "") {
+    return "Project description is required";
+  }
+
+  const wordCount = description.trim().split(/\s+/).length;
+  if (wordCount < 80) {
+    return `Project description must be at least 80 words (current: ${wordCount} words)`;
+  }
+
+  return "";
+};
+
+/**
+ * Validates project deadline (required and cannot be in the past)
+ * @param {string} deadline - The deadline date to validate
+ * @returns {string} - Error message or empty string if valid
+ */
+export const validateProjectDeadline = (deadline) => {
+  if (!deadline || deadline.trim() === "") {
+    return "Project deadline is required";
+  }
+
+  const selectedDate = new Date(deadline);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  if (selectedDate < today) {
+    return "Deadline cannot be in the past";
+  }
+
+  return "";
+};

@@ -19,14 +19,20 @@ import {
 
 const Sidebar = ({ onNavigate, isOpen, onClose }) => {
   const [activeButton, setActiveButton] = React.useState({
-    Dashboard: true,
-    Report: false,
-    Team: false,
-    Task: false,
-    Project: false,
-    Settings: false,
-    Help: false,
-  });
+  Dashboard: true,
+  Report: false,
+  UsersReport: false,    // for superadmin
+  ProjectReport: false,    // for superadmin
+  TaskReport: false,     // for superadmin
+  Team: false,
+  Task: false,
+  Project: false,
+  Admin: false,
+  Settings: false,
+  Help: false,
+  Logout: false,
+});
+
 
   const [showReportDropdown, setShowReportDropdown] = useState(false);
 
@@ -105,13 +111,18 @@ const Sidebar = ({ onNavigate, isOpen, onClose }) => {
         <span>Dashboard</span>
       </div>
 
-      {/* REPORT MENU */}
-      <div>
+      
+{/* REPORT MENU */}
+<div>
   <div
     className={`${menuItemsStyle} ${
-      activeButton.Report ? selectedButtonStyle : ""
+      activeButton.UsersReport ||
+      activeButton.ProjectReport ||
+      activeButton.TaskReport
+        ? selectedButtonStyle
+        : ""
     } flex items-center justify-between`}
-    onClick={() => {
+    onClick={() => { 
       setShowReportDropdown(!showReportDropdown);
     }}
   >
@@ -127,11 +138,15 @@ const Sidebar = ({ onNavigate, isOpen, onClose }) => {
 
       {/* USERS REPORT */}
       <div
-        className="px-4 py-2 text-sm hover:bg-gray-100 rounded cursor-pointer flex items-center gap-2"
+        className={`px-4 py-2 text-sm rounded cursor-pointer flex items-center gap-2
+        ${
+          activeButton.UsersReport
+            ? "bg-gray-200 font-medium"
+            : "hover:bg-gray-100"
+        }`}
         onClick={(e) => {
           e.stopPropagation();
           handleButtonClick("UsersReport");
-          
         }}
       >
         <Users size={16} />
@@ -140,11 +155,15 @@ const Sidebar = ({ onNavigate, isOpen, onClose }) => {
 
       {/* PROJECT REPORT */}
       <div
-        className="px-4 py-2 text-sm hover:bg-gray-100 rounded cursor-pointer flex items-center gap-2"
+        className={`px-4 py-2 text-sm rounded cursor-pointer flex items-center gap-2
+        ${
+          activeButton.ProjectReport
+            ? "bg-gray-200 font-medium"
+            : "hover:bg-gray-100"
+        }`}
         onClick={(e) => {
           e.stopPropagation();
           handleButtonClick("ProjectReport");
-          
         }}
       >
         <FolderKanban size={16} />
@@ -153,11 +172,15 @@ const Sidebar = ({ onNavigate, isOpen, onClose }) => {
 
       {/* TASK REPORT */}
       <div
-        className="px-4 py-2 text-sm hover:bg-gray-100 rounded cursor-pointer flex items-center gap-2"
+        className={`px-4 py-2 text-sm rounded cursor-pointer flex items-center gap-2
+        ${
+          activeButton.TaskReport
+            ? "bg-gray-200 font-medium"
+            : "hover:bg-gray-100"
+        }`}
         onClick={(e) => {
           e.stopPropagation();
           handleButtonClick("TaskReport");
-          
         }}
       >
         <ClipboardList size={16} />
@@ -167,6 +190,8 @@ const Sidebar = ({ onNavigate, isOpen, onClose }) => {
     </div>
   )}
 </div>
+
+
 
 
       {/* ADMIN MENU */}

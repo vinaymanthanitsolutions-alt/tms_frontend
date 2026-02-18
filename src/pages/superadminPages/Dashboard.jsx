@@ -18,7 +18,7 @@ const Dashboard = () => {
 
   const fetchCounts = async () => {
     try {
-      const res = await axios.get("http://localhost:8080/empCounts");
+      const res = await axios.get("http://localhost:8080/empCounts?manager_id=SA001");
 
       console.log("Dashboard API:", res.data);
 

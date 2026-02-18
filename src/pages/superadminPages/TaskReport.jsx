@@ -10,6 +10,7 @@ const TaskReport = () => {
   const [showModal, setShowModal] = useState(false);
 const [selectedTask, setSelectedTask] = useState(null);
 const [selectedTeamType, setSelectedTeamType] = useState("");
+const [showTeamDropdown, setShowTeamDropdown] = useState(false);
 
 
 
@@ -24,8 +25,9 @@ const [selectedTeamType, setSelectedTeamType] = useState("");
       task: "Login Module UI",
       department: "IT",
        developer: [
-    { id: "D01", name: "Aman", subtask: "Login UI", status: "Active" },
-    { id: "D02", name: "Kunal", task: "Dashboard", status: "Active" }
+    { id: "D01", name: "Aman", subtask: "Login UI", status: "COMPLETED" },
+    { id: "D02", name: "naman", subtask: "logout UI", status: "PENDING" },
+    { id: "D03", name: "Kunal", subtask: "Dashboard", status: "IN PROGRESS" }
   ],
   tester: [
     { id: "T01", name: "Priya" },
@@ -40,8 +42,78 @@ const [selectedTeamType, setSelectedTeamType] = useState("");
       task: "API Development",
       department: "IT",
         developer: [
-    { id: "D01", name: "Aman", subtask: "Login UI", status: "Active" },
-    { id: "D02", name: "Kunal", subtask: "Dashboard", status: "Active" }
+    { id: "D01", name: "ujjawal", subtask: "Login UI", status: "IN PROGRESS" },
+     { id: "D02", name: "raman", subtask: "reset password UI", status: "COMPLETED" },
+    { id: "D03", name: "Kumar", subtask: "Dashboard", status: "PENDING" }
+  ],
+  tester: [
+    { id: "T01", name: "Priya" },
+    { id: "T02", name: "Riya" }
+  ]
+    },
+
+     {
+      projectId: "PRJ-001",
+      teamId: "TM003",
+      teamLeader: "vanshika Sharma",
+      managerId: "PM001",
+      task: "Dashboard Module UI",
+      department: "IT",
+        developer: [
+    { id: "D01", name: "Manisha", subtask: "Report", status: "IN PROGRESS" },
+     { id: "D02", name: "rama", subtask: "Task", status: "COMPLETED" },
+    { id: "D03", name: "Krishna", subtask: "Dashboard", status: " IN PROGRESS" }
+  ],
+  tester: [
+    { id: "T01", name: "Priyanka" },
+    { id: "T02", name: "Riyansh" }
+  ]
+    },
+     {
+      projectId: "PRJ-002",
+      teamId: "TM002",
+      teamLeader: "Neha Verma",
+      managerId: "PM002",
+      task: "API Development",
+      department: "IT",
+        developer: [
+    { id: "D01", name: "ujjawal", subtask: "Login UI", status: "IN PROGRESS" },
+     { id: "D02", name: "raman", subtask: "reset password UI", status: "COMPLETED" },
+    { id: "D03", name: "Kumar", subtask: "Dashboard", status: "PENDING" }
+  ],
+  tester: [
+    { id: "T01", name: "Priya" },
+    { id: "T02", name: "Riya" }
+  ]
+    },
+     {
+      projectId: "PRJ-002",
+      teamId: "TM002",
+      teamLeader: "Neha Verma",
+      managerId: "PM002",
+      task: "API Development",
+      department: "IT",
+        developer: [
+    { id: "D01", name: "ujjawal", subtask: "Login UI", status: "IN PROGRESS" },
+     { id: "D02", name: "raman", subtask: "reset password UI", status: "COMPLETED" },
+    { id: "D03", name: "Kumar", subtask: "Dashboard", status: "PENDING" }
+  ],
+  tester: [
+    { id: "T01", name: "Priya" },
+    { id: "T02", name: "Riya" }
+  ]
+    },
+     {
+      projectId: "PRJ-002",
+      teamId: "TM002",
+      teamLeader: "Neha Verma",
+      managerId: "PM002",
+      task: "API Development",
+      department: "IT",
+        developer: [
+    { id: "D01", name: "ujjawal", subtask: "Login UI", status: "IN PROGRESS" },
+     { id: "D02", name: "raman", subtask: "reset password UI", status: "COMPLETED" },
+    { id: "D03", name: "Kumar", subtask: "Dashboard", status: "PENDING" }
   ],
   tester: [
     { id: "T01", name: "Priya" },
@@ -153,7 +225,13 @@ const [selectedTeamType, setSelectedTeamType] = useState("");
 
                 <td className="p-4">{task.managerId}</td>
                 <td className="p-4">{task.task}</td>
-                <td className="p-4 ">{task.department}</td>
+
+                 <td className="px-2 py-2 text-lg">
+              <div className="px-2 py-0.5 bg-blue-100 text-sm mx-auto rounded-2xl w-20 text-center text-blue-500">
+                {task.department}
+           </div>
+               </td>
+                {/* <td className="p-4 ">{task.department}</td> */}
                    <td className="p-4">
                    <button
                 onClick={() => handleView(task)}
@@ -173,92 +251,122 @@ const [selectedTeamType, setSelectedTeamType] = useState("");
 
     {showModal && selectedTask && (
   <div className="fixed inset-0 bg-black/40 bg-opacity-40 flex justify-center items-center z-50">
-    <div className="bg-white w-[520px] rounded-xl  shadow-lg p-6 relative">
+    <div className="bg-white w-[700px] rounded-xl shadow-lg p-6 relative max-h-[80vh] overflow-y-auto">
+
 
       {/* Close Button */}
       <button
         onClick={() => setShowModal(false)}
-        className="absolute top-3 right-3 text-gray-500 hover:text-red-500"
+        className="absolute top-3 right-3 text-gray-500 hover:text-black"
       >
         <X size={18} />
       </button>
-
-      <h2 className="text-xl font-semibold mb-6 ">
-        Team Details
+         <div className="w-auto  ">
+      <h2 className="text-xl font-semibold mb-6   ">
+        Team Detail's
       </h2>
+      </div>
 
       {/* Form Fields */}
-      <div className="grid grid-cols-2 gap-4 mb-6">
+      <div className="grid grid-cols-2 gap-8 mb-6 ">
 
         {/* Team Leader Name */}
         <div>
-          <label className="block text-sm font-medium mb-1">
-            Team Leader Name
+          <label className="block text-sm font-medium mb-1 ">
+            Team Leader Name *
           </label>
           <input
             type="text"
             value={selectedTask.teamLeader}
             readOnly
-            className="w-full border border-gray-300 rounded px-3 py-2 text-sm bg-gray-100"
+            className="w-full border border-gray-300 rounded px-3 py-2 text-sm bg-gray-100 outline-gray-300"
           />
         </div>
 
         {/* Team ID */}
         <div>
           <label className="block text-sm font-medium mb-1">
-            Team ID
+            Team ID *
           </label>
           <input
             type="text"
             value={selectedTask.teamId}
             readOnly
-            className="w-full border border-gray-300 rounded px-3 py-2 text-sm bg-gray-100"
+            className="w-full border border-gray-300 rounded px-3 py-2 text-sm bg-gray-100 outline-gray-300"
           />
         </div>
 
-        {/* Team ID */}
+        {/* Task*/}
         <div>
           <label className="block text-sm font-medium mb-1">
-            Task
+            Task *
           </label>
           <input
             type="text"
             value={selectedTask.task}
             readOnly
-            className="w-full border border-gray-300 rounded px-3 py-2 text-sm bg-gray-100"
+            className="w-full border border-gray-300 rounded px-3 py-2 text-sm bg-gray-100 outline-gray-300"
           />
         </div>
 
-        {/* Team ID */}
+        {/* Manager ID */}
         <div>
           <label className="block text-sm font-medium mb-1">
-           Manager Id
+           Manager Id *
           </label>
           <input
             type="text"
             value={selectedTask.managerId}
             readOnly
-            className="w-full border border-gray-300 rounded px-3 py-2 text-sm bg-gray-100"
+            className="w-full border border-gray-300 rounded px-3 py-2 text-sm bg-gray-100 outline-gray-300"
           />
         </div>
 
       </div>
 
       {/* Team Dropdown */}
-      <div className="mb-6">
-        <label className="block text-sm font-medium mb-1">
-          Team
-        </label>
-        <select
-          className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
-          value={selectedTeamType}
-          onChange={(e) => setSelectedTeamType(e.target.value)}
+<div className="mb-6">
+  <label className="block text-sm font-medium mb-2 ">
+    Team
+  </label>
+
+  <div className="relative">
+    <button
+      type="button"
+      onClick={() => setShowTeamDropdown(!showTeamDropdown)}
+      className="w-full border border-gray-300 rounded px-3 py-2 text-sm text-left bg-white "
+    >
+      {selectedTeamType
+        ? selectedTeamType.charAt(0).toUpperCase() + selectedTeamType.slice(1)
+        : "Select Team"}
+    </button>
+
+    {showTeamDropdown && (
+      <div className="mt-2 border border-gray-200 rounded bg-white shadow">
+        <div
+          className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm"
+          onClick={() => {
+            setSelectedTeamType("developer");
+            setShowTeamDropdown(false);
+          }}
         >
-          <option value="">Select</option>
-          <option value="developer">Developer</option>
-          <option value="tester">Tester</option>
-        </select>
+          Developer
+        </div>
+
+        <div
+          className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm "
+          onClick={() => {
+            setSelectedTeamType("tester");
+            setShowTeamDropdown(false);
+          }}
+        >
+          Tester
+        </div>
       </div>
+    )}
+  </div>
+</div>
+
 
         {/* Developer Table */}
       {selectedTeamType === "developer" && (
@@ -267,13 +375,13 @@ const [selectedTeamType, setSelectedTeamType] = useState("");
             Developer Details
           </h3>
 
-          <table className="w-full text-sm border border-gray-200">
-            <thead className="bg-gray-100 text-gray-600 ">
+          <table className="w-full text-sm border border-gray-200 text-center">
+            <thead className="bg-gray-100 text-gray-600  ">
               <tr>
-                <th className="p-2 text-left">ID</th>
-                <th className="p-2 text-left">Name</th>
-                <th className="p-2 text-left">Sub Task</th>
-                <th className="p-2 text-left">Status</th>
+                <th className="p-2 ">ID</th>
+                <th className="p-2 ">Name</th>
+                <th className="p-2 ">Sub Task</th>
+                <th className="p-2 ">Status</th>
               </tr>
             </thead>
             <tbody>
@@ -282,7 +390,22 @@ const [selectedTeamType, setSelectedTeamType] = useState("");
                   <td className="p-2">{dev.id}</td>
                   <td className="p-2">{dev.name}</td>
                   <td className="p-2">{dev.subtask}</td>
-                  <td className="p-2">{dev.status}</td>
+                  <td className="px-4 py-3">
+                  <span
+              className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                 dev.status === "COMPLETED"
+                ? "bg-green-100 text-green-700"
+                 : dev.status === "IN PROGRESS"
+                ? "bg-yellow-100 text-yellow-700"
+               : "bg-red-100 text-red-700"
+                    }`}
+                  >
+
+                    {dev.status}
+                  </span>
+                </td>
+
+                  {/* <td className="p-2">{dev.status}</td> */}
                 </tr>
               ))}
             </tbody>
@@ -298,7 +421,7 @@ const [selectedTeamType, setSelectedTeamType] = useState("");
           </h3>
 
           <table className="w-full text-sm border border-gray-200">
-            <thead className="bg-gray-100">
+            <thead className="bg-gray-100 text-gray-600">
               <tr>
                 <th className="p-2 text-left">ID</th>
                 <th className="p-2 text-left">Name</th>

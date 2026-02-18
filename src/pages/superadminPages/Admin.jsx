@@ -97,14 +97,16 @@ const adminsPerPage = 5;
     const data = await response.json();
     console.log("UPDATE RESPONSE:", data);
 
-    alert("Admin Updated Successfully ✅");
+   toast.success("Admin detail update successfully ");
+
 
     fetchAdmins();
     setIsEditOpen(false);
 
   } catch (error) {
     console.error("Update Error:", error);
-    alert("Update Failed ❌");
+    toast.error("Update failed ");
+
   }
 };
 
@@ -142,14 +144,14 @@ const adminsPerPage = 5;
     const data = await response.json();
     console.log("SIGNUP RESPONSE:", data);
 
-    alert("Admin Registered Successfully ✅");
+    alert("Admin Registered Successfully ");
 
     fetchAdmins();   
     setIsAddOpen(false);
 
   } catch (error) {
     console.error("Signup Error:", error);
-    alert("Registration Failed ❌");
+    alert("Registration Failed ");
   }
 };
 
@@ -320,6 +322,9 @@ useEffect(() => {
 
 
 
+
+
+
       {/*  TABLE */}
       <div className="w-full overflow-x-auto bg-white rounded-lg shadow">
        <table className="min-w-full border border-gray-200">
@@ -442,7 +447,7 @@ useEffect(() => {
         <h2 className="text-xl font-semibold text-gray-800">
           Add Admin
         </h2>
-        <p className="text-gray-400 text-sm">
+        <p className="text-gray-500 text-sm">
           Add new admin details
         </p>
       </div>
@@ -537,7 +542,7 @@ useEffect(() => {
             className="w-full h-11 px-3 border border-gray-300 rounded-lg outline-none"
             required
           />
-          <p className="text-xs text-gray-400 mt-1">
+          <p className="text-xs text-gray-500 mt-1">
             Min 8 chars, 1 capital, 1 number, 1 special symbol
           </p>
         </div>
@@ -559,7 +564,7 @@ useEffect(() => {
             <option value="IT">IT</option>
             <option value="SALES">SALES</option>
           </select>
-          <p className="text-xs text-gray-400 mt-1">
+          <p className="text-xs text-gray-500 mt-1">
             Select a department first
           </p>
         </div>
