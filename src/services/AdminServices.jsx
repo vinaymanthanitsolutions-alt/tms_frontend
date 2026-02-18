@@ -251,20 +251,26 @@ export const createProject = async (projectData) => {
   }
 };
 
-export const getAllProjects = async (page = 1, limit = 5) => {
+export const getAllProjects = async (
+  adminId,
+  page = 1,
+  limit = 5,
+  search = "",
+) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/project/`, {
+    const response = await axios.get(`${API_BASE_URL}/project/admin`, {
       params: {
+        admin_id: adminId,
         page: page,
         limit: limit,
+        search: search,
       },
     });
 
     console.log("Raw project response:", response.data);
-    console.log("Projects array:", response.data.projects);
+    console.log("Projects array:", response.data.data.projects);
 
-    // Handle possible response wrapping
-    const responseData = response.data.data || response.data;
+    const responseData = response.data.data;
 
     return {
       success: true,

@@ -1,4 +1,11 @@
-import { Search, Edit, Trash2, X } from "lucide-react";
+import {
+  Search,
+  Edit,
+  Trash2,
+  X,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import React, { useState, useEffect, useRef } from "react";
 import {
   getEmployeesByRole,
@@ -33,6 +40,7 @@ const AdminProject = () => {
   const [managerId, setManagerId] = useState("");
   const [loadingManagers, setLoadingManagers] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [adminId] = useState("A001");
 
   // Projects state
   const [projects, setProjects] = useState([]);
@@ -44,6 +52,10 @@ const AdminProject = () => {
   const [openReassignDropdown, setOpenReassignDropdown] = useState(null);
   const [reassignManagerId, setReassignManagerId] = useState("");
   const reassignDropdownRef = useRef(null);
+
+  // Search state
+  const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
 
   // Form state
   const [formData, setFormData] = useState({
@@ -86,9 +98,22 @@ const AdminProject = () => {
     }
   }, [isSidebarOpen]);
 
+  // Debounce search term
   useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchTerm);
+    }, 500); // 500ms delay
+
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+
+  useEffect(() => {
+    // Reset to page 1 when search changes
+    if (debouncedSearch !== "") {
+      setPage(1);
+    }
     fetchProjects();
-  }, [page]);
+  }, [page, debouncedSearch]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -113,7 +138,12 @@ const AdminProject = () => {
   const fetchProjects = async () => {
     setLoadingProjects(true);
     try {
-      const response = await getAllProjects(page, limit);
+      const response = await getAllProjects(
+        adminId,
+        page,
+        limit,
+        debouncedSearch,
+      );
 
       console.log("Fetch projects response:", response);
       console.log("Response success:", response.success);
@@ -388,7 +418,7 @@ const AdminProject = () => {
   };
 
   return (
-    <div className="p-5">
+    <div className="py-4 px-5 xxs:p-5">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-semibold">Project Mangement</h1>
@@ -399,22 +429,33 @@ const AdminProject = () => {
           onClick={() => setIsSidebarOpen(true)}
         >
           <Plus size={16} />
-          <button className="tracking-wide">Add Project</button>
+          <button className="tracking-wide hidden xxs:block">
+            Add Project
+          </button>
         </div>
       </div>
 
       <div>
-        <div className="flex border-2 rounded-md border-gray-200 justify-between px-3 py-4 my-3">
-          <div className="border-2 border-gray-200 rounded-md w-fit flex items-center gap-2 px-3 py-2">
+        <div className="flex  flex-col xxs:flex-row gap-3 xxs:border-2 rounded-md xxs:border-gray-200 justify-between xxs:px-3 xxs:py-4 my-3">
+          <div className="border-2 border-gray-200 rounded-md w-full xxs:w-fit flex items-center gap-2 px-3 py-2">
             <Search size={20} className="text-gray-500 cursor-pointer" />
             <input
               type="text"
-              placeholder="Search by Emp code..."
+              placeholder="Search by project name or id"
               className="outline-none text-sm flex-1"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
             />
+            {searchTerm && (
+              <X
+                size={18}
+                className="text-gray-400 hover:text-gray-600 cursor-pointer"
+                onClick={() => setSearchTerm("")}
+              />
+            )}
           </div>
           <div className="flex gap-2 items-center">
-            <div className="text-gray-600 uppercase font-medium text-sm tracking-wide mr-2">
+            <div className="hidden md:block text-gray-600 uppercase font-medium text-sm tracking-wide mr-2">
               smart filters :{" "}
             </div>
             <div
@@ -426,7 +467,9 @@ const AdminProject = () => {
               onClick={() => handleFilterClick("active")}
             >
               <IconBoltFilled size={16} className="text-green-500" />
-              <button className={filterButtonStyle}>Active</button>
+              <button className={`${filterButtonStyle} hidden xl:block`}>
+                Active
+              </button>
             </div>
             <div
               className={
@@ -437,7 +480,9 @@ const AdminProject = () => {
               onClick={() => handleFilterClick("overdue")}
             >
               <IconTriangleFilled size={16} className="text-red-500" />
-              <button className={filterButtonStyle}>Overdue</button>
+              <button className={`${filterButtonStyle} hidden xl:block`}>
+                Overdue
+              </button>
             </div>
             <div
               className={
@@ -448,7 +493,9 @@ const AdminProject = () => {
               onClick={() => handleFilterClick("noManager")}
             >
               <IconUserOff size={16} className="text-orange-500" />
-              <button className={filterButtonStyle}>No Manager</button>
+              <button className={`${filterButtonStyle} hidden xl:block`}>
+                No Manager
+              </button>
             </div>
             <div
               className={
@@ -459,164 +506,182 @@ const AdminProject = () => {
               onClick={() => handleFilterClick("highPriority")}
             >
               <IconStarFilled size={16} className="text-purple-500" />
-              <button className={filterButtonStyle}>High Priority</button>
+              <button className={`${filterButtonStyle} hidden xl:block`}>
+                High Priority
+              </button>
             </div>
           </div>
         </div>
       </div>
 
-      <table className="w-full border-separate border-spacing-0 border border-gray-200 mt-5 rounded-md overflow-hidden">
-        <thead>
-          <tr className="bg-gray-100">
-            <th className="uppercase text-gray-500 pl-8 py-3 text-left text-xs font-medium border-b border-gray-200">
-              Project Name
-            </th>
-            <th className="uppercase text-gray-500 px-4 py-3 text-left text-xs font-medium border-b border-gray-200">
-              Status
-            </th>
-            <th className="uppercase text-gray-500 px-4 py-3 text-left text-xs font-medium border-b border-gray-200">
-              Manager
-            </th>
-            <th className="uppercase text-gray-500 px-4 py-3 text-left text-xs font-medium border-b border-gray-200">
-              Deadline
-            </th>
-            <th className="uppercase text-gray-500 px-4 py-3 text-left text-xs font-medium border-b border-gray-200">
-              Progress
-            </th>
-            <th className="uppercase text-gray-500 px-4 py-3 text-center text-xs font-medium border-b border-gray-200">
-              Reassign PM
-            </th>
-            <th className="uppercase text-gray-500 px-4 py-3 text-center text-xs font-medium border-b border-gray-200">
-              Actions
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {loadingProjects ? (
-            <tr>
-              <td colSpan="7" className="px-4 py-8 text-center text-gray-500">
-                Loading projects...
-              </td>
+      <div className="overflow-x-auto mt-5">
+        <table className="min-w-full border-separate border-spacing-0 border border-gray-200 rounded-md overflow-hidden">
+          <thead>
+            <tr className="bg-gray-100">
+              <th className="uppercase text-gray-500 pl-8 py-3 text-left text-xs font-medium border-b border-gray-200 whitespace-nowrap">
+                Project Name
+              </th>
+              <th className="uppercase text-gray-500 px-4 py-3 text-left text-xs font-medium border-b border-gray-200 whitespace-nowrap">
+                Status
+              </th>
+              <th className="uppercase text-gray-500 px-4 py-3 text-left text-xs font-medium border-b border-gray-200 whitespace-nowrap">
+                Manager
+              </th>
+              <th className="uppercase text-gray-500 px-4 py-3 text-left text-xs font-medium border-b border-gray-200 whitespace-nowrap">
+                Deadline
+              </th>
+              <th className="uppercase text-gray-500 px-4 py-3 text-left text-xs font-medium border-b border-gray-200 whitespace-nowrap">
+                Progress
+              </th>
+              <th className="uppercase text-gray-500 px-4 py-3 text-center text-xs font-medium border-b border-gray-200 whitespace-nowrap">
+                Reassign PM
+              </th>
+              <th className="uppercase text-gray-500 px-4 py-3 text-center text-xs font-medium border-b border-gray-200 whitespace-nowrap">
+                Actions
+              </th>
             </tr>
-          ) : getFilteredProjects().length === 0 ? (
-            <tr>
-              <td colSpan="7" className="px-4 py-8 text-center text-gray-500">
-                No projects found
-              </td>
-            </tr>
-          ) : (
-            getFilteredProjects().map((project) => {
-              const status = getProjectStatus(project);
-              return (
-                <tr key={project.project_id}>
-                  <td className="px-4 py-3 text-sm text-gray-800 border-b border-gray-200 flex items-center gap-3">
-                    <Rocket
-                      size={30}
-                      className="px-2 py-2 rounded bg-blue-200 text-blue-500"
-                    />
-                    <div>
-                      <div>{project.name}</div>
-                      <div className="text-[0.60rem] text-gray-500 mt-1">
-                        ID: {project.project_id}
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-4 py-3 text-sm border-b border-gray-200">
-                    <span
-                      className={`${status.className} px-2 py-1 rounded-xl text-xs font-medium`}
-                    >
-                      {status.label}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 text-sm text-gray-800 border-b border-gray-200">
-                    {project.pm_id || "-"}
-                  </td>
-                  <td className="px-4 py-3 text-sm text-gray-800 border-b border-gray-200">
-                    {formatDate(project.deadline)}
-                  </td>
-                  <td className="px-4 py-3 text-sm border-b border-gray-200">
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div
-                        className="bg-gray-400 h-2 rounded-full"
-                        style={{ width: "0%" }}
-                      ></div>
-                    </div>
-                    <div className="text-[0.60rem] text-gray-500 mt-1">0%</div>
-                  </td>
-                  <td className="px-4 py-3 text-sm border-b border-gray-200">
-                    <div
-                      className="flex justify-center relative"
-                      ref={reassignDropdownRef}
-                    >
-                      <button
-                        onClick={() =>
-                          toggleReassignDropdown(project.project_id)
-                        }
-                        className="text-orange-500 tracking-wide text-xs cursor-pointer"
-                      >
-                        Reassign
-                      </button>
-                      {openReassignDropdown === project.project_id && (
-                        <div
-                          className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1 w-56 bg-white border border-gray-300 rounded-md shadow-lg z-50 p-2"
-                          onMouseDown={(e) => e.stopPropagation()}
-                        >
-                          <select
-                            value={reassignManagerId}
-                            onChange={(e) => {
-                              const newManagerId = e.target.value;
-                              setReassignManagerId(newManagerId);
-                              handleReassign(project.project_id, newManagerId);
-                            }}
-                            className="w-full px-2 py-2 border border-gray-300 rounded-md text-sm outline-none focus:border-emerald-600"
-                          >
-                            <option value="">Select new manager</option>
-                            {projectManagers.map((manager) => (
-                              <option
-                                key={manager.emp_id}
-                                value={manager.emp_id}
-                              >
-                                {manager.emp_name} ({manager.emp_id})
-                              </option>
-                            ))}
-                          </select>
+          </thead>
+          <tbody>
+            {loadingProjects ? (
+              <tr>
+                <td colSpan="7" className="px-4 py-8 text-center text-gray-500">
+                  Loading projects...
+                </td>
+              </tr>
+            ) : getFilteredProjects().length === 0 ? (
+              <tr>
+                <td colSpan="7" className="px-4 py-8 text-center text-gray-500">
+                  No projects found
+                </td>
+              </tr>
+            ) : (
+              getFilteredProjects().map((project) => {
+                const status = getProjectStatus(project);
+                return (
+                  <tr key={project.project_id}>
+                    <td className="px-4 py-3 text-sm text-gray-800 border-b border-gray-200 whitespace-nowrap">
+                      <div className="flex items-center gap-3">
+                        <Rocket
+                          size={30}
+                          className="px-2 py-2 rounded bg-blue-200 text-blue-500 flex-shrink-0"
+                        />
+                        <div>
+                          <div>{project.name}</div>
+                          <div className="text-[0.60rem] text-gray-500 mt-1">
+                            ID: {project.project_id}
+                          </div>
                         </div>
-                      )}
-                    </div>
-                  </td>
-                  <td className="px-4 py-3 text-sm border-b border-gray-200">
-                    <div className="flex gap-2 justify-center">
-                      <button
-                        onClick={() => handleSaveManagerAssignment(project)}
-                        className="text-black border border-gray-300 p-2 rounded hover:text-gray-500 transition"
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 text-sm border-b border-gray-200 whitespace-nowrap">
+                      <span
+                        className={`${status.className} px-2 py-1 rounded-xl text-xs font-medium`}
                       >
-                        <Edit size={16} />
-                      </button>
-                      <button
-                        onClick={() => handleDeleteProject(project.project_id)}
-                        className="bg-red-300 text-red-700 border border-red-700 p-2 rounded transition hover:bg-red-400"
+                        {status.label}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 text-sm text-gray-800 border-b border-gray-200 whitespace-nowrap">
+                      {project.pm_id || "-"}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-gray-800 border-b border-gray-200 whitespace-nowrap">
+                      {formatDate(project.deadline)}
+                    </td>
+                    <td className="px-4 py-3 text-sm border-b border-gray-200 whitespace-nowrap">
+                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div
+                          className="bg-gray-400 h-2 rounded-full"
+                          style={{ width: "0%" }}
+                        ></div>
+                      </div>
+                      <div className="text-[0.60rem] text-gray-500 mt-1">
+                        0%
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 text-sm border-b border-gray-200 whitespace-nowrap">
+                      <div
+                        className="flex justify-center relative"
+                        ref={reassignDropdownRef}
                       >
-                        <Trash2 size={16} />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              );
-            })
-          )}
-        </tbody>
-      </table>
+                        <button
+                          onClick={() =>
+                            toggleReassignDropdown(project.project_id)
+                          }
+                          className="text-orange-500 tracking-wide text-xs cursor-pointer"
+                        >
+                          Reassign
+                        </button>
+                        {openReassignDropdown === project.project_id && (
+                          <div
+                            className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1 w-56 bg-white border border-gray-300 rounded-md shadow-lg z-50 p-2"
+                            onMouseDown={(e) => e.stopPropagation()}
+                          >
+                            <select
+                              value={reassignManagerId}
+                              onChange={(e) => {
+                                const newManagerId = e.target.value;
+                                setReassignManagerId(newManagerId);
+                                handleReassign(
+                                  project.project_id,
+                                  newManagerId,
+                                );
+                              }}
+                              className="w-full px-2 py-2 border border-gray-300 rounded-md text-sm outline-none focus:border-emerald-600"
+                            >
+                              <option value="">Select new manager</option>
+                              {projectManagers.map((manager) => (
+                                <option
+                                  key={manager.emp_id}
+                                  value={manager.emp_id}
+                                >
+                                  {manager.emp_name} ({manager.emp_id})
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                        )}
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 text-sm border-b border-gray-200 whitespace-nowrap">
+                      <div className="flex gap-2 justify-center">
+                        <button
+                          onClick={() => handleSaveManagerAssignment(project)}
+                          className="text-black border border-gray-300 p-2 rounded hover:text-gray-500 transition"
+                        >
+                          <Edit size={16} />
+                        </button>
+                        <button
+                          onClick={() =>
+                            handleDeleteProject(project.project_id)
+                          }
+                          className="bg-red-300 text-red-700 border border-red-700 p-2 rounded transition hover:bg-red-400"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })
+            )}
+          </tbody>
+        </table>
+      </div>
 
       {/* Pagination Controls */}
       <div className="flex justify-between items-center mt-4">
         <div className="text-sm text-gray-600">
           Showing {getFilteredProjects().length}{" "}
-          {activeFilter ? "filtered" : ""} project
+          {activeFilter || debouncedSearch ? "filtered" : ""} project
           {getFilteredProjects().length !== 1 ? "s" : ""}
-          {!activeFilter && ` of ${totalProjects} total`}
+          {!activeFilter && !debouncedSearch && ` of ${totalProjects} total`}
+          {debouncedSearch && (
+            <span className="ml-1 text-emerald-600">
+              for "{debouncedSearch}"
+            </span>
+          )}
         </div>
 
-        <div className="flex gap-2 items-center">
+        <div className="flex gap-2 items-center ml-2">
           <button
             onClick={() => setPage((prev) => Math.max(1, prev - 1))}
             disabled={page === 1}
@@ -626,7 +691,8 @@ const AdminProject = () => {
                 : "bg-white text-gray-700 hover:bg-gray-50 border-gray-300"
             }`}
           >
-            Previous
+            <span className="hidden xxs:block">Previous</span>
+            <ChevronLeft size={16} className="xxs:hidden" />
           </button>
 
           <div className="text-sm text-gray-700">
@@ -642,7 +708,8 @@ const AdminProject = () => {
                 : "bg-white text-gray-700 hover:bg-gray-50 border-gray-300"
             }`}
           >
-            Next
+            <span className="hidden xxs:block">Next</span>
+            <ChevronRight size={16} className="xxs:hidden" />
           </button>
         </div>
       </div>

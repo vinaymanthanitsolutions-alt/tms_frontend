@@ -60,11 +60,11 @@ const AdminDashboard = () => {
           {/* second sidebar */}
 
           <div className="w-96 border px-2">
-            <h1>Upcoming Deadlines</h1>
+            <h1 className="font-semibold">Upcoming Deadlines</h1>
              <div className="flex flex-col gap-3">
-                <div>
+                <div className="bg-gray-100 px-3 py-1 rounded py-2">
                   <div className="flex justify-between">
-                    <div>High Priority</div>
+                    <div className="text-orange-500 font-medium text-[0.65rem] rounded bg-orange-100 px-2 py-1">High Priority</div>
                     <div>2 Days left</div>
                   </div>
                   <div>

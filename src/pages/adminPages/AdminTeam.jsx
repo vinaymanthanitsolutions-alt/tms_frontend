@@ -1,5 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Search, Plus, Edit, Trash2, ChevronDown, Filter } from "lucide-react";
+import { ChevronRight } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import { getEmployeeById, deleteEmployee } from "../../services/AdminServices";
 import toast from "react-hot-toast";
 import Confirmation from "../../components/AdminComponents/Confirmation";
@@ -169,7 +171,7 @@ const AdminTeam = ({ setIsOpenAdminRegister, setEditEmployee, refreshKey }) => {
 
         {/* Status Filter Tabs */}
 
-        <div className="flex border-2 rounded-md border-gray-200 justify-between px-3 py-4 my-3">
+        <div className="flex xxs:border-2 rounded-md border-gray-200 justify-between p-0 xxs:px-3 xxs:py-4 my-3 ">
           <div className="border-2 border-gray-200 rounded-md w-fit flex items-center gap-2 px-3 py-2">
             <Search
               size={20}
@@ -185,15 +187,15 @@ const AdminTeam = ({ setIsOpenAdminRegister, setEditEmployee, refreshKey }) => {
               onChange={handleSearchChange}
             />
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1 xxs:gap-3">
             {/* Filter Dropdown */}
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setShowFilterDropdown(!showFilterDropdown)}
-                className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition"
+                className="flex items-center gap-2 ml-1 px-4 py-2 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition"
               >
                 <Filter size={18} className="text-gray-600" />
-                <span className="text-sm font-medium">{getFilterLabel()}</span>
+                <span className="hidden md:block text-sm font-medium">{getFilterLabel()}</span>
                 <ChevronDown
                   size={16}
                   className={`text-gray-600 transition-transform ${
@@ -387,7 +389,8 @@ const AdminTeam = ({ setIsOpenAdminRegister, setEditEmployee, refreshKey }) => {
                   : "bg-white text-gray-700 hover:bg-gray-50 border-gray-300"
               }`}
             >
-              Previous
+              <span className="hidden xxs:block">Previous</span>
+              <ChevronLeft size={16} className="ml-2 xxs:hidden" />
             </button>
 
             <div className="text-sm text-gray-700">
@@ -405,7 +408,8 @@ const AdminTeam = ({ setIsOpenAdminRegister, setEditEmployee, refreshKey }) => {
                   : "bg-white text-gray-700 hover:bg-gray-50 border-gray-300"
               }`}
             >
-              Next
+              <span className="hidden xxs:block">Next</span>
+              <ChevronRight size={16} className="ml-2 xxs:hidden" />
             </button>
           </div>
         </div>

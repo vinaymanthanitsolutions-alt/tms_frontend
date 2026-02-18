@@ -1,6 +1,6 @@
-// export const DEMODATA = {
-//  role:"admin"
-// }
+  export const DEMODATA = {
+  role:"admin"
+  }
 
 // export const DEMODATA = {
 //     role : "teamlead"
@@ -10,9 +10,9 @@
 //   role: "projectmanager",
 // };
 
-export const DEMODATA = {
- role : "projectmanager"
-}
+// export const DEMODATA = {
+//  role : "projectmanager"
+// }
 
 export const EMPLOYEES = [
   {
