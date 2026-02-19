@@ -563,7 +563,7 @@ const AdminProject = () => {
                       <div className="flex items-center gap-3">
                         <Rocket
                           size={30}
-                          className="px-2 py-2 rounded bg-blue-200 text-blue-500 flex-shrink-0"
+                          className="px-2 py-2 rounded bg-blue-200 text-blue-500 shrink-0"
                         />
                         <div>
                           <div>{project.name}</div>
@@ -716,7 +716,7 @@ const AdminProject = () => {
 
       {/* Right Sidebar */}
       <div
-        className={`fixed top-0 right-0 h-full w-96 bg-white z-60 transform transition-transform duration-300 ease-in-out flex flex-col ${
+        className={`fixed top-0 right-0 h-full w-full xxs:w-96 bg-white z-60 transform transition-transform duration-300 ease-in-out flex flex-col ${
           isSidebarOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
