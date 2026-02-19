@@ -7,6 +7,7 @@ import { Users } from "lucide-react";
 import { Settings } from "lucide-react";
 import { MessageCircleQuestionMark } from "lucide-react";
 import { X } from "lucide-react";
+import { ChevronDown, ChevronRight, AlertTriangle, TrendingUp, FileText } from "lucide-react";
 import { DEMODATA } from "../data";
 
 const Sidebar = ({ onNavigate, isOpen, onClose }) => {
@@ -19,6 +20,8 @@ const Sidebar = ({ onNavigate, isOpen, onClose }) => {
     Settings: false,
     Help: false,
   });
+  const [isReportExpanded, setIsReportExpanded] = React.useState(false);
+  const [activeReportSubmenu, setActiveReportSubmenu] = React.useState(null);
 
   function handleButtonClick(buttonName) {
     setActiveButton((prevState) => {
