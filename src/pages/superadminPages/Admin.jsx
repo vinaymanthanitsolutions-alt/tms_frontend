@@ -1,42 +1,20 @@
-import React, { useState, useEffect } from "react";
-
-import { Pencil, Trash2, X, Search } from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
+import { Pencil, Trash2, X, Search, Filter, ChevronDown } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
-import { Filter, ChevronDown } from "lucide-react";
-import { useRef } from "react";
-
-
-{/*const initialAdmins = [
-  {
-    adminCode: "ADM001",
-    name: "Rahul Sharma",
-    email: "rahul@gmail.com",
-    phone: "9876543210",
-    status: "ACTIVE",
-  },
-  {
-    adminCode: "ADM002",
-    name: "Neha Singh",
-    email: "neha@gmail.com",
-    phone: "9123456780",
-    status: "INACTIVE",
-  },
-];*/}
 
 const Admin = () => {
- const [admins, setAdmins] = useState([]);
+  const [admins, setAdmins] = useState([]);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [editAdmin, setEditAdmin] = useState(null);
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [statusFilter, setStatusFilter] = useState("ALL");
+  const [showFilterDropdown, setShowFilterDropdown] = useState(false);
   const [totalPages, setTotalPages] = useState(1);
-const [statusFilter, setStatusFilter] = useState("ALL");
-const [showFilterDropdown, setShowFilterDropdown] = useState(false);
-const dropdownRef = useRef(null);
 
-
-const adminsPerPage = 5; 
+  const dropdownRef = useRef(null);
+  const adminsPerPage = 5;
 
   const [newAdmin, setNewAdmin] = useState({
     adminCode: "",
@@ -48,9 +26,101 @@ const adminsPerPage = 5;
     status: "ACTIVE",
   });
 
+  /* ================= FETCH ADMINS ================= */
 
-  const validateAdminCode = (code) => /^A\d{3}$/.test(code);
-  const validatePhone = (phone) => /^[6-9]\d{9}$/.test(phone);
+  const fetchAdmins = async () => {
+    try {
+      const managerID = "SA001";
+
+      const response = await fetch(
+        `http://localhost:8080/emp?emp_id=${managerID}&status=${statusFilter}&page=${currentPage}&limit=${adminsPerPage}&search=${search}`
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) throw new Error("Failed to fetch admins");
+
+      const adminArray = data?.data?.data || [];
+
+      const formattedData = adminArray.map((emp) => ({
+        adminCode: emp.emp_id,
+        name: emp.emp_name,
+        email: emp.email,
+        phone: emp.phone,
+        status: emp.status,
+        department: emp.department,
+        role: emp.role,
+      }));
+
+      setAdmins(formattedData);
+
+      // backend se total count aaye to
+      if (data?.data?.total) {
+        setTotalPages(Math.ceil(data.data.total / adminsPerPage));
+      } else {
+        setTotalPages(1);
+      }
+
+    } catch (error) {
+      console.error("Fetch Error:", error);
+      toast.error("Failed to fetch admins");
+    }
+  };
+
+  /* ================= EFFECTS ================= */
+
+  useEffect(() => {
+    fetchAdmins();
+  }, [currentPage, search, statusFilter]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowFilterDropdown(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  /* ================= ADD ================= */
+
+  const handleAddChange = (e) => {
+    setNewAdmin({ ...newAdmin, [e.target.name]: e.target.value });
+  };
+
+  const handleAddAdmin = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch("http://localhost:8080/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          emp_id: newAdmin.adminCode,
+          emp_name: newAdmin.name,
+          email: newAdmin.email,
+          phone: newAdmin.phone,
+          password: newAdmin.password,
+          department: newAdmin.department,
+          role: "ADMIN",
+          manager_id: "SA001",
+        }),
+      });
+
+      if (!response.ok) throw new Error("Failed");
+
+      toast.success("Admin Registered Successfully");
+      fetchAdmins();
+      setIsAddOpen(false);
+
+    } catch (error) {
+      toast.error("Registration Failed");
+    }
+  };
+
+  /* ================= UPDATE ================= */
 
   const openEditModal = (admin) => {
     setEditAdmin({ ...admin });
@@ -61,157 +131,58 @@ const adminsPerPage = 5;
     setEditAdmin({ ...editAdmin, [e.target.name]: e.target.value });
   };
 
- 
- const handleUpdate = async () => {
-  try {
-    if (!editAdmin) return;
+  const handleUpdate = async () => {
+    try {
+      if (!editAdmin) return;
 
-    const response = await fetch(
-      `http://localhost:8080/emp/${editAdmin.adminCode}`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          
-  emp_id: editAdmin.adminCode,
-  emp_name: editAdmin.name,
-  email: editAdmin.email,
-  phone: editAdmin.phone,
-  password: editAdmin.password || "Default@123",
-  department: editAdmin.department || "HEAD",
-  role: "ADMIN",
-  manager_id: editAdmin.manager_id || "SA001",
-  status : editAdmin.status,
-}),
-        
-      }
-    );
+      const response = await fetch(
+        `http://localhost:8080/emp/${editAdmin.adminCode}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            emp_id: editAdmin.adminCode,
+            emp_name: editAdmin.name,
+            email: editAdmin.email,
+            phone: editAdmin.phone,
+            password: editAdmin.password || "Default@123",
+            department: editAdmin.department || "HEAD",
+            role: "ADMIN",
+            manager_id: "SA001",
+            status: editAdmin.status,
+          }),
+        }
+      );
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(errorText || "Failed to update employee");
-    }
+      if (!response.ok) throw new Error("Update failed");
 
-    const data = await response.json();
-    console.log("UPDATE RESPONSE:", data);
+      toast.success("Admin detail updated successfully");
+      fetchAdmins();
+      setIsEditOpen(false);
 
-   toast.success("Admin detail update successfully ");
-
-
-    fetchAdmins();
-    setIsEditOpen(false);
-
-  } catch (error) {
-    console.error("Update Error:", error);
-    toast.error("Update failed ");
-
-  }
-};
-
-
-
-  const handleAddChange = (e) => {
-    setNewAdmin({ ...newAdmin, [e.target.name]: e.target.value });
-  };
-
- 
- const handleAddAdmin = async () => {
-  try {
-    const response = await fetch("http://localhost:8080/signup", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        emp_id: newAdmin.adminCode,
-        emp_name: newAdmin.name,
-        email: newAdmin.email,
-        phone: newAdmin.phone,
-        password: newAdmin.password,
-        department: newAdmin.department,
-        role: "ADMIN",
-        manager_id: newAdmin.manager_id || "SA001",
-      }),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(errorText || "Failed to register admin");
-    }
-
-    const data = await response.json();
-    console.log("SIGNUP RESPONSE:", data);
-
-    alert("Admin Registered Successfully ");
-
-    fetchAdmins();   
-    setIsAddOpen(false);
-
-  } catch (error) {
-    console.error("Signup Error:", error);
-    alert("Registration Failed ");
-  }
-};
-
-
-
-useEffect(() => {
-  fetchAdmins();
-}, [currentPage, search, statusFilter]);
-
-const fetchAdmins = async () => {
-  try {
-    const managerID = "SA001";
-
-    const response = await fetch(
-      `http://localhost:8080/emp?emp_id=${managerID}&status=${statusFilter}&page=${currentPage}&limit=${adminsPerPage}&search=${search}`
-    );
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error("Failed to fetch admins");
-    }
-
-    console.log("API RESPONSE:", data);
-
-    const adminArray = data.data || [];
-
-    const formattedData = adminArray.map((emp) => ({
-      adminCode: emp.emp_id,
-      name: emp.emp_name,
-      email: emp.email,
-      phone: emp.phone,
-      status: emp.status,
-      department: emp.department,
-      role: emp.role,
-    }));
-
-    setAdmins(formattedData);
-
-   
-    setTotalPages(data.pagination?.total_pages || 1);
-
-  } catch (error) {
-    console.error(error);
-    toast.error("Failed to load admins");
-  }
-};
-
-useEffect(() => {
-  const handleClickOutside = (event) => {
-    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-      setShowFilterDropdown(false);
+    } catch (error) {
+      toast.error("Update failed");
     }
   };
 
-  document.addEventListener("mousedown", handleClickOutside);
-  return () => {
-    document.removeEventListener("mousedown", handleClickOutside);
+  /* ================= DELETE ================= */
+
+  const handleDelete = async (code) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8080/emp/${code}`,
+        { method: "DELETE" }
+      );
+
+      if (!response.ok) throw new Error("Delete failed");
+
+      toast.success("Admin deleted successfully");
+      fetchAdmins();
+
+    } catch (error) {
+      toast.error("Delete failed");
+    }
   };
-}, []);
 
 
 
@@ -410,21 +381,41 @@ useEffect(() => {
       </div>
 
       {/* PAGINATION */}
-<div className="flex justify-end mt-4 gap-2">
-  {Array.from({ length: totalPages }, (_, index) => (
-    <button
-      key={index}
-      onClick={() => setCurrentPage(index + 1)}
-      className={`px-3 rounded border border-gray-200 ${
-        currentPage === index + 1
-          ? "bg-emerald-500 text-white"
-          : "bg-white text-gray-700"
-      }`}
-    >
-      {index + 1}
-    </button>
-  ))}
-</div>
+        <div className="flex justify-center items-center gap-2 mt-6">
+        <button
+          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          disabled={currentPage === 1}
+          className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+        >
+          Prev
+        </button>
+
+        {[...Array(totalPages || 0)].map((_, index) => (
+          <button
+            key={index}
+            onClick={() => setCurrentPage(index + 1)}
+            className={`px-3 py-1 rounded ${
+              currentPage === index + 1
+                ? "bg-emerald-500 text-white"
+                : "bg-gray-200"
+            }`}
+          >
+            {index + 1}
+          </button>
+        ))}
+
+        <button
+          onClick={() =>
+            setCurrentPage((prev) =>
+              Math.min(prev + 1, totalPages || 1)
+            )
+          }
+          disabled={currentPage === totalPages}
+          className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+        >
+          Next
+        </button>
+      </div>
 
 
 

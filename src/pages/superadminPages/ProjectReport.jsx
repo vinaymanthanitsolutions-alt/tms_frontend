@@ -1,67 +1,43 @@
 import { Rocket } from "lucide-react";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import {  Search } from "lucide-react";
 
 const itemsPerPage = 5;
 
 const ProjectReport = () => {
   const [currentPage, setCurrentPage] = useState(1);
+  const [projects, setProjects] = useState([]); // ✅ API data
+    const [search, setSearch] = useState("");
 
-  const projects = [
-    {
-      adminId: "A001",
-      projectName: "Website Redesign",
-      projectCode: "PRJ-001",
-      status: "Active",
-      manager: "John Doe",
-      deadline: "20/2/2026",
-      progress: 65,
-    },
-    {
-      adminId: "A002",
-      projectName: "Mobile App Development",
-      projectCode: "PRJ-002",
-      status: "Overdue",
-      manager: "Jane Smith",
-      deadline: "25/2/2026",
-      progress: 45,
-    },
-    {
-      adminId: "A003",
-      projectName: "Database Migration",
-      projectCode: "PRJ-003",
-      status: "No Manager",
-      manager: "-",
-      deadline: "23/2/2026",
-      progress: 80,
-    },
-    {
-      adminId: "A004",
-      projectName: "API Integration",
-      projectCode: "PRJ-004",
-      status: "High Priority",
-      manager: "Mike Johnson",
-      deadline: "30/2/2026",
-      progress: 30,
-    },
-    {
-      adminId: "A005",
-      projectName: "CRM Upgrade",
-      projectCode: "PRJ-005",
-      status: "Active",
-      manager: "Chris Evans",
-      deadline: "12/3/2026",
-      progress: 55,
-    },
-    {
-      adminId: "A006",
-      projectName: "Security Patch",
-      projectCode: "PRJ-006",
-      status: "Overdue",
-      manager: "Robert Downey",
-      deadline: "5/3/2026",
-      progress: 20,
-    },
-  ];
+
+  // ✅ Fetch API
+ useEffect(() => {
+  const fetchProjects = async () => {
+    try {
+      const response = await axios.get(
+      `http://localhost:8080/project/?search=${search}&page=${currentPage}&limit=15`
+      );
+
+      const formattedProjects =
+        response.data.data.projects.map((item) => ({
+          adminId: item.created_by,
+          projectName: item.name,
+          projectCode: item.project_id,
+          status: item.status,
+          manager: item.pm_id,
+          deadline: item.deadline || "-",
+          progress: item.progress,
+        }));
+
+      setProjects(formattedProjects);
+    } catch (error) {
+      console.error("Error fetching projects:", error);
+    }
+  };
+
+  fetchProjects();
+}, [ search, currentPage]);
 
   /* ✅ Pagination Logic */
   const totalPages = Math.ceil(projects.length / itemsPerPage);
@@ -77,6 +53,26 @@ const ProjectReport = () => {
           Project's work under the admin
         </p>
       </div>
+
+        {/*  SEARCH + FILTER + ADD BUTTON */}
+<div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4 bg-white border border-gray-200 p-4 rounded-lg">
+
+  {/* SEARCH */}
+  <div className="relative w-full sm:w-1/3 lg:w-1/3">
+    <Search
+      size={18}
+      className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+    />
+    <input
+      type="text"
+      placeholder="Search Admin ID & manager.."
+      value={search}
+      onChange={(e) => setSearch(e.target.value)}
+      className="border border-gray-200 pl-10 pr-3 py-2 rounded w-full focus:outline-none"
+    />
+  </div>
+  </div>
+
 
       {/* TABLE */}
       <div className="bg-white rounded-xl shadow border border-gray-200 overflow-x-auto">
@@ -115,12 +111,11 @@ const ProjectReport = () => {
                 <td className="px-2 py-3 text-center">
                   <span
                     className={`px-2 py-1 rounded-xl ${
-                      project.status === "Active"
+                      project.status === "COMPLETED"
                         ? "bg-green-200 text-green-700"
-                        : project.status === "Overdue"
-                        ? "bg-red-200 text-red-700"
-                        : project.status === "No Manager"
-                        ? "bg-orange-200 text-orange-700"
+                        : project.status === "ACTIVE"
+                        ? "bg-yellow-200 text-yellow-700"
+                        
                         : "bg-purple-200 text-purple-700"
                     }`}
                   >
@@ -159,7 +154,7 @@ const ProjectReport = () => {
         </table>
       </div>
 
-      {/* ✅ Pagination */}
+      {/* Pagination remains SAME */}
       <div className="flex justify-center items-center gap-2 mt-6">
         <button
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
