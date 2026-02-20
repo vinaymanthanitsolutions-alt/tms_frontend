@@ -94,6 +94,28 @@ const Dashboard = () => {
      { role: "Testers", count: 18, icon: <Braces size={18} /> },
   ];
 
+  const latestAdmin = [
+  {name: "Amit Sharma", createdAt: "2025-02-18", status: "Active"},
+  {name: "Megha",createdAt: "2025-09-22",status: "InActive"}, 
+  ];
+
+const getInitials = (name = "") => {
+  if (!name) return "";
+
+  const words = name.trim().split(" ");
+
+  if (words.length === 1) {
+    return words[0][0]?.toUpperCase() || "";
+  }
+
+  return (
+    (words[0][0] || "").toUpperCase() +
+    (words[1][0] || "").toUpperCase()
+  );
+};
+
+
+
   return (
     <div className="p-8 bg-gray-100 min-h-screen">
       <h1 className="text-3xl font-bold mb-8">Dashboard</h1>
@@ -249,21 +271,57 @@ const Dashboard = () => {
           </table>
           </div>
 
-          {/*  */}
-          <div className="bg-white p-6 rounded-2xl shadow">
-            <div className="flex flex-row gap-55 ">
-             <h2 className="text-lg font-semibold mb-4 flex flex-row gap-4">
-           Latest Admin          
-          </h2>
-          <h2 className=" text-lg font-semibold">...</h2>
-          </div>
-             <div>
-              
-             </div>
+         
+          {/* Latest Admin */}
+{/* Latest Admin */}
+<div className="bg-white p-6 rounded-2xl shadow">
+  <div className="flex justify-between items-center mb-4">
+    <h2 className="text-lg font-semibold">Latest Admin</h2>
+    <button className="text-gray-400 hover:text-gray-600">•••</button>
+  </div>
+
+  <div className="space-y-4">
+    {latestAdmin.map((admin, index) => (
+      <div
+        key={index}
+        className="flex items-center gap-4 bg-gray-50 p-4 rounded-xl"
+      >
+        {/* Initial Circle */}
+        <div className="w-12 h-12 flex items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-purple-500 text-white font-bold text-lg shadow">
+          {getInitials(admin.name)}
+        </div>
+
+        {/* Admin Info */}
+        <div className="flex-1">
+          <p className="font-semibold text-gray-800">
+            {admin.name}
+          </p>
+          <p className="text-sm text-gray-500">
+            @{admin.name.toLowerCase().replace(/\s/g, "")} •{" "}
+            {admin.createdAt}
+          </p>
+        </div>
+
+        {/* Status Badge */}
+        <span
+          className={`px-3 py-1 text-xs font-semibold rounded-full ${
+            admin.status === "Active"
+              ? "bg-green-100 text-green-600"
+              : "bg-red-100 text-red-600"
+          }`}
+        >
+          {admin.status}
+        </span>
+      </div>
+    ))}
+  </div>
+</div>
+
+
 
             
           </div>
-        </div>
+        
         
       </div>
     </div>

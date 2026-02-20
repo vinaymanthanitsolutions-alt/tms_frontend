@@ -3,7 +3,7 @@ import { IconBellFilled } from "@tabler/icons-react";
 import { User } from 'lucide-react';
 export default function Navbar() {
   return (
-    <nav className="py-4 border-b-2 border-gray-200 w-full flex justify-end items-center gap-4 pr-5">
+    <nav className="py-4 border-b-2 border-gray-200 w-full flex justify-end items-center gap-4 pr-5 ">
       <div className="flex gap-4 ">
         <IconMailFilled className="text-gray-600 w-5 h-5" />
         <IconBellFilled className="text-gray-600 w-5 h-5" />
