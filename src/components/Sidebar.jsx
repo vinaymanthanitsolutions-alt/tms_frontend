@@ -191,9 +191,6 @@ const Sidebar = ({ onNavigate, isOpen, onClose }) => {
   )}
 </div>
 
-
-
-
       {/* ADMIN MENU */}
       <div
         className={`${menuItemsStyle} ${

@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { Search , Eye ,  X} from "lucide-react";
 
 
 
 const TaskReport = () => {
+   
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedRole, setSelectedRole] = useState({});
@@ -11,131 +12,199 @@ const TaskReport = () => {
 const [selectedTask, setSelectedTask] = useState(null);
 const [selectedTeamType, setSelectedTeamType] = useState("");
 const [showTeamDropdown, setShowTeamDropdown] = useState(false);
+ const [tasks, setTasks] = useState([]); 
+ 
 
 
 
   const itemsPerPage = 5;
+  const projectId = "PR030";
 
-  const [tasks] = useState([
-    {
-      projectId: "PRJ-001",
-      teamId: "TM001",
-      teamLeader: "Rahul Sharma",
-      managerId: "PM001",
-      task: "Login Module UI",
-      department: "IT",
-       developer: [
-    { id: "D01", name: "Aman", subtask: "Login UI", status: "COMPLETED" },
-    { id: "D02", name: "naman", subtask: "logout UI", status: "PENDING" },
-    { id: "D03", name: "Kunal", subtask: "Dashboard", status: "IN PROGRESS" }
-  ],
-  tester: [
-    { id: "T01", name: "Priya" },
-    { id: "T02", name: "Riya" }
-  ]
-    },
-    {
-      projectId: "PRJ-002",
-      teamId: "TM002",
-      teamLeader: "Neha Verma",
-      managerId: "PM002",
-      task: "API Development",
-      department: "IT",
-        developer: [
-    { id: "D01", name: "ujjawal", subtask: "Login UI", status: "IN PROGRESS" },
-     { id: "D02", name: "raman", subtask: "reset password UI", status: "COMPLETED" },
-    { id: "D03", name: "Kumar", subtask: "Dashboard", status: "PENDING" }
-  ],
-  tester: [
-    { id: "T01", name: "Priya" },
-    { id: "T02", name: "Riya" }
-  ]
-    },
+const fetchTasks = async () => {
+  try {
+    const response = await fetch(
+      `http://localhost:8080/tasks/project/?project_id=${projectId}&page=${currentPage}&search=${searchTerm}&limit=20`
 
-     {
-      projectId: "PRJ-001",
-      teamId: "TM003",
-      teamLeader: "vanshika Sharma",
-      managerId: "PM001",
-      task: "Dashboard Module UI",
-      department: "IT",
-        developer: [
-    { id: "D01", name: "Manisha", subtask: "Report", status: "IN PROGRESS" },
-     { id: "D02", name: "rama", subtask: "Task", status: "COMPLETED" },
-    { id: "D03", name: "Krishna", subtask: "Dashboard", status: " IN PROGRESS" }
-  ],
-  tester: [
-    { id: "T01", name: "Priyanka" },
-    { id: "T02", name: "Riyansh" }
-  ]
-    },
-     {
-      projectId: "PRJ-002",
-      teamId: "TM002",
-      teamLeader: "Neha Verma",
-      managerId: "PM002",
-      task: "API Development",
-      department: "IT",
-        developer: [
-    { id: "D01", name: "ujjawal", subtask: "Login UI", status: "IN PROGRESS" },
-     { id: "D02", name: "raman", subtask: "reset password UI", status: "COMPLETED" },
-    { id: "D03", name: "Kumar", subtask: "Dashboard", status: "PENDING" }
-  ],
-  tester: [
-    { id: "T01", name: "Priya" },
-    { id: "T02", name: "Riya" }
-  ]
-    },
-     {
-      projectId: "PRJ-002",
-      teamId: "TM002",
-      teamLeader: "Neha Verma",
-      managerId: "PM002",
-      task: "API Development",
-      department: "IT",
-        developer: [
-    { id: "D01", name: "ujjawal", subtask: "Login UI", status: "IN PROGRESS" },
-     { id: "D02", name: "raman", subtask: "reset password UI", status: "COMPLETED" },
-    { id: "D03", name: "Kumar", subtask: "Dashboard", status: "PENDING" }
-  ],
-  tester: [
-    { id: "T01", name: "Priya" },
-    { id: "T02", name: "Riya" }
-  ]
-    },
-     {
-      projectId: "PRJ-002",
-      teamId: "TM002",
-      teamLeader: "Neha Verma",
-      managerId: "PM002",
-      task: "API Development",
-      department: "IT",
-        developer: [
-    { id: "D01", name: "ujjawal", subtask: "Login UI", status: "IN PROGRESS" },
-     { id: "D02", name: "raman", subtask: "reset password UI", status: "COMPLETED" },
-    { id: "D03", name: "Kumar", subtask: "Dashboard", status: "PENDING" }
-  ],
-  tester: [
-    { id: "T01", name: "Priya" },
-    { id: "T02", name: "Riya" }
-  ]
-    },
-  ]);
+    );
 
+    const result = await response.json();
+
+    console.log("FULL RESPONSE:", result);
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch tasks");
+    }
+
+    // ✅ Correct array path
+    const apiTasks = result?.data?.data || [];
+
+    const formattedTasks = apiTasks.map((task) => ({
+      projectId: task.project_id || "",
+      teamId: task.teamID || "",
+      teamLeader: task.teamLeaderName || "",
+      managerId: task.createdBy || "",
+      task: task.title || "",
+      department: task.department || "",
+    }));
+
+    setTasks(formattedTasks);
+  } catch (error) {
+    console.error("Fetch Error:", error);
+  }
+};
+
+
+  useEffect(() => {
+    fetchTasks();
+  }, [currentPage, searchTerm]);
+
+
+  // const [tasks] = useState([
+  //   {
+  //     projectId: "PRJ-001",
+  //     teamId: "TM001",
+  //     teamLeader: "Rahul Sharma",
+  //     managerId: "PM001",
+  //     task: "Login Module UI",
+  //     department: "IT",
+  //      developer: [
+  //   { id: "D01", name: "Aman", subtask: "Login UI", status: "COMPLETED" },
+  //   { id: "D02", name: "naman", subtask: "logout UI", status: "PENDING" },
+  //   { id: "D03", name: "Kunal", subtask: "Dashboard", status: "IN PROGRESS" }
+  // ],
+  // tester: [
+  //   { id: "T01", name: "Priya" },
+  //   { id: "T02", name: "Riya" }
+  // ]
+  //   },
+  //   {
+  //     projectId: "PRJ-002",
+  //     teamId: "TM002",
+  //     teamLeader: "Neha Verma",
+  //     managerId: "PM002",
+  //     task: "API Development",
+  //     department: "IT",
+  //       developer: [
+  //   { id: "D01", name: "ujjawal", subtask: "Login UI", status: "IN PROGRESS" },
+  //    { id: "D02", name: "raman", subtask: "reset password UI", status: "COMPLETED" },
+  //   { id: "D03", name: "Kumar", subtask: "Dashboard", status: "PENDING" }
+  // ],
+  // tester: [
+  //   { id: "T01", name: "Priya" },
+  //   { id: "T02", name: "Riya" }
+  // ]
+  //   },
+
+  //    {
+  //     projectId: "PRJ-001",
+  //     teamId: "TM003",
+  //     teamLeader: "vanshika Sharma",
+  //     managerId: "PM001",
+  //     task: "Dashboard Module UI",
+  //     department: "IT",
+  //       developer: [
+  //   { id: "D01", name: "Manisha", subtask: "Report", status: "IN PROGRESS" },
+  //    { id: "D02", name: "rama", subtask: "Task", status: "COMPLETED" },
+  //   { id: "D03", name: "Krishna", subtask: "Dashboard", status: " IN PROGRESS" }
+  // ],
+  // tester: [
+  //   { id: "T01", name: "Priyanka" },
+  //   { id: "T02", name: "Riyansh" }
+  // ]
+  //   },
+  //    {
+  //     projectId: "PRJ-002",
+  //     teamId: "TM002",
+  //     teamLeader: "Neha Verma",
+  //     managerId: "PM002",
+  //     task: "API Development",
+  //     department: "IT",
+  //       developer: [
+  //   { id: "D01", name: "ujjawal", subtask: "Login UI", status: "IN PROGRESS" },
+  //    { id: "D02", name: "raman", subtask: "reset password UI", status: "COMPLETED" },
+  //   { id: "D03", name: "Kumar", subtask: "Dashboard", status: "PENDING" }
+  // ],
+  // tester: [
+  //   { id: "T01", name: "Priya" },
+  //   { id: "T02", name: "Riya" }
+  // ]
+  //   },
+  //    {
+  //     projectId: "PRJ-002",
+  //     teamId: "TM002",
+  //     teamLeader: "Neha Verma",
+  //     managerId: "PM002",
+  //     task: "API Development",
+  //     department: "IT",
+  //       developer: [
+  //   { id: "D01", name: "ujjawal", subtask: "Login UI", status: "IN PROGRESS" },
+  //    { id: "D02", name: "raman", subtask: "reset password UI", status: "COMPLETED" },
+  //   { id: "D03", name: "Kumar", subtask: "Dashboard", status: "PENDING" }
+  // ],
+  // tester: [
+  //   { id: "T01", name: "Priya" },
+  //   { id: "T02", name: "Riya" }
+  // ]
+  //   },
+  //    {
+  //     projectId: "PRJ-002",
+  //     teamId: "TM002",
+  //     teamLeader: "Neha Verma",
+  //     managerId: "PM002",
+  //     task: "API Development",
+  //     department: "IT",
+  //       developer: [
+  //   { id: "D01", name: "ujjawal", subtask: "Login UI", status: "IN PROGRESS" },
+  //    { id: "D02", name: "raman", subtask: "reset password UI", status: "COMPLETED" },
+  //   { id: "D03", name: "Kumar", subtask: "Dashboard", status: "PENDING" }
+  // ],
+  // tester: [
+  //   { id: "T01", name: "Priya" },
+  //   { id: "T02", name: "Riya" }
+  // ]
+  //   },
+  // ]);
+
+
+  
   // Filter Logic
   const filteredTasks = tasks.filter((task) => {
-    const search = searchTerm.toLowerCase();
-    return (
-      task.teamId.toLowerCase().includes(search) ||
-      task.projectId.toLowerCase().includes(search)
-    );
-  });
+  const search = searchTerm?.toLowerCase() || "";
+
+  return (
+    (task.teamId || "").toLowerCase().includes(search) ||
+    (task.projectId || "").toLowerCase().includes(search)
+  );
+});
+
+
+
+
+
+
 
   // Pagination Logic
-  const totalPages = Math.ceil(filteredTasks.length / itemsPerPage);
-  const indexOfLast = currentPage * itemsPerPage;
-  const indexOfFirst = indexOfLast - itemsPerPage;
-  const currentTasks = filteredTasks.slice(indexOfFirst, indexOfLast);
+const totalPages = Math.max(
+  1,
+  Math.ceil(filteredTasks.length / itemsPerPage)
+);
+
+const indexOfLast = currentPage * itemsPerPage;
+const indexOfFirst = indexOfLast - itemsPerPage;
+const currentTasks = filteredTasks.slice(indexOfFirst, indexOfLast);
+
+
+useEffect(() => {
+  if (currentPage > totalPages) {
+    setCurrentPage(1);
+  }
+}, [filteredTasks, totalPages, currentPage]);
+
+
+
+   // ✅ Auto reset page if filter reduces data
+   
+  
 
   const handleView = (task) => {
   setSelectedTask(task);
