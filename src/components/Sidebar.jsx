@@ -8,13 +8,9 @@ import { Users } from "lucide-react";
 import { Settings } from "lucide-react";
 import { MessageCircleQuestionMark } from "lucide-react";
 import { X } from "lucide-react";
+import {ChevronDown, ChevronRight, AlertTriangle, TrendingUp, FileText } from "lucide-react";
 import { DEMODATA } from "../data";
-import {
-  
-  FolderKanban,
-  
-  ChevronDown
-} from "lucide-react";
+import { FolderKanban } from "lucide-react";
 
 
 const Sidebar = ({ onNavigate, isOpen, onClose }) => {
@@ -24,6 +20,9 @@ const Sidebar = ({ onNavigate, isOpen, onClose }) => {
   UsersReport: false,    // for superadmin
   ProjectReport: false,    // for superadmin
   TaskReport: false,     // for superadmin
+  RiskOverview: false,   // for admin report
+  ProjectInsight: false, // for admin report
+  AuditHistory: false,   // for admin report
   Team: false,
   Task: false,
   Project: false,
@@ -35,6 +34,7 @@ const Sidebar = ({ onNavigate, isOpen, onClose }) => {
 
 
   const [showReportDropdown, setShowReportDropdown] = useState(false);
+  const [showAdminReportDropdown, setShowAdminReportDropdown] = useState(false);
 
   function handleButtonClick(buttonName) {
     setActiveButton((prevState) => {
@@ -72,13 +72,66 @@ const Sidebar = ({ onNavigate, isOpen, onClose }) => {
           <House size={20} />
           <span>Dashboard</span>
         </div>
-        <div
-          className={`${menuItemsStyle} ${activeButton.Report ? selectedButtonStyle : ""}`}
-          onClick={() => handleButtonClick("Report")}
-        >
-          <ChartNoAxesCombined size={20} />
-          <span>Report</span>
+
+        {/* Admin Report with subbuttons */}
+        <div>
+          <div
+            className={`${menuItemsStyle} ${
+              activeButton.RiskOverview || activeButton.ProjectInsight || activeButton.AuditHistory
+                ? selectedButtonStyle
+                : ""
+            } flex items-center justify-between`}
+            onClick={() => setShowAdminReportDropdown(!showAdminReportDropdown)}
+          >
+            <div className="flex items-center gap-2">
+              <ChartNoAxesCombined size={20} />
+              <span>Report</span>
+            </div>
+            <ChevronDown size={16} />
+          </div>
+
+          {showAdminReportDropdown && (
+            <div className="ml-8 mt-2 space-y-1">
+              <div
+                className={`px-4 py-2 text-sm rounded cursor-pointer flex items-center gap-2 text-gray-500 ${
+                  activeButton.RiskOverview ? "bg-gray-200 text-gray-600" : "hover:bg-gray-100 hover:text-black"
+                }`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleButtonClick("RiskOverview");
+                }}
+              >
+                <AlertTriangle size={16} />
+                Risk Overview
+              </div>
+              <div
+                className={`px-4 py-2 text-sm rounded cursor-pointer flex items-center gap-2 text-gray-600 ${
+                  activeButton.ProjectInsight ? "bg-gray-200 text-gray-600" : "hover:bg-gray-100 hover:text-black"
+                }`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleButtonClick("ProjectInsight");
+                }}
+              >
+                <TrendingUp size={16} />
+                Project Insight
+              </div>
+              <div
+                className={`px-4 py-2 text-sm rounded cursor-pointer flex items-center gap-2 text-gray-600 ${
+                  activeButton.AuditHistory ? "bg-gray-200 text-gray-600" : "hover:bg-gray-100 hover:text-black"
+                }`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleButtonClick("AuditHistory");
+                }}
+              >
+                <FileText size={16} />
+                Audit History
+              </div>
+            </div>
+          )}
         </div>
+
         <div
           className={`${menuItemsStyle} ${activeButton.Team ? selectedButtonStyle : ""}`}
           onClick={() => handleButtonClick("Team")}

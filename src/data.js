@@ -1,6 +1,6 @@
-  // export const DEMODATA = {
-  // role:"admin"
-  // }
+  export const DEMODATA = {
+  role:"admin"
+  }
 
 // export const DEMODATA = {
 //     role : "teamlead"
@@ -62,9 +62,9 @@
 //   },
 // ];
 
-export const DEMODATA = {
-  role: "superadmin",
-};
+// export const DEMODATA = {
+//   role: "superadmin",
+// };
 
 
 // "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
@@ -84,9 +84,28 @@ export const BARCHARTDATA = {
   datasets: [{
     label: "Dataset 1",
     data: [65, 59, 80, 81, 56, 55],
-    backgroundColor: "rgb(75, 192, 192)",
-    borderColor: "rgb(75, 192, 192)",
+    backgroundColor: "#ff6900",
+    borderColor: "#ff6900",
     borderWidth: 1,
-    
   }],
+};
+
+export const BLUEBARCHARTDATA = {
+  labels: ["", "", "", "", ""],
+  datasets: [
+    {
+      label: "",
+      data: [22, 45, 38, 58, 85],
+      backgroundColor: [
+        "#93C5FD", // light blue
+        "#60A5FA", // medium-light blue
+        "#3B82F6", // medium blue
+        "#3B82F6", // medium blue
+        "#EF4444", // red - highlight
+      ],
+      borderWidth: 0,
+      barPercentage: 0.6,
+      categoryPercentage: 0.8,
+    },
+  ],
 };
