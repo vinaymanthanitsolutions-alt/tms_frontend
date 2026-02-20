@@ -23,19 +23,20 @@ export const getProjectsByPM = async (pmId, page = 1, limit = 5) => {
   }
 };
 
-export const getEmployeesByPM = async (pmId, status = "ALL") => {
+export const getEmployeesByPM = async (
+  pmId,
+  role = "TEAM_LEADER"
+) => {
   try {
-    const response = await axios.get(
-      `${API_BASE_URL}/emp`,
-      {
-        params: {
-          emp_id: pmId,
-          status: status,
-        },
-      }
-    );
+    const response = await axios.get(`${API_BASE_URL}/emp`, {
+      params: {
+        emp_id: pmId,
+        role: role,
+      },
+    });
 
-    return response.data.data; // returning employee array
+    // ✅ actual employee list
+    return response.data.data.data || [];
 
   } catch (error) {
     console.error("Error fetching employees:", error);

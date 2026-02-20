@@ -19,3 +19,22 @@ export const getProjectCounts = async (pmId) => {
 
   return res.data.data;
 };
+
+
+// 3️⃣ PM Project Report API
+export const getPMProjectReport = async (empId) => {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/project/reportAsPM?emp_id=${empId}`
+    );
+
+    if (response.data.success) {
+      return response.data.data; // return only project array
+    } else {
+      return [];
+    }
+  } catch (error) {
+    console.error("Error fetching PM project report:", error);
+    throw error;
+  }
+};
