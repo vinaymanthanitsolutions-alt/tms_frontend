@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
+
 import manthanLogo from "/manthanlogo.png";
 import { House } from "lucide-react";
 import { ChartNoAxesCombined } from "lucide-react";
@@ -7,21 +8,33 @@ import { Users } from "lucide-react";
 import { Settings } from "lucide-react";
 import { MessageCircleQuestionMark } from "lucide-react";
 import { X } from "lucide-react";
-import { ChevronDown, ChevronRight, AlertTriangle, TrendingUp, FileText } from "lucide-react";
+import {ChevronDown, ChevronRight, AlertTriangle, TrendingUp, FileText } from "lucide-react";
 import { DEMODATA } from "../data";
+import { FolderKanban } from "lucide-react";
+
 
 const Sidebar = ({ onNavigate, isOpen, onClose }) => {
   const [activeButton, setActiveButton] = React.useState({
-    Dashboard: true,
-    Report: false,
-    Team: false,
-    Task: false,
-    Project: false,
-    Settings: false,
-    Help: false,
-  });
-  const [isReportExpanded, setIsReportExpanded] = React.useState(false);
-  const [activeReportSubmenu, setActiveReportSubmenu] = React.useState(null);
+  Dashboard: true,
+  Report: false,
+  UsersReport: false,    // for superadmin
+  ProjectReport: false,    // for superadmin
+  TaskReport: false,     // for superadmin
+  RiskOverview: false,   // for admin report
+  ProjectInsight: false, // for admin report
+  AuditHistory: false,   // for admin report
+  Team: false,
+  Task: false,
+  Project: false,
+  Admin: false,
+  Settings: false,
+  Help: false,
+  Logout: false,
+});
+
+
+  const [showReportDropdown, setShowReportDropdown] = useState(false);
+  const [showAdminReportDropdown, setShowAdminReportDropdown] = useState(false);
 
   function handleButtonClick(buttonName) {
     setActiveButton((prevState) => {
@@ -59,13 +72,66 @@ const Sidebar = ({ onNavigate, isOpen, onClose }) => {
           <House size={20} />
           <span>Dashboard</span>
         </div>
-        <div
-          className={`${menuItemsStyle} ${activeButton.Report ? selectedButtonStyle : ""}`}
-          onClick={() => handleButtonClick("Report")}
-        >
-          <ChartNoAxesCombined size={20} />
-          <span>Report</span>
+
+        {/* Admin Report with subbuttons */}
+        <div>
+          <div
+            className={`${menuItemsStyle} ${
+              activeButton.RiskOverview || activeButton.ProjectInsight || activeButton.AuditHistory
+                ? selectedButtonStyle
+                : ""
+            } flex items-center justify-between`}
+            onClick={() => setShowAdminReportDropdown(!showAdminReportDropdown)}
+          >
+            <div className="flex items-center gap-2">
+              <ChartNoAxesCombined size={20} />
+              <span>Report</span>
+            </div>
+            <ChevronDown size={16} />
+          </div>
+
+          {showAdminReportDropdown && (
+            <div className="ml-8 mt-2 space-y-1">
+              <div
+                className={`px-4 py-2 text-sm rounded cursor-pointer flex items-center gap-2 text-gray-500 ${
+                  activeButton.RiskOverview ? "bg-gray-200 text-gray-600" : "hover:bg-gray-100 hover:text-black"
+                }`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleButtonClick("RiskOverview");
+                }}
+              >
+                <AlertTriangle size={16} />
+                Risk Overview
+              </div>
+              <div
+                className={`px-4 py-2 text-sm rounded cursor-pointer flex items-center gap-2 text-gray-600 ${
+                  activeButton.ProjectInsight ? "bg-gray-200 text-gray-600" : "hover:bg-gray-100 hover:text-black"
+                }`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleButtonClick("ProjectInsight");
+                }}
+              >
+                <TrendingUp size={16} />
+                Project Insight
+              </div>
+              <div
+                className={`px-4 py-2 text-sm rounded cursor-pointer flex items-center gap-2 text-gray-600 ${
+                  activeButton.AuditHistory ? "bg-gray-200 text-gray-600" : "hover:bg-gray-100 hover:text-black"
+                }`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleButtonClick("AuditHistory");
+                }}
+              >
+                <FileText size={16} />
+                Audit History
+              </div>
+            </div>
+          )}
         </div>
+
         <div
           className={`${menuItemsStyle} ${activeButton.Team ? selectedButtonStyle : ""}`}
           onClick={() => handleButtonClick("Team")}
@@ -86,25 +152,117 @@ const Sidebar = ({ onNavigate, isOpen, onClose }) => {
 
   // SuperAdmin menu rendering function
   const renderSuperAdminMenu = () => {
-    return (
-      <>
-        <div
-          className={`${menuItemsStyle} ${activeButton.Dashboard ? selectedButtonStyle : ""}`}
-          onClick={() => handleButtonClick("Dashboard")}
-        >
-          <House size={20} />
-          <span>Dashboard</span>
-        </div>
-        <div
-          className={`${menuItemsStyle} ${activeButton.Report ? selectedButtonStyle : ""}`}
-          onClick={() => handleButtonClick("Report")}
-        >
-          <ChartNoAxesCombined size={20} />
-          <span>Report</span>
-        </div>
-      </>
-    );
-  };
+  return (
+    <>
+      <div
+        className={`${menuItemsStyle} ${
+          activeButton.Dashboard ? selectedButtonStyle : ""
+        }`}
+        onClick={() => handleButtonClick("Dashboard")}
+      >
+        <House size={20} />
+        <span>Dashboard</span>
+      </div>
+
+      
+{/* REPORT MENU */}
+<div>
+  <div
+    className={`${menuItemsStyle} ${
+      activeButton.UsersReport ||
+      activeButton.ProjectReport ||
+      activeButton.TaskReport
+        ? selectedButtonStyle
+        : ""
+    } flex items-center justify-between`}
+    onClick={() => { 
+      setShowReportDropdown(!showReportDropdown);
+    }}
+  >
+    <div className="flex items-center gap-2">
+      <ChartNoAxesCombined size={20} />
+      <span>Report</span>
+    </div>
+    <ChevronDown size={16} />
+  </div>
+
+  {showReportDropdown && (
+    <div className="ml-8 mt-2 space-y-1">
+
+      {/* USERS REPORT */}
+      <div
+        className={`px-4 py-2 text-sm rounded cursor-pointer flex items-center gap-2
+        ${
+          activeButton.UsersReport
+            ? "bg-gray-200 font-medium"
+            : "hover:bg-gray-100"
+        }`}
+        onClick={(e) => {
+          e.stopPropagation();
+          handleButtonClick("UsersReport");
+        }}
+      >
+        <Users size={16} />
+        Users
+      </div>
+
+      {/* PROJECT REPORT */}
+      <div
+        className={`px-4 py-2 text-sm rounded cursor-pointer flex items-center gap-2
+        ${
+          activeButton.ProjectReport
+            ? "bg-gray-200 font-medium"
+            : "hover:bg-gray-100"
+        }`}
+        onClick={(e) => {
+          e.stopPropagation();
+          handleButtonClick("ProjectReport");
+        }}
+      >
+        <FolderKanban size={16} />
+        Project
+      </div>
+
+      {/* TASK REPORT */}
+      <div
+        className={`px-4 py-2 text-sm rounded cursor-pointer flex items-center gap-2
+        ${
+          activeButton.TaskReport
+            ? "bg-gray-200 font-medium"
+            : "hover:bg-gray-100"
+        }`}
+        onClick={(e) => {
+          e.stopPropagation();
+          handleButtonClick("TaskReport");
+        }}
+      >
+        <ClipboardList size={16} />
+        Task
+      </div>
+
+    </div>
+  )}
+</div>
+
+
+
+
+      {/* ADMIN MENU */}
+      <div
+        className={`${menuItemsStyle} ${
+          activeButton.Admin ? selectedButtonStyle : ""
+        }`}
+        onClick={() => handleButtonClick("Admin")}
+      >
+        <Users size={20} />
+        <span>Admin's</span>
+      </div>
+    </>
+  );
+};
+
+
+
 
   // ProjectManager menu rendering function
   const renderProjectManagerMenu = () => {

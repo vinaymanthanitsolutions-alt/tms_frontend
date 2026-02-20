@@ -6,7 +6,10 @@ import AdminReport from "./adminPages/AdminReport";
 import AdminDashboard from "./adminPages/AdminDashboard";
 import Dashboard from "./superadminPages/Dashboard";
 
-import Report from "./superadminPages/Report";
+import UsersReport from "./superadminPages/UsersReport";
+import TaskReport from "./superadminPages/TaskReport";
+import ProjectReport from "./superadminPages/ProjectReport";
+import Admin from "./superadminPages/Admin"
 
 import ProjectManagerDashboard from "./ProjectManagerPages/ProjectManagerDashboard";
 import TeamLeadDashboard from "./teamleadPages/TeamLeadDashboard";
@@ -15,8 +18,10 @@ import { DEMODATA } from "../data";
 import { Menu } from "lucide-react";
 import ProjectManagerProject from "./ProjectManagerPages/ProjectManagerProject";
 import PMTask from "./ProjectManagerPages/PMTask";
-import ProjectReport from "./ProjectManagerPages/ProjectReport";
+// import ProjectReport from "./ProjectManagerPages/ProjectReport";
 import AdminProject from "./adminPages/AdminProject";
+import AdminRiskOverview from "./adminPages/AdminRiskOverview";
+import AdminProjectInsight from "./adminPages/AdminProjectInsight";
 
 export default function Home() {
   const [isOpenAdminRegister, setIsOpenAdminRegister] = useState(false);
@@ -40,6 +45,8 @@ export default function Home() {
       />
     ),
     Report: () => <AdminReport />,
+    RiskOverview: () => <AdminRiskOverview />,
+    ProjectInsight: () => <AdminProjectInsight />,
     Project: () => (
       <AdminProject/>
     ),
@@ -54,9 +61,11 @@ export default function Home() {
   const projectManagerPages = {
     Dashboard: () => <ProjectManagerDashboard />,
     Project: () => (
-      <ProjectManagerProject className="border-2" />
+      <ProjectManagerProject />
     ),
-    Report: () => <ProjectReport />,
+    Report: () => <div></div>,
+
+
     Task: () => (
      <PMTask/>
     ),
@@ -70,7 +79,10 @@ export default function Home() {
   // Super Admin
   const superAdminPages = {
     Dashboard: () => <Dashboard />,
-    Report: () => <Report />,
+    UsersReport: () => <UsersReport />,
+    ProjectReport: () => <ProjectReport />,
+    TaskReport: () => <TaskReport />,
+    Admin: () => <Admin />,
     default: () => (
       <div className="p-4">
         <h2 className="text-xl font-semibold">Page Under Construction</h2>

@@ -1,12 +1,23 @@
 import { useState } from "react";
 import { loginUser } from "../services/UserLoginServices";
+import VerifyOtp from "../pages/VerifyOtp";
+import ForgetPassword from "../pages/ForgetPassword";
+import ResetPassword from "../pages/ResetPassword";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 export default function UserLogin() {
   const [empId, setEmpId] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showOtp, setShowOtp] = useState(false);
+  const [forgetMode, setForgetMode] = useState(false);
+  const [showReset, setShowReset] = useState(false);
+  const [email, setEmail] = useState("");
+  const navigate = useNavigate();
 
+  // ===== LOGIN SUBMIT =====
   async function handleSubmit(e) {
     e.preventDefault();
 
@@ -19,73 +30,52 @@ export default function UserLogin() {
       setLoading(true);
       setError("");
 
-      const data = await loginUser({
-        empId,
-        password,
-      });
+      const res = await loginUser({ empId, password });
+      console.log("LOGIN RESPONSE:", res);
 
-      if (data.token) {
-        localStorage.setItem("token", data.token);
+      if (res?.success) {
+        toast.success("OTP sent to your registered email ");
+        setShowOtp(true); 
+      } else {
+        setError(res?.message || "Invalid credentials");
+        toast.error(res?.message || "Invalid credentials ");
       }
-
-      alert("Login Successful ✅");
-      localStorage.setItem("userId", response.data.userId);
     } catch (err) {
-      setError(err.message || "Invalid credentials");
+      console.error("Login error:", err);
+      setError(err.message || "Login failed");
+      toast.error(err.message || "Login failed ");
     } finally {
       setLoading(false);
     }
   }
 
+ 
+
   return (
     <div className="min-h-screen w-full bg-gray-100 flex items-center justify-center px-4 sm:px-6 md:px-8 py-6">
-
-      {/* OUTER WRAPPER */}
       <div className="w-full max-w-7xl bg-transparent rounded-3xl overflow-hidden shadow-md">
-
         <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2">
 
           {/* LEFT LOGIN CARD */}
           <div className="flex items-center justify-center bg-white px-5 sm:px-8 md:px-10 py-8 sm:py-10 rounded-3xl lg:rounded-l-3xl lg:rounded-r-none">
-
             <div className="w-full max-w-md">
-
               {/* Logo */}
               <div className="flex items-center gap-3 sm:gap-4 mb-6 sm:mb-8">
-                <img
-                  src="/logo.png"
-                  alt="Manthan IT Solutions"
-                  className="h-9 sm:h-11 md:h-12 w-auto"
-                />
-                <span
-                  className="text-lg sm:text-xl md:text-2xl font-semibold tracking-wide text-gray-900"
-                  style={{ fontFamily: "var(--font-oswald)" }}
-                >
+                <img src="/logo.png" alt="Logo" className="h-9 sm:h-11 md:h-12 w-auto" />
+                <span className="text-lg sm:text-xl md:text-2xl font-semibold tracking-wide text-gray-900">
                   Manthan IT Solutions
                 </span>
               </div>
 
-              <h1
-                className="text-2xl sm:text-3xl text-gray-900 mb-2 sm:mb-3"
-                style={{ fontFamily: "var(--font-oswald)" }}
-              >
-                Sign in
-              </h1>
-
-              <p
-                className="text-gray-500 mb-5 sm:mb-6 text-sm sm:text-base"
-                style={{ fontFamily: "var(--font-unna)" }}
-              >
+              <h1 className="text-2xl sm:text-3xl text-gray-900 mb-2 sm:mb-3">Sign in</h1>
+              <p className="text-gray-500 mb-5 sm:mb-6 text-sm sm:text-base">
                 Welcome back! Please enter your credentials.
               </p>
 
+              {/* LOGIN FORM */}
               <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
-
-                {/* Employee ID */}
                 <div>
-                  <label className="block text-sm text-gray-600 mb-1">
-                    Employee ID
-                  </label>
+                  <label className="block text-sm text-gray-600 mb-1">Employee ID</label>
                   <input
                     type="text"
                     placeholder="EMP12345"
@@ -96,11 +86,8 @@ export default function UserLogin() {
                   />
                 </div>
 
-                {/* Password */}
                 <div>
-                  <label className="block text-sm text-gray-600 mb-1">
-                    Password
-                  </label>
+                  <label className="block text-sm text-gray-600 mb-1">Password</label>
                   <input
                     type="password"
                     placeholder="••••••••"
@@ -111,23 +98,21 @@ export default function UserLogin() {
                   />
                 </div>
 
-                {/* Remember + Forgot */}
                 <div className="flex items-center justify-between text-sm flex-wrap gap-2">
                   <label className="flex items-center gap-2 text-gray-600">
-                    <input type="checkbox" />
-                    Remember me
+                    <input type="checkbox" /> Remember me
                   </label>
-                  <a href="#" className="text-gray-800 hover:underline">
+                  <button
+                    type="button"
+                    onClick={() => setForgetMode(true)}
+                    className="text-gray-800 hover:underline"
+                  >
                     Forgot password?
-                  </a>
+                  </button>
                 </div>
 
-                {/* Error */}
-                {error && (
-                  <p className="text-red-500 text-sm">{error}</p>
-                )}
+                {error && <p className="text-red-500 text-sm">{error}</p>}
 
-                {/* Button */}
                 <button
                   type="submit"
                   disabled={loading}
@@ -135,7 +120,6 @@ export default function UserLogin() {
                 >
                   {loading ? "Signing in..." : "Sign in"}
                 </button>
-
               </form>
             </div>
           </div>
@@ -201,6 +185,55 @@ export default function UserLogin() {
 
         </div>
       </div>
+
+       
+
+{forgetMode && (
+  <div className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-50">
+    <ForgetPassword
+      onClose={() => setForgetMode(false)}
+      onOtpSent={(email) => {
+        setForgetMode(false);
+        setEmail(email);   
+        setShowReset(true);
+      }}
+    />
+  </div>
+)}
+
+
+
+      {/* VERIFY OTP MODAL */}
+{showOtp && (
+  <div className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-50">
+    <VerifyOtp
+      empId={empId}
+      onClose={() => setShowOtp(false)}
+      onVerified={() => {
+        setShowOtp(false);
+        
+      }}
+    />
+  </div>
+)}
+
+
+      {/* RESET PASSWORD MODAL*/}
+{showReset && (
+  <div className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-50">
+    <ResetPassword
+      email={email}
+      onDone={() => {
+        setShowReset(false);
+        toast.success("Password reset successfully ");
+      }}
+      onClose={() => setShowReset(false)}
+    />
+  </div>
+)}
+
+      
+
     </div>
   );
 }
