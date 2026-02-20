@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
+
 import manthanLogo from "/manthanlogo.png";
 import { House } from "lucide-react";
 import { ChartNoAxesCombined } from "lucide-react";
@@ -8,17 +9,32 @@ import { Settings } from "lucide-react";
 import { MessageCircleQuestionMark } from "lucide-react";
 import { X } from "lucide-react";
 import { DEMODATA } from "../data";
+import {
+  
+  FolderKanban,
+  
+  ChevronDown
+} from "lucide-react";
+
 
 const Sidebar = ({ onNavigate, isOpen, onClose }) => {
   const [activeButton, setActiveButton] = React.useState({
-    Dashboard: true,
-    Report: false,
-    Team: false,
-    Task: false,
-    Project: false,
-    Settings: false,
-    Help: false,
-  });
+  Dashboard: true,
+  Report: false,
+  UsersReport: false,    // for superadmin
+  ProjectReport: false,    // for superadmin
+  TaskReport: false,     // for superadmin
+  Team: false,
+  Task: false,
+  Project: false,
+  Admin: false,
+  Settings: false,
+  Help: false,
+  Logout: false,
+});
+
+
+  const [showReportDropdown, setShowReportDropdown] = useState(false);
 
   function handleButtonClick(buttonName) {
     setActiveButton((prevState) => {
@@ -83,25 +99,117 @@ const Sidebar = ({ onNavigate, isOpen, onClose }) => {
 
   // SuperAdmin menu rendering function
   const renderSuperAdminMenu = () => {
-    return (
-      <>
-        <div
-          className={`${menuItemsStyle} ${activeButton.Dashboard ? selectedButtonStyle : ""}`}
-          onClick={() => handleButtonClick("Dashboard")}
-        >
-          <House size={20} />
-          <span>Dashboard</span>
-        </div>
-        <div
-          className={`${menuItemsStyle} ${activeButton.Report ? selectedButtonStyle : ""}`}
-          onClick={() => handleButtonClick("Report")}
-        >
-          <ChartNoAxesCombined size={20} />
-          <span>Report</span>
-        </div>
-      </>
-    );
-  };
+  return (
+    <>
+      <div
+        className={`${menuItemsStyle} ${
+          activeButton.Dashboard ? selectedButtonStyle : ""
+        }`}
+        onClick={() => handleButtonClick("Dashboard")}
+      >
+        <House size={20} />
+        <span>Dashboard</span>
+      </div>
+
+      
+{/* REPORT MENU */}
+<div>
+  <div
+    className={`${menuItemsStyle} ${
+      activeButton.UsersReport ||
+      activeButton.ProjectReport ||
+      activeButton.TaskReport
+        ? selectedButtonStyle
+        : ""
+    } flex items-center justify-between`}
+    onClick={() => { 
+      setShowReportDropdown(!showReportDropdown);
+    }}
+  >
+    <div className="flex items-center gap-2">
+      <ChartNoAxesCombined size={20} />
+      <span>Report</span>
+    </div>
+    <ChevronDown size={16} />
+  </div>
+
+  {showReportDropdown && (
+    <div className="ml-8 mt-2 space-y-1">
+
+      {/* USERS REPORT */}
+      <div
+        className={`px-4 py-2 text-sm rounded cursor-pointer flex items-center gap-2
+        ${
+          activeButton.UsersReport
+            ? "bg-gray-200 font-medium"
+            : "hover:bg-gray-100"
+        }`}
+        onClick={(e) => {
+          e.stopPropagation();
+          handleButtonClick("UsersReport");
+        }}
+      >
+        <Users size={16} />
+        Users
+      </div>
+
+      {/* PROJECT REPORT */}
+      <div
+        className={`px-4 py-2 text-sm rounded cursor-pointer flex items-center gap-2
+        ${
+          activeButton.ProjectReport
+            ? "bg-gray-200 font-medium"
+            : "hover:bg-gray-100"
+        }`}
+        onClick={(e) => {
+          e.stopPropagation();
+          handleButtonClick("ProjectReport");
+        }}
+      >
+        <FolderKanban size={16} />
+        Project
+      </div>
+
+      {/* TASK REPORT */}
+      <div
+        className={`px-4 py-2 text-sm rounded cursor-pointer flex items-center gap-2
+        ${
+          activeButton.TaskReport
+            ? "bg-gray-200 font-medium"
+            : "hover:bg-gray-100"
+        }`}
+        onClick={(e) => {
+          e.stopPropagation();
+          handleButtonClick("TaskReport");
+        }}
+      >
+        <ClipboardList size={16} />
+        Task
+      </div>
+
+    </div>
+  )}
+</div>
+
+
+
+
+      {/* ADMIN MENU */}
+      <div
+        className={`${menuItemsStyle} ${
+          activeButton.Admin ? selectedButtonStyle : ""
+        }`}
+        onClick={() => handleButtonClick("Admin")}
+      >
+        <Users size={20} />
+        <span>Admin's</span>
+      </div>
+    </>
+  );
+};
+
+
+
 
   // ProjectManager menu rendering function
   const renderProjectManagerMenu = () => {

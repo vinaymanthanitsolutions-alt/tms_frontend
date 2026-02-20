@@ -1,5 +1,5 @@
-import {
- PieChart,
+import { 
+  PieChart,
   Pie,
   Cell,
   BarChart,
@@ -10,30 +10,54 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
-/*  DUMMY DATA */
-const pieData = [
-  { name: "Total Admin", value: 40 },
-  { name: "Active Admin", value: 33 },
-  { name: "Deactive Admin", value: 5 },
-  {name: "Suspended" , value:2}
-];
-
-const barData = [
-  { month: "Jan", Active : 4, Deactive: 2 },
-  { month: "Feb", Active: 6, Deactive: 3 },
-  { month: "Mar", Active: 8, Deactive: 4 },
-  { month: "Apr", Active: 10, Deactive: 5 },
-];
-
-const COLORS = ["#10B981", "#3B82F6", "#EF4444","#FFEB3B"]; // green, blue, red
+const COLORS = ["#10B981", "#3B82F6", "#EF4444", "#FFEB3B"];
 
 export default function DashboardChart() {
-  return (
-    <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
 
-      {/* 🔵 LEFT : PIE CHART */}
-      <div className="bg-white p-6 rounded-xl ml-5  border border-gray-200">
+  const [pieData, setPieData] = useState([]);
+  const [barData, setBarData] = useState([]);
+
+  useEffect(() => {
+    fetchCounts();
+  }, []);
+
+  const fetchCounts = async () => {
+    try {
+      const res = await axios.get("http://localhost:8080/empCounts?manager_id=SA001");
+
+      console.log("API RESPONSE:", res.data);
+
+      const counts = res.data.data; 
+
+      setPieData([
+        { name: "TOTAL ADMIN", value: counts.total_employees || 0 },
+        { name: "ACTIVE ADMIN", value: counts.active || 0 },
+        { name: "INACTIVE ADMIN", value: counts.inactive || 0 },
+        { name: "SUSPENDED", value: counts.suspended || 0 },
+      ]);
+
+      // ✅ FIXED HERE
+      setBarData([
+        { week: "week1", ACTIVE: 12, INACTIVE: 5 },
+        { week: "week2", ACTIVE: 18, INACTIVE: 4 },
+        { week: "week3", ACTIVE: 10, INACTIVE: 8 },
+        { week: "week4", ACTIVE: 22, INACTIVE: 3 },
+       
+      ]);
+
+    } catch (error) {
+      console.error("Error fetching employee counts:", error);
+    }
+  };
+
+  return (
+    <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-6 bg-gray-50 h-106">
+
+      {/* PIE CHART */}
+      <div className="bg-white p-6 rounded-xl ml-5 mt-6 border border-gray-200">
         <h2 className="text-lg font-semibold mb-4">
           Admin Overview
         </h2>
@@ -47,7 +71,7 @@ export default function DashboardChart() {
                 nameKey="name"
                 innerRadius={50}
                 outerRadius={90}
-                paddingAngle={5}
+                paddingAngle={2}
               >
                 {pieData.map((entry, index) => (
                   <Cell
@@ -63,21 +87,21 @@ export default function DashboardChart() {
         </div>
       </div>
 
-      {/* 🟢 RIGHT : BAR CHART */}
-      <div className="bg-white p-6 rounded-xl border border-gray-200">
+      {/* BAR CHART */}
+      <div className="bg-white p-6 rounded-xl border mt-6 border-gray-200">
         <h2 className="text-lg font-semibold mb-4">
-          Monthly Admin Status
+          Weekly Admin Status
         </h2>
 
         <div className="w-full h-72">
           <ResponsiveContainer>
             <BarChart data={barData}>
-              <XAxis dataKey="month" />
+              <XAxis dataKey="week" />
               <YAxis />
               <Tooltip />
               <Legend />
-              <Bar dataKey="Active" fill="#10B981" />
-              <Bar dataKey="Deactive" fill="#EF4444" />
+              <Bar dataKey="ACTIVE" fill="#10B981" />
+              <Bar dataKey="INACTIVE" fill="#EF4444" />
             </BarChart>
           </ResponsiveContainer>
         </div>
