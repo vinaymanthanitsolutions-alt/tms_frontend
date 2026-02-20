@@ -20,6 +20,8 @@ import ProjectManagerProject from "./ProjectManagerPages/ProjectManagerProject";
 import PMTask from "./ProjectManagerPages/PMTask";
 // import ProjectReport from "./ProjectManagerPages/ProjectReport";
 import AdminProject from "./adminPages/AdminProject";
+import AdminRiskOverview from "./adminPages/AdminRiskOverview";
+import AdminProjectInsight from "./adminPages/AdminProjectInsight";
 
 export default function Home() {
   const [isOpenAdminRegister, setIsOpenAdminRegister] = useState(false);
@@ -43,6 +45,8 @@ export default function Home() {
       />
     ),
     Report: () => <AdminReport />,
+    RiskOverview: () => <AdminRiskOverview />,
+    ProjectInsight: () => <AdminProjectInsight />,
     Project: () => (
       <AdminProject/>
     ),
@@ -60,6 +64,7 @@ export default function Home() {
       <ProjectManagerProject />
     ),
     Report: () => <div></div>,
+
 
     Task: () => (
      <PMTask/>

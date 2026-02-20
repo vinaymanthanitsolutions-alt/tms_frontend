@@ -1,14 +1,14 @@
-  // export const DEMODATA = {
-  // role:"admin"
-  // }
+  export const DEMODATA = {
+  role:"admin"
+  }
 
 // export const DEMODATA = {
 //     role : "teamlead"
 // }
 
-export const DEMODATA = {
-  role: "projectmanager",
-};
+// export const DEMODATA = {
+//   role: "projectmanager",
+// };
 
 // export const DEMODATA = {
 //  role : "projectmanager"
@@ -84,9 +84,28 @@ export const BARCHARTDATA = {
   datasets: [{
     label: "Dataset 1",
     data: [65, 59, 80, 81, 56, 55],
-    backgroundColor: "rgb(75, 192, 192)",
-    borderColor: "rgb(75, 192, 192)",
+    backgroundColor: "#ff6900",
+    borderColor: "#ff6900",
     borderWidth: 1,
-    
   }],
+};
+
+export const BLUEBARCHARTDATA = {
+  labels: ["", "", "", "", ""],
+  datasets: [
+    {
+      label: "",
+      data: [22, 45, 38, 58, 85],
+      backgroundColor: [
+        "#93C5FD", // light blue
+        "#60A5FA", // medium-light blue
+        "#3B82F6", // medium blue
+        "#3B82F6", // medium blue
+        "#EF4444", // red - highlight
+      ],
+      borderWidth: 0,
+      barPercentage: 0.6,
+      categoryPercentage: 0.8,
+    },
+  ],
 };
