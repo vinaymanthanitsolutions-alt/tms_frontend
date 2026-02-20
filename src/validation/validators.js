@@ -62,6 +62,6 @@ export const validatePhoneNumber = (phoneNumber) => {
 };
 
 export const validateTeamId = (teamId) => {
-  const id = String(teamId).trim();
-  return /^T\d{3,5}$/.test(id);
+  const id = String(teamId).trim().toUpperCase();
+  return /^TM\d{3,5}$/.test(id);
 };

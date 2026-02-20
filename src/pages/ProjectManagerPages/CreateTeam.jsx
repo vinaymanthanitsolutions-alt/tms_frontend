@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Plus, X } from "lucide-react";
 import { validateTeamId } from "../../validation/validators";
-import { getProjectsByPM ,getEmployeesByPM} from "../../services/projectService";
+import { getProjectsByPM ,getEmployeesByPM} from "../../services/ManagerServices/projectService";
+import {
+  createTeam,
+  addTeamMember,
+} from "../../services/ManagerServices/teamService";
 import toast from "react-hot-toast";
 
 const CreateTeam = ({ onClose }) => {
@@ -17,18 +21,6 @@ const CreateTeam = ({ onClose }) => {
   const [showTLDropdown, setShowTLDropdown] = useState(false);
   const [teamIdError, setTeamIdError] = useState("");
 
-  // useEffect(() => {
-  //   setTeamLeads([
-  //     { id: 1, name: "Rahul Sharma", email: "rahul@email.com" },
-  //     { id: 2, name: "Ankit Verma", email: "ankit@email.com" }
-  //   ]);
-
-  //   setDevelopers([
-  //     { id: 3, name: "Priya Singh", email: "priya@email.com", role: "Developer" },
-  //     { id: 4, name: "Aman Gupta", email: "aman@email.com", role: "Developer" },
-  //     { id: 5, name: "Sneha Jain", email: "sneha@email.com", role: "Tester" }
-  //   ]);
-  // }, []);
 
   useEffect(() => {
   const fetchEmployees = async () => {
@@ -90,36 +82,63 @@ const CreateTeam = ({ onClose }) => {
   );
 };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+ const handleSubmit = async (e) => {
+  e.preventDefault();
 
+  try {
     if (!validateTeamId(teamId)) {
       setTeamIdError(
-        "Team ID must start with 'T' followed by 3-5 digits (e.g. T123)"
+        "Team ID must start with TM followed by digits"
       );
       return;
-    } else {
-      setTeamIdError("");
     }
 
-    if (!projectId) {
-       toast.error("Please select a Project");
-      return;
-    }
+    if (!projectId)
+      return toast.error("Select Project");
 
-    if (!selectedTL) {
-      toast.error("Please select a Team Leader");
-      return;
-    }
+    if (!selectedTL)
+      return toast.error("Select Team Leader");
 
-    if (selectedMembers.length === 0) {
-       toast.error("Please select at least one Developer or Tester");
-      return;
+    if (selectedMembers.length === 0)
+      return toast.error("Add team members");
+
+    // =========================
+    // ✅ STEP 1: CREATE TEAM
+    // =========================
+    const teamPayload = {
+      project_id: projectId,
+      team_id: teamId,
+      team_leader_id: selectedTL.emp_id,
+    };
+
+    console.log("Creating Team:", teamPayload);
+
+    await createTeam(teamPayload);
+
+    // =========================
+    // ✅ STEP 2: ADD MEMBERS
+    // =========================
+    for (const member of selectedMembers) {
+      console.log(
+        "Adding Member:",
+        member.emp_id
+      );
+
+      await addTeamMember(
+        teamId,
+        member.emp_id
+      );
     }
 
     toast.success("Team Created Successfully 🎉");
+
     onClose();
-  };
+
+  } catch (error) {
+    console.error(error);
+    toast.error("Team creation failed ❌");
+  }
+};
 
   return (
     <form
@@ -221,7 +240,7 @@ const CreateTeam = ({ onClose }) => {
         {selectedTL && (
           <div className="mt-3 bg-emerald-100 text-emerald-700 px-3 py-2 rounded-md text-sm inline-block">
             <div className="font-medium">{selectedTL.emp_name}</div>
-            <div className="text-xs">{selectedTL.email}</div>
+            <div className="text-xs">{selectedTL.emp_id}</div>
           </div>
         )}
       </div>
@@ -252,7 +271,7 @@ const CreateTeam = ({ onClose }) => {
             >
               <div>
                 <div className="font-medium">{member.emp_name}</div>
-                <div className="text-xs">{member.email}</div>
+                <div className="text-xs">{member.emp_id}</div>
               </div>
               <X
                 size={14}
