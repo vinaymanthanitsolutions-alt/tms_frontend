@@ -64,8 +64,6 @@ export default function Home() {
       <ProjectManagerProject />
     ),
     Report: () => <div></div>,
-
-
     Task: () => (
      <PMTask/>
     ),

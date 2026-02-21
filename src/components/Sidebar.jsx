@@ -8,33 +8,43 @@ import { Users } from "lucide-react";
 import { Settings } from "lucide-react";
 import { MessageCircleQuestionMark } from "lucide-react";
 import { X } from "lucide-react";
-import {ChevronDown, ChevronRight, AlertTriangle, TrendingUp, FileText } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronRight,
+  AlertTriangle,
+  TrendingUp,
+  FileText,
+} from "lucide-react";
 import { DEMODATA } from "../data";
 import { FolderKanban } from "lucide-react";
 
-
 const Sidebar = ({ onNavigate, isOpen, onClose }) => {
   const [activeButton, setActiveButton] = React.useState({
-  Dashboard: true,
-  Report: false,
-  UsersReport: false,    // for superadmin
-  ProjectReport: false,    // for superadmin
-  TaskReport: false,     // for superadmin
-  RiskOverview: false,   // for admin report
-  ProjectInsight: false, // for admin report
-  AuditHistory: false,   // for admin report
-  Team: false,
-  Task: false,
-  Project: false,
-  Admin: false,
-  Settings: false,
-  Help: false,
-  Logout: false,
-});
-
+    Dashboard: true,
+    Report: false,
+    UsersReport: false, // for superadmin
+    ProjectReport: false, // for superadmin
+    TaskReport: false, // for superadmin
+    RiskOverview: false, // for admin report
+    ProjectInsight: false, // for admin report
+    AuditHistory: false, // for admin report
+    ProjectAnalysis: false, // for projectmanager report
+    TaskAndTeamInsights: false, // for projectmanager report
+    Team: false,
+    Task: false,
+    Project: false,
+    Admin: false,
+    Settings: false,
+    Help: false,
+    Logout: false,
+  });
 
   const [showReportDropdown, setShowReportDropdown] = useState(false);
   const [showAdminReportDropdown, setShowAdminReportDropdown] = useState(false);
+  const [
+    showProjectManagerReportDropdown,
+    setShowProjectManagerReportDropdown,
+  ] = useState(false);
 
   function handleButtonClick(buttonName) {
     setActiveButton((prevState) => {
@@ -77,7 +87,9 @@ const Sidebar = ({ onNavigate, isOpen, onClose }) => {
         <div>
           <div
             className={`${menuItemsStyle} ${
-              activeButton.RiskOverview || activeButton.ProjectInsight || activeButton.AuditHistory
+              activeButton.RiskOverview ||
+              activeButton.ProjectInsight ||
+              activeButton.AuditHistory
                 ? selectedButtonStyle
                 : ""
             } flex items-center justify-between`}
@@ -94,7 +106,9 @@ const Sidebar = ({ onNavigate, isOpen, onClose }) => {
             <div className="ml-8 mt-2 space-y-1">
               <div
                 className={`px-4 py-2 text-sm rounded cursor-pointer flex items-center gap-2 text-gray-500 ${
-                  activeButton.RiskOverview ? "bg-gray-200 text-gray-600" : "hover:bg-gray-100 hover:text-black"
+                  activeButton.RiskOverview
+                    ? "bg-gray-200 text-gray-600"
+                    : "hover:bg-gray-100 hover:text-black"
                 }`}
                 onClick={(e) => {
                   e.stopPropagation();
@@ -106,7 +120,9 @@ const Sidebar = ({ onNavigate, isOpen, onClose }) => {
               </div>
               <div
                 className={`px-4 py-2 text-sm rounded cursor-pointer flex items-center gap-2 text-gray-600 ${
-                  activeButton.ProjectInsight ? "bg-gray-200 text-gray-600" : "hover:bg-gray-100 hover:text-black"
+                  activeButton.ProjectInsight
+                    ? "bg-gray-200 text-gray-600"
+                    : "hover:bg-gray-100 hover:text-black"
                 }`}
                 onClick={(e) => {
                   e.stopPropagation();
@@ -118,7 +134,9 @@ const Sidebar = ({ onNavigate, isOpen, onClose }) => {
               </div>
               <div
                 className={`px-4 py-2 text-sm rounded cursor-pointer flex items-center gap-2 text-gray-600 ${
-                  activeButton.AuditHistory ? "bg-gray-200 text-gray-600" : "hover:bg-gray-100 hover:text-black"
+                  activeButton.AuditHistory
+                    ? "bg-gray-200 text-gray-600"
+                    : "hover:bg-gray-100 hover:text-black"
                 }`}
                 onClick={(e) => {
                   e.stopPropagation();
@@ -152,117 +170,108 @@ const Sidebar = ({ onNavigate, isOpen, onClose }) => {
 
   // SuperAdmin menu rendering function
   const renderSuperAdminMenu = () => {
-  return (
-    <>
-      <div
-        className={`${menuItemsStyle} ${
-          activeButton.Dashboard ? selectedButtonStyle : ""
-        }`}
-        onClick={() => handleButtonClick("Dashboard")}
-      >
-        <House size={20} />
-        <span>Dashboard</span>
-      </div>
+    return (
+      <>
+        <div
+          className={`${menuItemsStyle} ${
+            activeButton.Dashboard ? selectedButtonStyle : ""
+          }`}
+          onClick={() => handleButtonClick("Dashboard")}
+        >
+          <House size={20} />
+          <span>Dashboard</span>
+        </div>
 
-      
-{/* REPORT MENU */}
-<div>
-  <div
-    className={`${menuItemsStyle} ${
-      activeButton.UsersReport ||
-      activeButton.ProjectReport ||
-      activeButton.TaskReport
-        ? selectedButtonStyle
-        : ""
-    } flex items-center justify-between`}
-    onClick={() => { 
-      setShowReportDropdown(!showReportDropdown);
-    }}
-  >
-    <div className="flex items-center gap-2">
-      <ChartNoAxesCombined size={20} />
-      <span>Report</span>
-    </div>
-    <ChevronDown size={16} />
-  </div>
+        {/* REPORT MENU */}
+        <div>
+          <div
+            className={`${menuItemsStyle} ${
+              activeButton.UsersReport ||
+              activeButton.ProjectReport ||
+              activeButton.TaskReport
+                ? selectedButtonStyle
+                : ""
+            } flex items-center justify-between`}
+            onClick={() => {
+              setShowReportDropdown(!showReportDropdown);
+            }}
+          >
+            <div className="flex items-center gap-2">
+              <ChartNoAxesCombined size={20} />
+              <span>Report</span>
+            </div>
+            <ChevronDown size={16} />
+          </div>
 
-  {showReportDropdown && (
-    <div className="ml-8 mt-2 space-y-1">
-
-      {/* USERS REPORT */}
-      <div
-        className={`px-4 py-2 text-sm rounded cursor-pointer flex items-center gap-2
+          {showReportDropdown && (
+            <div className="ml-8 mt-2 space-y-1">
+              {/* USERS REPORT */}
+              <div
+                className={`px-4 py-2 text-sm rounded cursor-pointer flex items-center gap-2
         ${
           activeButton.UsersReport
             ? "bg-gray-200 font-medium"
             : "hover:bg-gray-100"
         }`}
-        onClick={(e) => {
-          e.stopPropagation();
-          handleButtonClick("UsersReport");
-        }}
-      >
-        <Users size={16} />
-        Users
-      </div>
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleButtonClick("UsersReport");
+                }}
+              >
+                <Users size={16} />
+                Users
+              </div>
 
-      {/* PROJECT REPORT */}
-      <div
-        className={`px-4 py-2 text-sm rounded cursor-pointer flex items-center gap-2
+              {/* PROJECT REPORT */}
+              <div
+                className={`px-4 py-2 text-sm rounded cursor-pointer flex items-center gap-2
         ${
           activeButton.ProjectReport
             ? "bg-gray-200 font-medium"
             : "hover:bg-gray-100"
         }`}
-        onClick={(e) => {
-          e.stopPropagation();
-          handleButtonClick("ProjectReport");
-        }}
-      >
-        <FolderKanban size={16} />
-        Project
-      </div>
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleButtonClick("ProjectReport");
+                }}
+              >
+                <FolderKanban size={16} />
+                Project
+              </div>
 
-      {/* TASK REPORT */}
-      <div
-        className={`px-4 py-2 text-sm rounded cursor-pointer flex items-center gap-2
+              {/* TASK REPORT */}
+              <div
+                className={`px-4 py-2 text-sm rounded cursor-pointer flex items-center gap-2
         ${
           activeButton.TaskReport
             ? "bg-gray-200 font-medium"
             : "hover:bg-gray-100"
         }`}
-        onClick={(e) => {
-          e.stopPropagation();
-          handleButtonClick("TaskReport");
-        }}
-      >
-        <ClipboardList size={16} />
-        Task
-      </div>
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleButtonClick("TaskReport");
+                }}
+              >
+                <ClipboardList size={16} />
+                Task
+              </div>
+            </div>
+          )}
+        </div>
 
-    </div>
-  )}
-</div>
-
-
-
-
-      {/* ADMIN MENU */}
-      <div
-        className={`${menuItemsStyle} ${
-          activeButton.Admin ? selectedButtonStyle : ""
-        }`}
-        onClick={() => handleButtonClick("Admin")}
-      >
-        <Users size={20} />
-        <span>Admin's</span>
-      </div>
-    </>
-  );
-};
-
-
-
+        {/* ADMIN MENU */}
+        <div
+          className={`${menuItemsStyle} ${
+            activeButton.Admin ? selectedButtonStyle : ""
+          }`}
+          onClick={() => handleButtonClick("Admin")}
+        >
+          <Users size={20} />
+          <span>Admin's</span>
+        </div>
+      </>
+    );
+  };
 
   // ProjectManager menu rendering function
   const renderProjectManagerMenu = () => {
@@ -275,12 +284,65 @@ const Sidebar = ({ onNavigate, isOpen, onClose }) => {
           <House size={20} />
           <span>Dashboard</span>
         </div>
-        <div
-          className={`${menuItemsStyle} ${activeButton.Report ? selectedButtonStyle : ""}`}
-          onClick={() => handleButtonClick("Report")}
-        >
-          <ChartNoAxesCombined size={20} />
-          <span>Report</span>
+
+        {/* ProjectManager Report with subbuttons */}
+        <div>
+          <div
+            className={`${menuItemsStyle} ${
+              activeButton.ProjectAnalysis || activeButton.TaskAndTeamInsights
+                ? selectedButtonStyle
+                : ""
+            } flex items-center justify-between`}
+            onClick={() =>
+              setShowProjectManagerReportDropdown(
+                !showProjectManagerReportDropdown,
+              )
+            }
+          >
+            <div className="flex items-center gap-2">
+              <ChartNoAxesCombined size={20} />
+              <span>Report</span>
+            </div>
+            <ChevronDown size={16} />
+          </div>
+
+          {showProjectManagerReportDropdown && (
+            <div className="ml-8 mt-2 space-y-1">
+              {/* PROJECT ANALYSIS */}
+              <div
+                className={`px-4 py-2 text-sm rounded cursor-pointer flex items-center gap-2
+                ${
+                  activeButton.ProjectAnalysis
+                    ? "bg-gray-200 font-medium"
+                    : "hover:bg-gray-100"
+                }`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleButtonClick("ProjectAnalysis");
+                }}
+              >
+                <TrendingUp size={16} />
+                Project Analysis
+              </div>
+
+              {/* TASK AND TEAM INSIGHTS */}
+              <div
+                className={`px-4 py-2 text-sm rounded cursor-pointer flex items-center gap-2
+                ${
+                  activeButton.TaskAndTeamInsights
+                    ? "bg-gray-200 font-medium"
+                    : "hover:bg-gray-100"
+                }`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleButtonClick("TaskAndTeamInsights");
+                }}
+              >
+                <Users size={16} />
+                Task and Team insights
+              </div>
+            </div>
+          )}
         </div>
 
         <div
@@ -368,55 +430,63 @@ const Sidebar = ({ onNavigate, isOpen, onClose }) => {
       )}
 
       <aside
-        className={`fixed w-full md:w-64 lg:static inset-y-0 left-0 z-50  h-screen px-5 py-4 border-r-2 border-gray-200 bg-white transform transition-transform duration-300 ease-in-out ${
+        className={`fixed w-full md:w-64 lg:static inset-y-0 left-0 z-50 h-screen border-r-2 border-gray-200 bg-white transform transition-transform duration-300 ease-in-out flex flex-col ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         } lg:translate-x-0`}
       >
-        <div className="flex gap-2 items-center justify-between">
-          <div className="flex gap-2 items-center">
-            <img src={manthanLogo} alt="Manthan Logo" className="w-8 h-auto" />
-            <div className="text-xl font-semibold">Manthan</div>
+        <div className="flex-shrink-0 px-5 py-4">
+          <div className="flex gap-2 items-center justify-between">
+            <div className="flex gap-2 items-center">
+              <img
+                src={manthanLogo}
+                alt="Manthan Logo"
+                className="w-8 h-auto"
+              />
+              <div className="text-xl font-semibold">Manthan</div>
+            </div>
+            <button
+              onClick={onClose}
+              className="lg:hidden p-2 hover:bg-gray-100 rounded transition"
+              aria-label="Close menu"
+            >
+              <X size={24} />
+            </button>
           </div>
-          <button
-            onClick={onClose}
-            className="lg:hidden p-2 hover:bg-gray-100 rounded transition"
-            aria-label="Close menu"
-          >
-            <X size={24} />
-          </button>
+
+          <div className="mt-4 px-3 py-2 bg-gray-100 rounded">
+            <div className="text-xs text-gray-500">Role</div>
+            <div className="text-sm font-medium capitalize">
+              {DEMODATA.role || "Unknown"}
+            </div>
+          </div>
         </div>
 
-        <div className="mt-4 px-3 py-2 bg-gray-100 rounded">
-          <div className="text-xs text-gray-500">Role</div>
-          <div className="text-sm font-medium capitalize">
-            {DEMODATA.role || "Unknown"}
-          </div>
-        </div>
-
-        <div className="text-xs mt-7 text-gray-600 mb-4">Menu</div>
-        <div className="flex flex-col gap-1">{renderMenuItems()}</div>
-        <div className="text-xs mt-7 text-gray-600 mb-4">General</div>
-        <div className="flex flex-col gap-1">
-          <div
-            className={`${menuItemsStyle} ${activeButton.Help ? selectedButtonStyle : ""}`}
-            onClick={() => handleButtonClick("Help")}
-          >
-            <MessageCircleQuestionMark size={20} />
-            <span>Help</span>
-          </div>
-          <div
-            className={`${menuItemsStyle} ${activeButton.Settings ? selectedButtonStyle : ""}`}
-            onClick={() => handleButtonClick("Settings")}
-          >
-            <Settings size={20} />
-            <span>Settings</span>
-          </div>
-          <div
-            className={`${menuItemsStyle} ${activeButton.Logout ? selectedButtonStyle : ""}`}
-            onClick={() => handleButtonClick("Logout")}
-          >
-            <MessageCircleQuestionMark size={20} />
-            <span>Logout</span>
+        <div className="flex-1 overflow-y-auto px-5 pb-4">
+          <div className="text-xs mt-7 text-gray-600 mb-4">Menu</div>
+          <div className="flex flex-col gap-1">{renderMenuItems()}</div>
+          <div className="text-xs mt-7 text-gray-600 mb-4">General</div>
+          <div className="flex flex-col gap-1">
+            <div
+              className={`${menuItemsStyle} ${activeButton.Help ? selectedButtonStyle : ""}`}
+              onClick={() => handleButtonClick("Help")}
+            >
+              <MessageCircleQuestionMark size={20} />
+              <span>Help</span>
+            </div>
+            <div
+              className={`${menuItemsStyle} ${activeButton.Settings ? selectedButtonStyle : ""}`}
+              onClick={() => handleButtonClick("Settings")}
+            >
+              <Settings size={20} />
+              <span>Settings</span>
+            </div>
+            <div
+              className={`${menuItemsStyle} ${activeButton.Logout ? selectedButtonStyle : ""}`}
+              onClick={() => handleButtonClick("Logout")}
+            >
+              <MessageCircleQuestionMark size={20} />
+              <span>Logout</span>
+            </div>
           </div>
         </div>
       </aside>
