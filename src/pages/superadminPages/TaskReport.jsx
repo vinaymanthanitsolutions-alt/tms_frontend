@@ -21,12 +21,12 @@ const [loadingTeam, setLoadingTeam] = useState(false);
 
 
   const itemsPerPage = 5;
-  const projectId = "PR030";
+  
 
 const fetchTasks = async () => {
   try {
     const response = await fetch(
-      `http://localhost:8080/tasks/project/?project_id=${projectId}&page=${currentPage}&search=${searchTerm}&limit=20`
+      `http://localhost:8080/tasks/getAll`
 
     );
 
@@ -39,15 +39,15 @@ const fetchTasks = async () => {
     }
 
     // ✅ Correct array path
-    const apiTasks = result?.data?.data || [];
+    const apiTasks = result?.data || [];
 
     const formattedTasks = apiTasks.map((task) => ({
       projectId: task.project_id || "",
-      teamId: task.teamID || "",
-      teamLeader: task.teamLeaderName || "",
-      managerId: task.createdBy || "",
-      task: task.title || "",
-      department: task.department || "",
+      teamId: task.team_id || "",
+      teamLeader: task.team_leader_name || "",
+      managerId: task.created_by_id || "",
+      task: task.task_title || "",
+      status: task.status || "",
     }));
 
     setTasks(formattedTasks);
@@ -171,7 +171,7 @@ useEffect(() => {
               {/* <th className="p-4">Member Name</th> */}
               <th className="p-4">Manager ID</th>
               <th className="p-4">Task</th>
-              <th className="p-4">Department</th>
+              <th className="p-4">Status</th>
                <th className="p-4">Action</th>
             </tr>
           </thead>
@@ -186,39 +186,33 @@ useEffect(() => {
                 <td className="p-4 font-medium">{task.projectId}</td>
                 <td className="p-4 font-medium">{task.teamLeader}</td>
 
-                {/* Team Select
-                <td className="p-4">
-                  <select
-                    className="border border-gray-300 rounded px-2 py-1 text-xs"
-                    value={selectedRole[index] || ""}
-                    onChange={(e) =>
-                      setSelectedRole({
-                        ...selectedRole,
-                        [index]: e.target.value,
-                      })
-                    }
-                  >
-                    <option value="">Select</option>
-                    <option value="developer">Developer</option>
-                    <option value="tester">Tester</option>
-                  </select>
-                </td> */}
-
-                {/* Member Display
-                <td className="p-4 text-sm text-gray-700">
-                  {selectedRole[index]
-                    ? task[selectedRole[index]].join(", ")
-                    : "-"}
-                </td> */}
+              
 
                 <td className="p-4">{task.managerId}</td>
                 <td className="p-4">{task.task}</td>
 
-                 <td className="px-2 py-2 text-lg">
+                 {/* {/* <td className="px-2 py-2 text-lg">
               <div className="px-2 py-0.5 bg-blue-100 text-sm mx-auto rounded-2xl w-20 text-center text-blue-500">
                 {task.department}
-           </div>
-               </td>
+           </div> 
+               </td> */}
+
+
+                <td className="p-2">
+        <span
+          className={`px-3 py-1 rounded-full text-sm font-semibold ${
+            task.status === "COMPLETED"
+              ? "bg-green-100 text-green-700"
+              : task.status === "IN_PROGRESS"
+              ? "bg-yellow-100 text-yellow-700"
+              
+              : "bg-purple-100 text-purple-700"
+          }`}
+        >
+          {task.status}
+        </span>
+      </td>
+
                 {/* <td className="p-4 ">{task.department}</td> */}
                    <td className="p-4">
                    <button
@@ -386,10 +380,12 @@ useEffect(() => {
       <td className="p-2">
         <span
           className={`px-3 py-1 rounded-full text-sm font-semibold ${
-            sub.status === "Completed"
+            sub.status === "COMPLETED"
               ? "bg-green-100 text-green-700"
-              : sub.status === "In Progress"
+              : sub.status === "TEST_DONE"
               ? "bg-yellow-100 text-yellow-700"
+              : sub.status === "DEVELOPMENT_DONE"
+              ? "bg-purple-100 text-purple-700"
               : "bg-red-100 text-red-700"
           }`}
         >
