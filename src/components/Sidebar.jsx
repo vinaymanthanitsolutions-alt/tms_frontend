@@ -23,6 +23,8 @@ const Sidebar = ({ onNavigate, isOpen, onClose }) => {
   RiskOverview: false,   // for admin report
   ProjectInsight: false, // for admin report
   AuditHistory: false,   // for admin report
+  ProjectAnalysis: false, // for projectmanager report
+  TaskAndTeamInsights: false, // for projectmanager report
   Team: false,
   Task: false,
   Project: false,
@@ -35,6 +37,7 @@ const Sidebar = ({ onNavigate, isOpen, onClose }) => {
 
   const [showReportDropdown, setShowReportDropdown] = useState(false);
   const [showAdminReportDropdown, setShowAdminReportDropdown] = useState(false);
+  const [showProjectManagerReportDropdown, setShowProjectManagerReportDropdown] = useState(false);
 
   function handleButtonClick(buttonName) {
     setActiveButton((prevState) => {
@@ -275,12 +278,61 @@ const Sidebar = ({ onNavigate, isOpen, onClose }) => {
           <House size={20} />
           <span>Dashboard</span>
         </div>
-        <div
-          className={`${menuItemsStyle} ${activeButton.Report ? selectedButtonStyle : ""}`}
-          onClick={() => handleButtonClick("Report")}
-        >
-          <ChartNoAxesCombined size={20} />
-          <span>Report</span>
+
+        {/* ProjectManager Report with subbuttons */}
+        <div>
+          <div
+            className={`${menuItemsStyle} ${
+              activeButton.ProjectAnalysis || activeButton.TaskAndTeamInsights
+                ? selectedButtonStyle
+                : ""
+            } flex items-center justify-between`}
+            onClick={() => setShowProjectManagerReportDropdown(!showProjectManagerReportDropdown)}
+          >
+            <div className="flex items-center gap-2">
+              <ChartNoAxesCombined size={20} />
+              <span>Report</span>
+            </div>
+            <ChevronDown size={16} />
+          </div>
+
+          {showProjectManagerReportDropdown && (
+            <div className="ml-8 mt-2 space-y-1">
+              {/* PROJECT ANALYSIS */}
+              <div
+                className={`px-4 py-2 text-sm rounded cursor-pointer flex items-center gap-2
+                ${
+                  activeButton.ProjectAnalysis
+                    ? "bg-gray-200 font-medium"
+                    : "hover:bg-gray-100"
+                }`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleButtonClick("ProjectAnalysis");
+                }}
+              >
+                <TrendingUp size={16} />
+                Project Analysis
+              </div>
+
+              {/* TASK AND TEAM INSIGHTS */}
+              <div
+                className={`px-4 py-2 text-sm rounded cursor-pointer flex items-center gap-2
+                ${
+                  activeButton.TaskAndTeamInsights
+                    ? "bg-gray-200 font-medium"
+                    : "hover:bg-gray-100"
+                }`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleButtonClick("TaskAndTeamInsights");
+                }}
+              >
+                <Users size={16} />
+                Task and Team insights
+              </div>
+            </div>
+          )}
         </div>
 
         <div

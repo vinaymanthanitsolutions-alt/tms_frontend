@@ -299,7 +299,7 @@ mt-4
 
           {/* RIGHT DIV - UPCOMING DEADLINES (fixed 320px when on same row; full width when wrapped below 1200px) */}
          <div className="bg-white rounded-lg shadow-sm p-4 
-                flex flex-col min-h-[280px] w-full
+                flex flex-col h-fit w-full
                 min-[1200px]:w-[320px] min-[1200px]:shrink-0 min-[1200px]:max-w-[320px]
                 max-h-[420px] sm:max-h-[480px] min-[1200px]:max-h-[calc(100vh-260px)]">
 

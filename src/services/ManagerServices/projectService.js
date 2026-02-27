@@ -31,7 +31,7 @@ export const getEmployeesByPM = async (
     const response = await axios.get(`${API_BASE_URL}/emp`, {
       params: {
         emp_id: pmId,
-        role: role,
+        filter_role: role,
       },
     });
 

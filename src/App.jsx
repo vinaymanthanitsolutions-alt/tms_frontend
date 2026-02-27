@@ -5,10 +5,8 @@ import Home from "./pages/Home";
 import UserRegister from "./Register";
 import AdminDashboard from "./pages/adminPages/AdminDashboard";
 import Dashboard from "./pages/superadminPages/Dashboard";
+import "./App.css";
 import ProjectManagerDashboard from "./pages/ProjectManagerPages/ProjectManagerDashboard";
-
-
-
 
 
 

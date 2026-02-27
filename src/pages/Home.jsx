@@ -18,6 +18,8 @@ import { DEMODATA } from "../data";
 import { Menu } from "lucide-react";
 import ProjectManagerProject from "./ProjectManagerPages/ProjectManagerProject";
 import PMTask from "./ProjectManagerPages/PMTask";
+import PMProjectAnalysis from "./ProjectManagerPages/PMProjectAnalysis";
+import TeamAndTaskAnalysis from "./ProjectManagerPages/TeamAndTaskAnalysis";
 // import ProjectReport from "./ProjectManagerPages/ProjectReport";
 import AdminProject from "./adminPages/AdminProject";
 import AdminRiskOverview from "./adminPages/AdminRiskOverview";
@@ -64,8 +66,8 @@ export default function Home() {
       <ProjectManagerProject />
     ),
     Report: () => <div></div>,
-
-
+    ProjectAnalysis: () => <PMProjectAnalysis />,
+    TaskAndTeamInsights: () => <TeamAndTaskAnalysis />,
     Task: () => (
      <PMTask/>
     ),
