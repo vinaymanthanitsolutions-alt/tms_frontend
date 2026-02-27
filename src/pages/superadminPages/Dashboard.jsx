@@ -5,12 +5,16 @@ import {
   XAxis,
   YAxis,
   Tooltip,
+  AreaChart,
+  Area,
   ResponsiveContainer,
   PieChart,
   Pie,
   Cell,
   Legend,
 } from "recharts";
+
+
 
 import {
   Users,
@@ -61,12 +65,12 @@ const Dashboard = () => {
   ];
 
   const lineData = [
-    { day: "Week1", active: 80, inactive: 60 },
-    { day: "Week2", active: 70, inactive: 75 },
-    { day: "Week3", active: 78, inactive: 70 },
-    { day: "Week4", active: 85, inactive: 65 },
-    { day: "Week5", active: 72, inactive: 80 },
-    { day: "Week6", active: 88, inactive: 85 },
+    { day: "Week1", active: 80, inactive: 50 },
+    { day: "Week2", active: 70, inactive: 85 },
+    { day: "Week3", active: 80, inactive: 70 },
+    { day: "Week4", active: 60, inactive: 70 },
+    { day: "Week5", active: 90, inactive: 80 },
+    { day: "Week6", active: 65, inactive: 50 },
     // { day: "Week7", active: 92, inactive: 90 },
   ];
 
@@ -129,7 +133,7 @@ const getInitials = (name = "") => {
         {cards.map((card, i) => (
           <div
             key={i}
-           className={`bg-gradient-to-r ${card.color} text-white rounded-2xl p-4 sm:p-5 md:p-6 shadow-lg flex items-center gap-3 sm:gap-4`}
+           className={`bg-gradient-to-r ${card.color} text-white rounded-2xl p-4 sm:p-5 md:p-6 shadow-lg flex items-center gap-3 sm:gap-4 hover:shadow-xl`}
 
           >
             
@@ -149,31 +153,54 @@ const getInitials = (name = "") => {
         {/* Left Section */}
          <div className="lg:col-span-3 space-y-6">
           {/* Line Chart */}
-          <div className="bg-white p-6 rounded-2xl shadow">
-            <h2 className="text-lg font-semibold mb-4">
-              Active, Inactive Admins
-            </h2>
-           <ResponsiveContainer width="100%" height={200} className="sm:h-[250px]" >
-              <LineChart data={lineData}>
-                
-                <XAxis dataKey="day" />
-                <YAxis />
-                <Tooltip />
-                <Line
-                  type="monotone"
-                  dataKey="active"
-                  stroke="#3b82f6"
-                  strokeWidth={3}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="inactive"
-                  stroke="#f59e0b"
-                  strokeWidth={3}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
+       
+
+<div className="bg-white p-6 rounded-2xl shadow">
+  <h2 className="text-lg font-semibold mb-4">
+    Active, Inactive Admins
+  </h2>
+
+  <ResponsiveContainer width="100%" height={200} className="sm:h-[250px] text-sm">
+    <AreaChart data={lineData}>
+      
+      <defs>
+        {/* Active Gradient */}
+        <linearGradient id="colorActive" >
+          <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.4}/>
+          <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.2}/>
+        </linearGradient>
+
+        {/* Inactive Gradient */}
+        <linearGradient id="colorInactive" >
+          <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.4}/>
+          <stop offset="95%" stopColor="#f59e0b" stopOpacity={0.2}/>
+        </linearGradient>
+      </defs>
+
+      
+      <XAxis dataKey="day" />
+      <YAxis />
+      <Tooltip />
+
+      <Area
+        type="monotone"
+        dataKey="active"
+        stroke="#3b82f6"
+        fill="url(#colorActive)"
+        strokeWidth={2}
+      />
+
+      <Area
+        type="monotone"
+        dataKey="inactive"
+        stroke="#f59e0b"
+        fill="url(#colorInactive)"
+        strokeWidth={2}
+      />
+
+    </AreaChart>
+  </ResponsiveContainer>
+</div>
 
           {/* Bottom Section */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -187,7 +214,7 @@ const getInitials = (name = "") => {
                     dataKey="value"
                     innerRadius={40}
                     outerRadius={90}
-                     paddingAngle={2}
+                    
                   >
                     {pieData.map((_, index) => (
                       <Cell key={index} fill={pieColors[index]} />
@@ -320,8 +347,6 @@ const getInitials = (name = "") => {
     ))}
   </div>
 </div>
-
-            
           </div>
         
         

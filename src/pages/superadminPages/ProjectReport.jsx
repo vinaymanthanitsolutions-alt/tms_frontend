@@ -7,7 +7,7 @@ const itemsPerPage = 5;
 
 const ProjectReport = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [projects, setProjects] = useState([]); // ✅ API data
+  const [projects, setProjects] = useState([]); //  API data
     const [search, setSearch] = useState("");
 
 

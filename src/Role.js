@@ -1,1 +1,1 @@
-export const ROLE = "superadmin"
+export const ROLE = "superadmin"; // Change this value to "admin", "pm", or "superadmin" for testing

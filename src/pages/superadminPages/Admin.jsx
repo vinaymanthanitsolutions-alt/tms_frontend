@@ -2,6 +2,13 @@ import React, { useState, useEffect, useRef } from "react";
 import { Pencil, Trash2, X, Search, Filter, ChevronDown } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 
+import {
+  
+  validatePassword,
+  validateEmail ,
+  validatePhoneNumber,
+} from "../../validation/validators";
+
 const Admin = () => {
   const [admins, setAdmins] = useState([]);
   const [isEditOpen, setIsEditOpen] = useState(false);
@@ -12,6 +19,9 @@ const Admin = () => {
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
   const [totalPages, setTotalPages] = useState(1);
+
+  const addRef = useRef(null);
+  const editRef = useRef(null);
 
   const dropdownRef = useRef(null);
   const adminsPerPage = 5;
@@ -26,7 +36,22 @@ const Admin = () => {
     status: "ACTIVE",
   });
 
-  /* ================= FETCH ADMINS ================= */
+   // Form state
+    const [formData, setFormData] = useState({
+      email: "",
+      contact: "",
+      password: "",
+     
+    });
+
+     // Error state
+      const [error, setError] = useState({
+        email: "",
+        contact: "",
+        password: "",
+      });
+
+  /*  FETCH ADMINS  */
 
   const fetchAdmins = async () => {
     try {
@@ -54,7 +79,7 @@ const Admin = () => {
 
       setAdmins(formattedData);
 
-      // backend se total count aaye to
+      // backend se total count 
       if (data?.data?.total) {
         setTotalPages(Math.ceil(data.data.total / adminsPerPage));
       } else {
@@ -67,7 +92,7 @@ const Admin = () => {
     }
   };
 
-  /* ================= EFFECTS ================= */
+  /*  EFFECTS */
 
   useEffect(() => {
     fetchAdmins();
@@ -85,14 +110,35 @@ const Admin = () => {
     };
   }, []);
 
-  /* ================= ADD ================= */
+  /* ADD  */
 
   const handleAddChange = (e) => {
     setNewAdmin({ ...newAdmin, [e.target.name]: e.target.value });
   };
 
+
+
   const handleAddAdmin = async (e) => {
     e.preventDefault();
+         // Validate all fields
+         const newError = {
+           email: validateEmail(formData.email),
+           contact: validatePhoneNumber(formData.contact),
+           password: validatePassword(formData.password),
+          //  deadline: validateProjectDeadline(formData.deadline),
+         };
+     
+         setError(newError);
+     
+         // Check if there are any errors
+         const hasError = Object.values(newError).some((error) => error !== "");
+         if (hasError) {
+           toast.error("Please fix all validation errors");
+           return;
+         }
+     
+         setSubmitting(true);
+
     try {
       const response = await fetch("http://localhost:8080/signup", {
         method: "POST",
@@ -120,7 +166,7 @@ const Admin = () => {
     }
   };
 
-  /* ================= UPDATE ================= */
+  /* UPDATE  */
 
   const openEditModal = (admin) => {
     setEditAdmin({ ...admin });
@@ -165,7 +211,7 @@ const Admin = () => {
     }
   };
 
-  /* ================= DELETE ================= */
+  /*  DELETE  */
 
   const handleDelete = async (code) => {
     try {
@@ -183,6 +229,41 @@ const Admin = () => {
       toast.error("Delete failed");
     }
   };
+
+  const resetForm = () => {
+    setFormData({
+      email: "",
+      contact: "",
+      password: "",
+    });
+    // setSelectedManager("");
+    // setManagerId("");
+    setErrors({
+      email: "",
+      contact: "",
+      password: "",
+    });
+  }; 
+
+      
+
+  useEffect(() => {
+  const handleClickOutside = (e) => {
+    if (addRef.current && !addRef.current.contains(e.target)) {
+      setIsAddOpen(false);
+    }
+
+    if (editRef.current && !editRef.current.contains(e.target)) {
+      setIsEditOpen(false);
+    }
+  };
+
+  document.addEventListener("mousedown", handleClickOutside);
+
+  return () => {
+    document.removeEventListener("mousedown", handleClickOutside);
+  };
+}, []);
 
 
 
@@ -225,7 +306,7 @@ const Admin = () => {
       >
         <Filter size={16} />
         <span className="text-sm font-medium">
-          {statusFilter === "ALL" ? "All Admins" : statusFilter}
+          {statusFilter === "ALL" ? "ALL ADMINS" : statusFilter}
         </span>
         <ChevronDown
           size={16}
@@ -245,7 +326,7 @@ const Admin = () => {
             }}
             className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
           >
-            All Admins
+            ALL ADMINS
           </button>
           <button
             onClick={() => {
@@ -255,7 +336,7 @@ const Admin = () => {
             }}
             className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
           >
-            Active
+            ACTIVE
           </button>
           <button
             onClick={() => {
@@ -265,7 +346,7 @@ const Admin = () => {
             }}
             className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
           >
-            Inactive
+            INACTIVE
           </button>
           <button
             onClick={() => {
@@ -275,7 +356,7 @@ const Admin = () => {
             }}
             className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
           >
-            Suspended
+            SUSPENDED
           </button>
         </div>
       )}
@@ -290,8 +371,6 @@ const Admin = () => {
     </button>
   </div>
 </div>
-
-
 
 
 
@@ -343,35 +422,36 @@ const Admin = () => {
                   </button>
 
                   
-                 <button
-               onClick={async () => {
-  try {
-    const response = await fetch(
-      `http://localhost:8080/emp/${admin.adminCode}`,
-      {
-        method: "DELETE",
+             <button
+  onClick={async () => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this admin?");
+
+    if (!confirmDelete) return;
+
+    try {
+      const response = await fetch(
+        `http://localhost:8080/emp/${admin.adminCode}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to delete admin");
       }
-    );
 
-    if (!response.ok) {
-      throw new Error("Failed to delete admin");
+      toast.success("Admin deleted successfully ✅");
+      fetchAdmins();
+
+    } catch (error) {
+      console.error(error);
+      toast.error("Delete failed");
     }
-
-    toast.success("Admin deleted successfully ✅");
-
-    //  Refresh list from backend
-    fetchAdmins();
-
-  } catch (error) {
-    console.error(error);
-    toast.error("Delete failed");
-  }
-}}
-
-            className="text-gray-500 p-2"
-           >
-              <Trash2 size={16} />
-             </button>
+  }}
+  className="text-gray-500 p-2"
+>
+  <Trash2 size={16} />
+</button>
 
                 </td>
               </tr>
@@ -423,7 +503,10 @@ const Admin = () => {
 {/*  ADD ADMIN POPUP */}
 {isAddOpen && (
   <div className="fixed inset-0 bg-black/40 flex justify-center items-center p-4 z-50 overflow-y-auto">
-    <div className="bg-white w-full max-w-4xl rounded-2xl border border-gray-200 shadow-md p-6 sm:p-8 relative">
+     <div
+      ref={addRef}
+      className="bg-white w-full max-w-4xl rounded-2xl border border-gray-200 shadow-md p-6 sm:p-8 relative"
+    >
 
       {/* CLOSE */}
       <button
@@ -578,11 +661,15 @@ const Admin = () => {
       {/*  EDIT POPUP */}
       {isEditOpen && (
    <div className="fixed inset-0 bg-black/40 flex justify-center items-center p-4 z-50 overflow-y-auto">
-    <div className="bg-white w-full max-w-2xl rounded-xl p-6 relative">
-
+    
+<div
+  ref={editRef}
+  className="bg-white w-full max-w-2xl rounded-2xl border border-gray-200 shadow-md p-6 sm:p-8 relative "
+>
+       {/* CLOSE */}
       <button
-        onClick={() => setIsEditOpen(false)}
-        className="absolute top-3 right-3 cursor-pointer"
+        onClick={() =>  setIsEditOpen(false)}
+        className="absolute top-4 right-4 text-gray-500 hover:text-black"
       >
         <X />
       </button>

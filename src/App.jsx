@@ -1,5 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import RequireRole from "./components/layout/RequireRole";
+import "./app.css";
 import MainLayout from "./components/layout/MainLayout";
 import Home from "./pages/Home";
 import { Toaster } from "react-hot-toast";
