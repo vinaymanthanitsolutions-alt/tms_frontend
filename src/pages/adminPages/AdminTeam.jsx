@@ -5,9 +5,14 @@ import { ChevronLeft } from "lucide-react";
 import { getEmployeeById, deleteEmployee } from "../../services/AdminServices";
 import toast from "react-hot-toast";
 import Confirmation from "../../components/AdminComponents/Confirmation";
+import RegisterEmployee from "../../components/AdminComponents/RegisterEmployee"; 
 
-const AdminTeam = ({ setIsOpenAdminRegister, setEditEmployee, refreshKey }) => {
+// const AdminTeam = ({ setIsOpenAdminRegister, setEditEmployee, refreshKey }) => {
+const AdminTeam = () => {
   const [openRegister, setOpenRegister] = React.useState(false);
+  const [isOpenAdminRegister, setIsOpenAdminRegister] = useState(false);
+const [editEmployee, setEditEmployee] = useState(null);
+const [refreshKey, setRefreshKey] = useState(0);
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -164,6 +169,16 @@ const AdminTeam = ({ setIsOpenAdminRegister, setEditEmployee, refreshKey }) => {
           onCancel={cancelDelete}
         />
       )}
+
+      <RegisterEmployee
+  isOpen={isOpenAdminRegister}
+  onClose={() => {
+    setIsOpenAdminRegister(false);
+    setEditEmployee(null);
+  }}
+  editData={editEmployee}
+  onSuccess={() => setRefreshKey(prev => prev + 1)}
+/>
 
       <div className="p-5">
         <h1 className="text-2xl font-semibold">Employee Management List</h1>
