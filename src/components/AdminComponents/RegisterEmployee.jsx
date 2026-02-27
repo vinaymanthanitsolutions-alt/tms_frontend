@@ -172,7 +172,7 @@ export default function RegisterEmployee({
       // Register new employee
       result = await registerEmployee(formData);
       if (result.success) {
-        toast.success("Employee registered successfully!");
+        toast.success(result.message || "Employee registered successfully!");
       }
     }
 

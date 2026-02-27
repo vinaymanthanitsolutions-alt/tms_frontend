@@ -83,7 +83,7 @@ const Dashboard = () => {
     { pid: "PR001", aid: "A001", days: 3, progress: 75 },
     { pid: "PR002", aid: "A002", days: 5, progress: 55 },
     { pid: "PR003", aid: "A003", days: 7, progress: 30 },
-    { pid: "PR003", aid: "A003", days: 7, progress: 30 },
+    { pid: "PR005", aid: "A003", days: 7, progress: 80 },
    
     
   ];
@@ -99,6 +99,7 @@ const Dashboard = () => {
   const latestAdmin = [
   {name: "Amit Sharma", createdAt: "2025-02-18", status: "Active"},
   {name: "Megha",createdAt: "2025-09-22",status: "InActive"}, 
+  {name: "Rohit Verma",createdAt: "2025-11-05",status: "Active"},
   ];
 
 const getInitials = (name = "") => {
@@ -119,15 +120,16 @@ const getInitials = (name = "") => {
 
 
   return (
-    <div className="p-8 bg-gray-100 min-h-screen">
-      <h1 className="text-3xl font-bold mb-8">Dashboard</h1>
+   <div className="p-4 sm:p-6 md:p-8 bg-gray-100 min-h-screen">
+      <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-6 md:mb-8">
+        Dashboard</h1>
 
       {/* Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-6 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6 mb-8">
         {cards.map((card, i) => (
           <div
             key={i}
-            className={`bg-gradient-to-r ${card.color} text-white rounded-2xl p-6 shadow-lg flex items-center gap-4`}
+           className={`bg-gradient-to-r ${card.color} text-white rounded-2xl p-4 sm:p-5 md:p-6 shadow-lg flex items-center gap-3 sm:gap-4`}
 
           >
             
@@ -143,7 +145,7 @@ const getInitials = (name = "") => {
       </div>
 
       {/* Main Layout */}
-     <div className="grid grid-cols-1 lg:grid-cols-5 gap-3">
+    <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 md:gap-6">
         {/* Left Section */}
          <div className="lg:col-span-3 space-y-6">
           {/* Line Chart */}
@@ -151,7 +153,7 @@ const getInitials = (name = "") => {
             <h2 className="text-lg font-semibold mb-4">
               Active, Inactive Admins
             </h2>
-            <ResponsiveContainer width="100%" height={250}>
+           <ResponsiveContainer width="100%" height={200} className="sm:h-[250px]" >
               <LineChart data={lineData}>
                 
                 <XAxis dataKey="day" />
@@ -174,7 +176,7 @@ const getInitials = (name = "") => {
           </div>
 
           {/* Bottom Section */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* Pie Chart */}
             <div className="bg-white p-6 rounded-2xl shadow">
               <h2 className="text-lg font-semibold mb-4">Project Status</h2>
@@ -198,15 +200,15 @@ const getInitials = (name = "") => {
             </div>
 
             {/* Roles */}
-            <div className="bg-white p-4 rounded-2xl shadow">
+            <div className="bg-white p-6 rounded-2xl shadow">
               <h2 className="text-lg font-semibold mb-4">
                 Employee Roles
               </h2>
-              <div className="space-y-4">
+              <div className="space-y-2">
                 {roles.map((role, i) => (
                   <div
                     key={i}
-                    className="flex justify-between items-center bg-gray-100 p-2 rounded-lg"
+                    className="flex justify-between items-center bg-gray-100 px-2 py-2.5 rounded-lg"
                   >
                     <div className="flex items-center gap-2">
                       {role.icon}
@@ -222,63 +224,56 @@ const getInitials = (name = "") => {
 
         {/* Right Section  */}
 
-         <div className="lg:col-span-2 space-y-4">
+         <div className="lg:col-span-2 space-y-6">
                  {/* table section */}
-          <div className="bg-white p-6 rounded-2xl shadow">
-          <h2 className="text-lg font-semibold mb-4">
-            Upcoming Deadlines
-          </h2>
-          {/* <table className="w-full ml-1 text-sm border "> */}
-            <thead>
-              <tr className="text-gray-500 text-sm flex gap-8  text-left">
-                <th className="py-2 ">Project ID</th>
-                <th className="py-2 ">Admin ID</th>
-                <th className="py-2 ">Remaining Days</th>
-                <th className="py-2 ">Progress</th>
-              </tr>
-            </thead>
-            <tbody>
-              {deadlines.map((item, i) => (
-                <tr key={i} className=" last:border-none text-left text-sm flex gap-12  border-b border-gray-200">
-                  <td  className="py-2 ">{item.pid}</td>
-                  <td className=" py-2">{item.aid}</td>
-                  <td className="py-2">{item.days}</td>
-                   <td className=" py-2 ">
-                  <div className="w-30 bg-gray-200 rounded-full h-2">
-                    <div
-                      className={`h-2 rounded-full  ${
-                        item.progress < 50
-                          ? "bg-red-500"
-                          : item.progress < 80
-                          ? "bg-yellow-400"
-                          : "bg-green-500"
-                      }`}
-                      style={{ width: `${item.progress}%` }}
-                    ></div>
-                  </div>
-                  <div className="text-[0.60rem] text-gray-500 mt-1">
-                    {item.progress}%
-                  </div>
-                </td>
-                </tr>
-              ))}
-              {/* ✅ 2 Blank Rows
-             <tr className=" text-center">
-                   <td className="py-3">&nbsp;</td>
-                        <td></td>
-                      <td></td>
-                   <td></td>
-                     </tr>
+        <div className="bg-white p-4 sm:p-4.5 rounded-2xl shadow">
+  <h2 className="text-sm sm:text-lg font-semibold mb-4">
+    Upcoming Deadlines
+  </h2>
 
-                   <tr className="text-center">
-                     <td className="py-3">&nbsp;</td>
-                      <td></td>
-                   <td></td>
-                         <td></td>
-                  </tr> */}
-            </tbody>
-          {/* </table> */}
+  <thead>
+    <tr className="text-gray-500 text-[10px] sm:text-sm flex gap-2 sm:gap-4 text-left w-full">
+      <th className="py-2 px-2 ">Project ID</th>
+      <th className="py-2 px-2 ">Admin ID</th>
+      <th className="py-2 px-2 ">Days</th>
+      <th className="py-2 px-2 ">Progress</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    {deadlines.map((item, i) => (
+      <tr
+        key={i}
+        className="last:border-none text-left text-[10px] sm:text-sm flex gap-2 sm:gap-8 border-b border-gray-200 w-full"
+      >
+        <td className="py-2 px-2  w-16 ">{item.pid}</td>
+
+        <td className="py-2 px-2  w-16 ">{item.aid}</td>
+
+        <td className="py-2 px-2   ">{item.days}</td>
+
+        <td className="py-2 px-2 w-12 ">
+          <div className="w-[80px] bg-gray-200 rounded-full h-2">
+            <div
+              className={`h-2 rounded-full ${
+                item.progress < 50
+                  ? "bg-red-500"
+                  : item.progress < 80
+                  ? "bg-yellow-400"
+                  : "bg-green-500"
+              }`}
+              style={{ width: `${item.progress}%` }}
+            ></div>
           </div>
+
+          <div className="text-[9px] sm:text-xs text-gray-500 mt-1">
+            {item.progress}%
+          </div>
+        </td>
+      </tr>
+    ))}
+  </tbody>
+</div>
 
          
           {/* Latest Admin */}
@@ -289,11 +284,11 @@ const getInitials = (name = "") => {
     <button className="text-gray-400 hover:text-gray-600">•••</button>
   </div>
 
-  <div className="space-y-4">
+  <div className="space-y-2.5">
     {latestAdmin.map((admin, index) => (
       <div
         key={index}
-        className="flex items-center gap-4 bg-gray-50 p-4 rounded-xl"
+        className="flex items-center gap-4 bg-gray-50 p-3.5 rounded-xl"
       >
         {/* Initial Circle */}
         <div className="w-12 h-12 flex items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-purple-500 text-white font-bold text-lg shadow">
@@ -325,8 +320,6 @@ const getInitials = (name = "") => {
     ))}
   </div>
 </div>
-
-
 
             
           </div>

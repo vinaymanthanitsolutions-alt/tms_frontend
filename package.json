@@ -15,7 +15,7 @@
     "@mui/material": "^7.3.8",
     "@mui/system": "^7.3.8",
     "@mui/x-charts": "^8.27.0",
-    "@tabler/icons-react": "^3.36.1",
+    "@tabler/icons-react": "^3.37.1",
     "@tailwindcss/vite": "^4.1.18",
     "axios": "^1.13.5",
     "chart.js": "^4.5.1",
