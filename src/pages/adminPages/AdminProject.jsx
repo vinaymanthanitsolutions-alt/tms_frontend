@@ -248,7 +248,7 @@ const AdminProject = () => {
       );
 
       if (response.success) {
-        setProjectManagers(response.data);
+        setProjectManagers(response.data?.data);
       } else {
         console.error("Failed to fetch project managers:", response.error);
       }
