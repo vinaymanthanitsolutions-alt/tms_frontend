@@ -61,13 +61,13 @@ const Dashboard = () => {
   ];
 
   const lineData = [
-    { day: "Mon", active: 80, inactive: 60 },
-    { day: "Tue", active: 70, inactive: 75 },
-    { day: "Wed", active: 78, inactive: 70 },
-    { day: "Thu", active: 85, inactive: 65 },
-    { day: "Fri", active: 72, inactive: 80 },
-    { day: "Sat", active: 88, inactive: 85 },
-    { day: "Sun", active: 92, inactive: 90 },
+    { day: "Week1", active: 80, inactive: 60 },
+    { day: "Week2", active: 70, inactive: 75 },
+    { day: "Week3", active: 78, inactive: 70 },
+    { day: "Week4", active: 85, inactive: 65 },
+    { day: "Week5", active: 72, inactive: 80 },
+    { day: "Week6", active: 88, inactive: 85 },
+    // { day: "Week7", active: 92, inactive: 90 },
   ];
 
   const pieData = [
@@ -83,6 +83,8 @@ const Dashboard = () => {
     { pid: "PR001", aid: "A001", days: 3, progress: 75 },
     { pid: "PR002", aid: "A002", days: 5, progress: 55 },
     { pid: "PR003", aid: "A003", days: 7, progress: 30 },
+    { pid: "PR003", aid: "A003", days: 7, progress: 30 },
+   
     
   ];
 
@@ -151,6 +153,7 @@ const getInitials = (name = "") => {
             </h2>
             <ResponsiveContainer width="100%" height={250}>
               <LineChart data={lineData}>
+                
                 <XAxis dataKey="day" />
                 <YAxis />
                 <Tooltip />
@@ -225,36 +228,42 @@ const getInitials = (name = "") => {
           <h2 className="text-lg font-semibold mb-4">
             Upcoming Deadlines
           </h2>
-          <table className="w-full text-sm">
+          {/* <table className="w-full ml-1 text-sm border "> */}
             <thead>
-              <tr className="text-gray-500 border-b">
-                <th className="py-2 text-center">Project ID</th>
-                <th className="py-2 text-center">Admin ID</th>
-                <th className="py-2 text-center">Remaining Days</th>
-                <th className="py-2 text-center">Progress</th>
+              <tr className="text-gray-500 text-sm flex gap-8  text-left">
+                <th className="py-2 ">Project ID</th>
+                <th className="py-2 ">Admin ID</th>
+                <th className="py-2 ">Remaining Days</th>
+                <th className="py-2 ">Progress</th>
               </tr>
             </thead>
             <tbody>
               {deadlines.map((item, i) => (
-                <tr key={i} className="border-b last:border-none text-center">
-                  <td className="py-3">{item.pid}</td>
-                  <td>{item.aid}</td>
-                  <td>{item.days}</td>
-                  <td className="w-40">
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div
-                        className="bg-gradient-to-r from-orange-400 to-purple-500 h-2 rounded-full"
-                        style={{ width: `${item.progress}%` }}
-                      ></div>
-                    </div>
-                    <span className="text-xs text-gray-600">
-                      {item.progress}%
-                    </span>
-                  </td>
+                <tr key={i} className=" last:border-none text-left text-sm flex gap-12  border-b border-gray-200">
+                  <td  className="py-2 ">{item.pid}</td>
+                  <td className=" py-2">{item.aid}</td>
+                  <td className="py-2">{item.days}</td>
+                   <td className=" py-2 ">
+                  <div className="w-30 bg-gray-200 rounded-full h-2">
+                    <div
+                      className={`h-2 rounded-full  ${
+                        item.progress < 50
+                          ? "bg-red-500"
+                          : item.progress < 80
+                          ? "bg-yellow-400"
+                          : "bg-green-500"
+                      }`}
+                      style={{ width: `${item.progress}%` }}
+                    ></div>
+                  </div>
+                  <div className="text-[0.60rem] text-gray-500 mt-1">
+                    {item.progress}%
+                  </div>
+                </td>
                 </tr>
               ))}
-              {/* ✅ 2 Blank Rows */}
-             <tr className="border-b text-center">
+              {/* ✅ 2 Blank Rows
+             <tr className=" text-center">
                    <td className="py-3">&nbsp;</td>
                         <td></td>
                       <td></td>
@@ -266,9 +275,9 @@ const getInitials = (name = "") => {
                       <td></td>
                    <td></td>
                          <td></td>
-                  </tr>
+                  </tr> */}
             </tbody>
-          </table>
+          {/* </table> */}
           </div>
 
          

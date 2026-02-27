@@ -46,32 +46,38 @@ export const getEmployeeById = async (
   search = "",
 ) => {
   try {
-    console.log("Calling API with params:", {
-      emp_id: empId,
-      status,
-      page,
-      limit,
-      search,
-    });
-
     const response = await axios.get(`${API_BASE_URL}/emp`, {
       params: {
         emp_id: empId,
-        status: status,
-        page: page,
-        limit: limit,
-        search: search,
+        status,
+        page,
+        limit,
+        search,
       },
     });
 
-    console.log("Raw API Response:", response.data);
+    // Backend shape:
+    // {
+    //   data: {
+    //     data: [...employees],
+    //     page,
+    //     limit,
+    //     total
+    //   },
+    //   success: true
+    // }
+    const payload = response.data?.data || {};
+    const employees = payload.data || [];
+    const respPage = payload.page || page;
+    const respLimit = payload.limit || limit;
+    const total = payload.total || 0;
 
     return {
       success: true,
-      data: response.data.data || [],
-      totalPages: response.data.pagination?.total_pages || 1,
-      currentPage: response.data.pagination?.page || page,
-      totalEmployees: response.data.pagination?.total || 0,
+      data: employees,
+      totalPages: respLimit > 0 ? Math.max(1, Math.ceil(total / respLimit)) : 1,
+      currentPage: respPage,
+      totalEmployees: total,
     };
   } catch (error) {
     console.error("Error fetching employee:", error);
