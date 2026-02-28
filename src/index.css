@@ -3,9 +3,15 @@
 @import "tailwindcss";
 
 @theme {
+  --breakpoint-sxs:445px;
+  --breakpoint-xxs:550px;
+  --breakpoint-xxxs:690px;
+  --breakpoint-md:768px;
+  --breakpoint-xmd:880px;
+  --breakpoint-lg:1024px;
   --breakpoint-lar:1100px;
   --breakpoint-xlar:1250px;
-  --breakpoint-xxs:550px;
+  --breakpoint-halfxl:1400px;
   --font-anton: "Anton", "sans-serif";
   --font-oswald: "Oswald", "sans-serif";      /*use this */
   --font-playfair: "Playfair", serif;   

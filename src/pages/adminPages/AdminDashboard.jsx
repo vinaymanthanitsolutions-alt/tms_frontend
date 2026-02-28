@@ -1,11 +1,40 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { UsersRound } from "lucide-react";
 import { Calendar } from "lucide-react";
 import { Line } from "../../components/AdminComponents/Line";
 import BarChart from "../../components/AdminComponents/BarChart";
 import { Pencil } from "lucide-react";
+import { getDashboardCounts } from "../../services/AdminServices";
+
 
 const AdminDashboard = () => {
+
+  const [getCount, setGetCount] = React.useState({
+    employeeCount: 0,
+    projectCount: 0,
+    activeTaskCount: 0,
+    pendingApprovalCount: 0,
+  });
+
+  const fetchDashboardCounts = async () => {
+    try{
+      const data = await getDashboardCounts();
+      console.log("Dashboard Counts:", data);
+      setGetCount({
+        employeeCount: data.employeeCount,
+        projectCount: data.projectCount,
+        activeTaskCount: data.activeTaskCount,
+        pendingApprovalCount: data.pendingApprovalCount,
+      });
+    }catch(error){
+      console.error("Error fetching dashboard counts:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchDashboardCounts();
+  }, []);
+
   return (
     <div className="h-[calc(100vh-4.35rem)] overflow-auto bg-gray-100">
       {/* Dashboard Cards */}
@@ -18,7 +47,7 @@ const AdminDashboard = () => {
             />
             <div>Total Employee</div>
           </div>
-          <div className="mt-2 text-xl font-medium">215</div>
+          <div className="mt-2 text-xl font-medium">{getCount.employeeCount}</div>
         </div>
         <div className="bg-white  rounded-lg p-4">
           <div className="flex items-center gap-2">
@@ -28,7 +57,7 @@ const AdminDashboard = () => {
             />
             <div>Total Projects</div>
           </div>
-          <div className="mt-2 text-xl font-medium">215</div>
+          <div className="mt-2 text-xl font-medium">{getCount.projectCount}</div>
         </div>
         <div className="bg-white  rounded-lg p-4">
           <div className="flex items-center gap-2">
@@ -38,7 +67,7 @@ const AdminDashboard = () => {
             />
             <div>Active Tasks</div>
           </div>
-          <div className="mt-2 text-xl font-medium">215</div>
+          <div className="mt-2 text-xl font-medium">{getCount.activeTaskCount}</div>
         </div>
         <div className="bg-white  rounded-lg p-4">
           <div className="flex items-center gap-2">
@@ -48,11 +77,11 @@ const AdminDashboard = () => {
             />
             <div>Pending Approvals</div>
           </div>
-          <div className="mt-2 text-xl font-medium">215</div>
+          <div className="mt-2 text-xl font-medium">{getCount.pendingApprovalCount}</div>
         </div>
       </div>
       {/* Project Progress & Recent Projects */}
-      <div className="flex w-full justify-between px-5 gap-3">
+      <div className="md:flex w-full items-stretch px-5 gap-3">
         <div className="h-full w-full">
           <div className="bg-white pl-6 py-4 rounded-lg">
             <BarChart />
@@ -93,9 +122,9 @@ const AdminDashboard = () => {
 
         {/* second sidebar */}
 
-        <div className="w-96 h-full flex flex-col justify-center gap-2 items-center">
+        <div className="md:w-80 h-full flex flex-col justify-between gap-2 items-center">
           <div className="rounded-lg py-4 px-4 bg-gray-50 w-full">
-            <div>
+            <div> 
               <h1 className="font-semibold mb-4">Upcoming Deadlines</h1>
               <div className="flex flex-col gap-3">
                 <div className="bg-gray-100 px-3 rounded py-3">
@@ -142,7 +171,7 @@ const AdminDashboard = () => {
             </div>
           </div>
           {/* below item */}
-          <div className=" bottom-0 w-68 bg-orange-500 text-white rounded-t-xl px-5 pt-6 pb-0.5">
+          <div className="w-full md:w-68 bg-orange-500 text-white rounded-xl px-5 pt-6 pb-6 mb-2  ">
             <h1 className="font-semibold">Need Help ?</h1>
             <p className="text-[0.85rem] font-light my-3">
               Check our documentation or contact support for assistance with

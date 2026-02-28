@@ -459,3 +459,34 @@ export const reassignProjectManager = async (projectId, newManagerId) => {
     return { success: false, error: errorMessage };
   }
 };
+
+
+// Dashboard counts Service
+
+export const getDashboardCounts = async () => {
+  try {
+
+    const [empresponse, projectresponse] = await Promise.all([
+      axios.get(`${API_BASE_URL}/empCounts`, {
+        params: { manager_id: "A001" }
+      }),
+      axios.get(`${API_BASE_URL}/projectCounts`, {
+        params: { admin_id: "A001" }
+      })
+    ]);
+
+    const empData = empresponse.data.data;
+    const projectData = projectresponse.data.data;
+
+    return {
+      employeeCount: empData.total_employees,
+      projectCount: projectData.total_projects,
+      activeTaskCount: projectData.active,
+      pendingApprovalCount: projectData.planning,
+    };
+
+  } catch (error) {
+    console.error("Error fetching dashboard counts:", error);
+    throw error;
+  }
+};

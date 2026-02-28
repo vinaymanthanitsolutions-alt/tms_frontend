@@ -21,6 +21,9 @@ import ProjectReport from "./pages/superAdminPages/ProjectReport";
 import TaskReport from "./pages/superAdminPages/TaskReport";
 import Admin from "./pages/superAdminPages/Admin";
 import AdminAuditHistory from "./pages/adminPages/AdminAuditHistory";
+import UserLogin from "./components/UserLogin";
+
+import { Navigate } from "react-router-dom";
 
 
 
@@ -31,7 +34,8 @@ export default function App(){
     <BrowserRouter>
     
       <Routes>
-         <Route path="/" element={<Home />} />
+         <Route path="/" element={<UserLogin />} />
+
         <Route element={<MainLayout/>}>
           <Route element={<RequireRole allowedRole="admin"/>}>
             <Route path="/admin/dashboard" element={<AdminDashboard/>}/>
@@ -61,6 +65,8 @@ export default function App(){
             {/* <Route path="/pm/project" element={<PmProject/>}/> */}
           </Route>
         </Route>
+
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
     </>
