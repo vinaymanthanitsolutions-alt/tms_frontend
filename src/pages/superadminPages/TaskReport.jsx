@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { Search , Eye ,  X} from "lucide-react";
 
 
 
 const TaskReport = () => {
+   
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedRole, setSelectedRole] = useState({});
@@ -11,131 +12,118 @@ const TaskReport = () => {
 const [selectedTask, setSelectedTask] = useState(null);
 const [selectedTeamType, setSelectedTeamType] = useState("");
 const [showTeamDropdown, setShowTeamDropdown] = useState(false);
+ const [tasks, setTasks] = useState([]); 
+ const [teamMembers, setTeamMembers] = useState([]);
+const [loadingTeam, setLoadingTeam] = useState(false);
+
+ 
 
 
 
   const itemsPerPage = 5;
+  
 
-  const [tasks] = useState([
-    {
-      projectId: "PRJ-001",
-      teamId: "TM001",
-      teamLeader: "Rahul Sharma",
-      managerId: "PM001",
-      task: "Login Module UI",
-      department: "IT",
-       developer: [
-    { id: "D01", name: "Aman", subtask: "Login UI", status: "COMPLETED" },
-    { id: "D02", name: "naman", subtask: "logout UI", status: "PENDING" },
-    { id: "D03", name: "Kunal", subtask: "Dashboard", status: "IN PROGRESS" }
-  ],
-  tester: [
-    { id: "T01", name: "Priya" },
-    { id: "T02", name: "Riya" }
-  ]
-    },
-    {
-      projectId: "PRJ-002",
-      teamId: "TM002",
-      teamLeader: "Neha Verma",
-      managerId: "PM002",
-      task: "API Development",
-      department: "IT",
-        developer: [
-    { id: "D01", name: "ujjawal", subtask: "Login UI", status: "IN PROGRESS" },
-     { id: "D02", name: "raman", subtask: "reset password UI", status: "COMPLETED" },
-    { id: "D03", name: "Kumar", subtask: "Dashboard", status: "PENDING" }
-  ],
-  tester: [
-    { id: "T01", name: "Priya" },
-    { id: "T02", name: "Riya" }
-  ]
-    },
+const fetchTasks = async () => {
+  try {
+    const response = await fetch(
+      `http://localhost:8080/tasks/getAll`
 
-     {
-      projectId: "PRJ-001",
-      teamId: "TM003",
-      teamLeader: "vanshika Sharma",
-      managerId: "PM001",
-      task: "Dashboard Module UI",
-      department: "IT",
-        developer: [
-    { id: "D01", name: "Manisha", subtask: "Report", status: "IN PROGRESS" },
-     { id: "D02", name: "rama", subtask: "Task", status: "COMPLETED" },
-    { id: "D03", name: "Krishna", subtask: "Dashboard", status: " IN PROGRESS" }
-  ],
-  tester: [
-    { id: "T01", name: "Priyanka" },
-    { id: "T02", name: "Riyansh" }
-  ]
-    },
-     {
-      projectId: "PRJ-002",
-      teamId: "TM002",
-      teamLeader: "Neha Verma",
-      managerId: "PM002",
-      task: "API Development",
-      department: "IT",
-        developer: [
-    { id: "D01", name: "ujjawal", subtask: "Login UI", status: "IN PROGRESS" },
-     { id: "D02", name: "raman", subtask: "reset password UI", status: "COMPLETED" },
-    { id: "D03", name: "Kumar", subtask: "Dashboard", status: "PENDING" }
-  ],
-  tester: [
-    { id: "T01", name: "Priya" },
-    { id: "T02", name: "Riya" }
-  ]
-    },
-     {
-      projectId: "PRJ-002",
-      teamId: "TM002",
-      teamLeader: "Neha Verma",
-      managerId: "PM002",
-      task: "API Development",
-      department: "IT",
-        developer: [
-    { id: "D01", name: "ujjawal", subtask: "Login UI", status: "IN PROGRESS" },
-     { id: "D02", name: "raman", subtask: "reset password UI", status: "COMPLETED" },
-    { id: "D03", name: "Kumar", subtask: "Dashboard", status: "PENDING" }
-  ],
-  tester: [
-    { id: "T01", name: "Priya" },
-    { id: "T02", name: "Riya" }
-  ]
-    },
-     {
-      projectId: "PRJ-002",
-      teamId: "TM002",
-      teamLeader: "Neha Verma",
-      managerId: "PM002",
-      task: "API Development",
-      department: "IT",
-        developer: [
-    { id: "D01", name: "ujjawal", subtask: "Login UI", status: "IN PROGRESS" },
-     { id: "D02", name: "raman", subtask: "reset password UI", status: "COMPLETED" },
-    { id: "D03", name: "Kumar", subtask: "Dashboard", status: "PENDING" }
-  ],
-  tester: [
-    { id: "T01", name: "Priya" },
-    { id: "T02", name: "Riya" }
-  ]
-    },
-  ]);
+    );
 
+    const result = await response.json();
+
+    console.log("FULL RESPONSE:", result);
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch tasks");
+    }
+
+    // ✅ Correct array path
+    const apiTasks = result?.data || [];
+
+    const formattedTasks = apiTasks.map((task) => ({
+      projectId: task.project_id || "",
+      teamId: task.team_id || "",
+      teamLeader: task.team_leader_name || "",
+      managerId: task.created_by_id || "",
+      task: task.task_title || "",
+      status: task.status || "",
+    }));
+
+    setTasks(formattedTasks);
+  } catch (error) {
+    console.error("Fetch Error:", error);
+  }
+};
+
+
+  useEffect(() => {
+    fetchTasks();
+  }, [currentPage, searchTerm]);
+
+
+
+
+ const fetchTeamMembers = async (teamId, role) => {
+  try {
+    setLoadingTeam(true);
+
+    const response = await fetch(
+      `http://localhost:8080/team/members-subtasks?team_id=${teamId}&role=${role}`
+    );
+
+    const result = await response.json();
+
+    console.log("TEAM API RESPONSE:", result);
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch team members");
+    }
+
+    // ✅ Correct path
+    setTeamMembers(result?.data?.members || []);
+  } catch (error) {
+    console.error("Team Fetch Error:", error);
+  } finally {
+    setLoadingTeam(false);
+  }
+};
+
+
+ 
   // Filter Logic
   const filteredTasks = tasks.filter((task) => {
-    const search = searchTerm.toLowerCase();
-    return (
-      task.teamId.toLowerCase().includes(search) ||
-      task.projectId.toLowerCase().includes(search)
-    );
-  });
+  const search = searchTerm?.toLowerCase() || "";
+
+  return (
+    (task.teamId || "").toLowerCase().includes(search) ||
+    (task.projectId || "").toLowerCase().includes(search)
+  );
+});
+
+
 
   // Pagination Logic
-  const totalPages = Math.ceil(filteredTasks.length / itemsPerPage);
-  const indexOfLast = currentPage * itemsPerPage;
-  const indexOfFirst = indexOfLast - itemsPerPage;
-  const currentTasks = filteredTasks.slice(indexOfFirst, indexOfLast);
+const totalPages = Math.max(
+  1,
+  Math.ceil(filteredTasks.length / itemsPerPage)
+);
+
+const indexOfLast = currentPage * itemsPerPage;
+const indexOfFirst = indexOfLast - itemsPerPage;
+const currentTasks = filteredTasks.slice(indexOfFirst, indexOfLast);
+
+
+useEffect(() => {
+  if (currentPage > totalPages) {
+    setCurrentPage(1);
+  }
+}, [filteredTasks, totalPages, currentPage]);
+
+
+
+   
+  
 
   const handleView = (task) => {
   setSelectedTask(task);
@@ -183,7 +171,7 @@ const [showTeamDropdown, setShowTeamDropdown] = useState(false);
               {/* <th className="p-4">Member Name</th> */}
               <th className="p-4">Manager ID</th>
               <th className="p-4">Task</th>
-              <th className="p-4">Department</th>
+              <th className="p-4">Status</th>
                <th className="p-4">Action</th>
             </tr>
           </thead>
@@ -198,39 +186,33 @@ const [showTeamDropdown, setShowTeamDropdown] = useState(false);
                 <td className="p-4 font-medium">{task.projectId}</td>
                 <td className="p-4 font-medium">{task.teamLeader}</td>
 
-                {/* Team Select
-                <td className="p-4">
-                  <select
-                    className="border border-gray-300 rounded px-2 py-1 text-xs"
-                    value={selectedRole[index] || ""}
-                    onChange={(e) =>
-                      setSelectedRole({
-                        ...selectedRole,
-                        [index]: e.target.value,
-                      })
-                    }
-                  >
-                    <option value="">Select</option>
-                    <option value="developer">Developer</option>
-                    <option value="tester">Tester</option>
-                  </select>
-                </td> */}
-
-                {/* Member Display
-                <td className="p-4 text-sm text-gray-700">
-                  {selectedRole[index]
-                    ? task[selectedRole[index]].join(", ")
-                    : "-"}
-                </td> */}
+              
 
                 <td className="p-4">{task.managerId}</td>
                 <td className="p-4">{task.task}</td>
 
-                 <td className="px-2 py-2 text-lg">
+                 {/* {/* <td className="px-2 py-2 text-lg">
               <div className="px-2 py-0.5 bg-blue-100 text-sm mx-auto rounded-2xl w-20 text-center text-blue-500">
                 {task.department}
-           </div>
-               </td>
+           </div> 
+               </td> */}
+
+
+                <td className="p-2">
+        <span
+          className={`px-3 py-1 rounded-full text-sm font-semibold ${
+            task.status === "COMPLETED"
+              ? "bg-green-100 text-green-700"
+              : task.status === "IN_PROGRESS"
+              ? "bg-yellow-100 text-yellow-700"
+              
+              : "bg-purple-100 text-purple-700"
+          }`}
+        >
+          {task.status}
+        </span>
+      </td>
+
                 {/* <td className="p-4 ">{task.department}</td> */}
                    <td className="p-4">
                    <button
@@ -346,9 +328,11 @@ const [showTeamDropdown, setShowTeamDropdown] = useState(false);
         <div
           className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm"
           onClick={() => {
-            setSelectedTeamType("developer");
-            setShowTeamDropdown(false);
-          }}
+  setSelectedTeamType("developer");
+  setShowTeamDropdown(false);
+  fetchTeamMembers(selectedTask.teamId, "Developer");
+}}
+
         >
           Developer
         </div>
@@ -356,9 +340,11 @@ const [showTeamDropdown, setShowTeamDropdown] = useState(false);
         <div
           className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm "
           onClick={() => {
-            setSelectedTeamType("tester");
-            setShowTeamDropdown(false);
-          }}
+  setSelectedTeamType("tester");
+  setShowTeamDropdown(false);
+  fetchTeamMembers(selectedTask.teamId, "Tester");
+}}
+
         >
           Tester
         </div>
@@ -385,29 +371,32 @@ const [showTeamDropdown, setShowTeamDropdown] = useState(false);
               </tr>
             </thead>
             <tbody>
-              {selectedTask.developer.map((dev, index) => (
-                <tr key={index} className="border border-gray-200">
-                  <td className="p-2">{dev.id}</td>
-                  <td className="p-2">{dev.name}</td>
-                  <td className="p-2">{dev.subtask}</td>
-                  <td className="px-4 py-3">
-                  <span
-              className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                 dev.status === "COMPLETED"
-                ? "bg-green-100 text-green-700"
-                 : dev.status === "IN PROGRESS"
-                ? "bg-yellow-100 text-yellow-700"
-               : "bg-red-100 text-red-700"
-                    }`}
-                  >
+             {teamMembers.map((member, index) =>
+  member.sub_tasks?.map((sub, i) => (
+    <tr key={`${index}-${i}`} className="border border-gray-200">
+      <td className="p-2">{member.emp_id}</td>
+      <td className="p-2">{member.emp_name}</td>
+      <td className="p-2">{sub.title}</td>
+      <td className="p-2">
+        <span
+          className={`px-3 py-1 rounded-full text-sm font-semibold ${
+            sub.status === "COMPLETED"
+              ? "bg-green-100 text-green-700"
+              : sub.status === "TEST_DONE"
+              ? "bg-yellow-100 text-yellow-700"
+              : sub.status === "DEVELOPMENT_DONE"
+              ? "bg-purple-100 text-purple-700"
+              : "bg-red-100 text-red-700"
+          }`}
+        >
+          {sub.status}
+        </span>
+      </td>
+    </tr>
+  ))
+)}
 
-                    {dev.status}
-                  </span>
-                </td>
-
-                  {/* <td className="p-2">{dev.status}</td> */}
-                </tr>
-              ))}
+                
             </tbody>
           </table>
         </div>
@@ -428,12 +417,14 @@ const [showTeamDropdown, setShowTeamDropdown] = useState(false);
               </tr>
             </thead>
             <tbody>
-              {selectedTask.tester.map((test, index) => (
-                <tr key={index} className="border border-gray-200">
-                  <td className="p-2">{test.id}</td>
-                  <td className="p-2">{test.name}</td>
-                </tr>
-              ))}
+             {teamMembers.map((member, index) => (
+  <tr key={index} className="border border-gray-200">
+    <td className="p-2">{member.emp_id}</td>
+    <td className="p-2">{member.emp_name}</td>
+  </tr>
+))}
+
+              
             </tbody>
           </table>
         </div>

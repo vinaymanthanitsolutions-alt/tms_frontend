@@ -1,8 +1,10 @@
 button{
-  cursor: pointer;
-  
+    cursor:pointer;
 }
 
-input, select, textarea {
-    outline: none;
+
+input,
+select,
+textarea {
+  outline: none;
 }
