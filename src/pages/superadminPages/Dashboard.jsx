@@ -47,6 +47,15 @@ const [projectCounts, setProjectCounts] = useState({
   completed: 0,
 });
 
+//state for role employee count
+const [roleCounts, setRoleCounts] = useState({
+  total: 0,
+  admin: 0,
+  projectManager: 0,
+  teamLeader: 0,
+  developer: 0,
+  tester: 0,
+});
   const cards = [
     {
       icon: <Users size={28} />,
@@ -121,13 +130,15 @@ const [projectCounts, setProjectCounts] = useState({
     
   ];
 
-  const roles = [
-    { role: "Admins", count: 12, icon: <UserCog size={18} /> },
-     { role: "Project Managers", count: 4, icon: <Briefcase size={18} /> },
-    { role: "Team Leaders", count: 5, icon: <UserCheck size={18} /> },
-    { role: "Developers", count: 38, icon: <Code size={18} /> },
-     { role: "Testers", count: 18, icon: <Braces size={18} /> },
-  ];
+ 
+
+  const roles= [
+  { role: "Admins", value: roleCounts.admin, icon: <UserCog size={18} /> },
+  { role: "Project Managers", value: roleCounts.projectManager, icon: <Briefcase size={18} /> },
+  { role: "Team Leaders", value: roleCounts.teamLeader, icon: <UserCheck size={18} /> },
+  { role: "Developers", value: roleCounts.developer, icon: <Code size={18} /> },
+  { role: "Testers", value: roleCounts.tester, icon: <Braces size={18} /> },
+];
 
   const latestAdmin = [
   {name: "Amit Sharma", createdAt: "2025-02-18", status: "Active"},
@@ -152,7 +163,7 @@ const getInitials = (name = "") => {
   );
 };
 
-
+//employee count
 useEffect(() => {
   const fetchCounts = async () => {
     try {
@@ -175,7 +186,7 @@ useEffect(() => {
   fetchCounts();
 }, []);
 
-
+//project count
 useEffect(() => {
   const fetchProjectCounts = async () => {
     try {
@@ -201,6 +212,33 @@ useEffect(() => {
   fetchProjectCounts();
 }, []);
 
+//role employee count
+useEffect(() => {
+  const fetchRoleCounts = async () => {
+    try {
+      const res = await fetch(
+        "http://localhost:8080/empRoleCount?role=SUPER_ADMIN"
+      );
+
+      const result = await res.json();
+
+      if (result.success) {
+        setRoleCounts({
+          total: result.data.total_employees,
+          admin: result.data.admin,
+          projectManager: result.data.project_manager,
+          teamLeader: result.data.team_leader,
+          developer: result.data.developer,
+          tester: result.data.tester,
+        });
+      }
+    } catch (error) {
+      console.error("Role Count Error:", error);
+    }
+  };
+
+  fetchRoleCounts();
+}, []);
 
   return (
    <div className="p-4 sm:p-6 md:p-8 bg-gray-100 min-h-screen">
@@ -208,11 +246,11 @@ useEffect(() => {
         Dashboard</h1>
 
       {/* Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6 mb-8">
+      <div className=" grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-5 gap-4 md:gap-6 mb-8">
         {cards.map((card, i) => (
           <div
             key={i}
-           className={`bg-gradient-to-r ${card.color} text-white rounded-2xl p-4 sm:p-5 md:p-6 shadow-lg flex items-center gap-3 sm:gap-4 hover:shadow-xl`}
+          className={`bg-gradient-to-r ${card.color} text-white rounded-2xl p-4 sm:p-5 md:p-6 shadow-lg flex items-center gap-3 sm:gap-4 hover:shadow-xl min-w-0`}
 
           >
             
@@ -318,7 +356,7 @@ useEffect(() => {
                       {role.icon}
                       <span>{role.role}</span>
                     </div>
-                    <span className="font-bold">{role.count}</span>
+                    <span className="font-bold">{role.value}</span>
                   </div>
                 ))}
               </div>
@@ -385,7 +423,7 @@ useEffect(() => {
 <div className="bg-white p-6 rounded-2xl shadow">
   <div className="flex justify-between items-center mb-4">
     <h2 className="text-lg font-semibold">Latest Admin</h2>
-    <button className="text-gray-400 hover:text-gray-600">•••</button>
+    <h2 className="text-gray-400 hover:text-gray-600">•••</h2>
   </div>
 
   <div className="space-y-2.5">

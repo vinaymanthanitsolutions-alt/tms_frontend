@@ -137,7 +137,7 @@ const handleDeleteTask = async () => {
 useEffect(() => {
   const fetchTasks = async () => {
     try {
-      const projectCode = "PR010";
+      const projectCode = "PR001"; // ✅ Replace with dynamic project code as needed
       const data = await getTasksByProject(projectCode);
       console.log(data)
 
@@ -333,7 +333,7 @@ useEffect(() => {
   <div className="flex items-center gap-3">
     
     {/* Avatar */}
-    <div className="h-9 w-9 flex items-center justify-center rounded-full bg-indigo-50 text-indigo-600 text-sm font-semibold border border-indigo-100">
+    <div className="h-9 w-9 flex items-center justify-center rounded-full bg-emerald-50 text-emerald-600 text-sm font-semibold border border-emerald-100">
       {task.teamLeaderName?.slice(0, 2).toUpperCase()}
     </div>
 
