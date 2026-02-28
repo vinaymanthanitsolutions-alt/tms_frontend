@@ -1,109 +1,108 @@
-import { 
-  PieChart,
-  Pie,
-  Cell,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
+import React, { useEffect, useState } from "react";
+import { Pie, Line } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  ArcElement,
   Tooltip,
   Legend,
-  ResponsiveContainer,
-} from "recharts";
-import { useEffect, useState } from "react";
-import axios from "axios";
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+} from "chart.js";
 
-const COLORS = ["#10B981", "#3B82F6", "#EF4444", "#FFEB3B"];
+// Register Chart.js components
+ChartJS.register(
+  ArcElement,
+  Tooltip,
+  Legend,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement
+);
 
 export default function DashboardChart() {
+  const [pieData, setPieData] = useState({
+  labels: [],
+  datasets: [],
+});
 
-  const [pieData, setPieData] = useState([]);
-  const [barData, setBarData] = useState([]);
+const [lineData, setLineData] = useState({
+  labels: [],
+  datasets: [],
+});
+
 
   useEffect(() => {
-    fetchCounts();
+    // Dummy data for Pie Chart (Project Stats)
+    setPieData({
+      labels: ["Total Projects", "Completed", "Pending", "New (1 Month)"],
+      datasets: [
+        {
+          label: "Projects",
+          data: [12, 5, 6, 3],
+          backgroundColor: ["#10B981", "#3B82F6", "#FBBF24", "#A78BFA"],
+          borderWidth: 1,
+        },
+      ],
+    });
+
+    // Dummy data for Line Chart (Weekly Employee Status)
+    setLineData({
+      labels: ["Week 1", "Week 2", "Week 3", "Week 4"],
+      datasets: [
+        {
+          label: "Active",
+          data: [12, 15, 10, 18],
+          borderColor: "#10B981",
+          backgroundColor: "rgba(16, 185, 129, 0.2)",
+          tension: 0.3,
+        },
+        {
+          label: "Inactive",
+          data: [3, 2, 5, 1],
+          borderColor: "#EF4444",
+          backgroundColor: "rgba(239, 68, 68, 0.2)",
+          tension: 0.3,
+        },
+      ],
+    });
   }, []);
-
-  const fetchCounts = async () => {
-    try {
-      const res = await axios.get("http://localhost:8080/empCounts?manager_id=SA001");
-
-      console.log("API RESPONSE:", res.data);
-
-      const counts = res.data.data; 
-
-      setPieData([
-        { name: "TOTAL ADMIN", value: counts.total_employees || 0 },
-        { name: "ACTIVE ADMIN", value: counts.active || 0 },
-        { name: "INACTIVE ADMIN", value: counts.inactive || 0 },
-        { name: "SUSPENDED", value: counts.suspended || 0 },
-      ]);
-
-      // ✅ FIXED HERE
-      setBarData([
-        { week: "week1", ACTIVE: 12, INACTIVE: 5 },
-        { week: "week2", ACTIVE: 18, INACTIVE: 4 },
-        { week: "week3", ACTIVE: 10, INACTIVE: 8 },
-        { week: "week4", ACTIVE: 22, INACTIVE: 3 },
-       
-      ]);
-
-    } catch (error) {
-      console.error("Error fetching employee counts:", error);
-    }
-  };
 
   return (
     <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-6 bg-gray-50 h-106">
 
       {/* PIE CHART */}
       <div className="bg-white p-6 rounded-xl ml-5 mt-6 border border-gray-200">
-        <h2 className="text-lg font-semibold mb-4">
-          Admin Overview
-        </h2>
-
+        <h2 className="text-lg font-semibold mb-4">Project Status Overview</h2>
         <div className="w-full h-72">
-          <ResponsiveContainer>
-            <PieChart>
-              <Pie
-                data={pieData}
-                dataKey="value"
-                nameKey="name"
-                innerRadius={50}
-                outerRadius={90}
-                paddingAngle={2}
-              >
-                {pieData.map((entry, index) => (
-                  <Cell
-                    key={index}
-                    fill={COLORS[index % COLORS.length]}
-                  />
-                ))}
-              </Pie>
-              <Tooltip />
-              <Legend />
-            </PieChart>
-          </ResponsiveContainer>
+          <Pie data={pieData} />
         </div>
       </div>
 
-      {/* BAR CHART */}
+      {/* LINE CHART */}
       <div className="bg-white p-6 rounded-xl border mt-6 border-gray-200">
-        <h2 className="text-lg font-semibold mb-4">
-          Weekly Admin Status
-        </h2>
-
+        <h2 className="text-lg font-semibold mb-4">Weekly Admin Status</h2>
         <div className="w-full h-72">
-          <ResponsiveContainer>
-            <BarChart data={barData}>
-              <XAxis dataKey="week" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="ACTIVE" fill="#10B981" />
-              <Bar dataKey="INACTIVE" fill="#EF4444" />
-            </BarChart>
-          </ResponsiveContainer>
+          <Line
+            data={lineData}
+            options={{
+              responsive: true,
+              plugins: {
+                legend: { position: "top" },
+                tooltip: { mode: "index", intersect: false },
+              },
+              interaction: {
+                mode: "nearest",
+                axis: "x",
+                intersect: false,
+              },
+              scales: {
+                y: { beginAtZero: true },
+              },
+            }}
+          />
         </div>
       </div>
     </div>

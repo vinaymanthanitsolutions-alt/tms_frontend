@@ -135,7 +135,7 @@ const User = () => {
 
         {showFilterDropdown && (
           <div className="absolute right-0 mt-2 w-44 bg-white border border-gray-200 rounded-md shadow-lg z-10">
-            {["ALL", "Admin", "Project Manager", "Team Leader", "Developer", "Tester"].map(
+            {["ALL", "ADMIN", "PROJECT_MANAGER", "TEAM_LEADER", "DEVELOPER", "TESTER"].map(
               (role) => (
                 <button
                   key={role}

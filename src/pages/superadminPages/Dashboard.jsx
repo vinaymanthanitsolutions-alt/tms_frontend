@@ -1,96 +1,331 @@
-import React, { useEffect, useState } from "react";
-import { UsersRound } from "lucide-react";
-import axios from "axios";
-import DashboardChart from "./DashboardChart";
+import React from "react";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  Legend,
+} from "recharts";
+
+import {
+  Users,
+  ClipboardList,
+  CheckCircle,
+  Hourglass,
+  Lightbulb,
+  UserCog,
+  UserCheck,
+  Briefcase,
+  Code,
+  Braces,
+} from "lucide-react";
 
 const Dashboard = () => {
+  const cards = [
+    {
+      icon: <Users size={28} />,
+      title: "Total Emp",
+      value: 150,
+      color: "from-blue-500 to-blue-400",
+      // icon: <Users size={28} />,
+    },
+    {
+      title: "Total Project",
+      value: 24,
+      color: "from-orange-500 to-orange-400",
+      icon: <ClipboardList size={28} />,
+    },
+    {
+      title: "Completed ",
+      value: 12,
+      color: "from-green-500 to-green-400",
+      icon: <CheckCircle size={28} />,
+    },
+    {
+      title: "Pending ",
+      value: 8,
+      color: "from-teal-500 to-teal-400",
+      icon: <Hourglass size={28} />,
+    },
+    {
+      title: "New Projects",
+      value: 4,
+      color: "from-purple-500 to-purple-400",
+      icon: <Lightbulb size={28} />,
+    },
+  ];
 
-  const [counts, setCounts] = useState({
-    total_employees: 0,
-    active: 0,
-    inactive: 0,
-    suspended: 0,
-  });
+  const lineData = [
+    { day: "Week1", active: 80, inactive: 60 },
+    { day: "Week2", active: 70, inactive: 75 },
+    { day: "Week3", active: 78, inactive: 70 },
+    { day: "Week4", active: 85, inactive: 65 },
+    { day: "Week5", active: 72, inactive: 80 },
+    { day: "Week6", active: 88, inactive: 85 },
+    // { day: "Week7", active: 92, inactive: 90 },
+  ];
 
-  useEffect(() => {
-    fetchCounts();
-  }, []);
+  const pieData = [
+    { name: "Total Projects", value: 24 },
+    { name: "Completed", value: 12 },
+    { name: "Pending", value: 8 },
+    { name: "New", value: 4 },
+  ];
 
-  const fetchCounts = async () => {
-    try {
-      const res = await axios.get("http://localhost:8080/empCounts?manager_id=SA001");
+  const pieColors = ["#3b82f6", "#22c55e", "#f97316", "#8b5cf6"];
 
-      console.log("Dashboard API:", res.data);
+  const deadlines = [
+    { pid: "PR001", aid: "A001", days: 3, progress: 75 },
+    { pid: "PR002", aid: "A002", days: 5, progress: 55 },
+    { pid: "PR003", aid: "A003", days: 7, progress: 30 },
+    { pid: "PR005", aid: "A003", days: 7, progress: 80 },
+   
+    
+  ];
 
-      if (res.data?.success) {
-        setCounts(res.data.data);
-      }
+  const roles = [
+    { role: "Admins", count: 12, icon: <UserCog size={18} /> },
+     { role: "Project Managers", count: 4, icon: <Briefcase size={18} /> },
+    { role: "Team Leaders", count: 5, icon: <UserCheck size={18} /> },
+    { role: "Developers", count: 38, icon: <Code size={18} /> },
+     { role: "Testers", count: 18, icon: <Braces size={18} /> },
+  ];
 
-    } catch (error) {
-      console.error("Error fetching dashboard counts:", error);
-    }
-  };
+  const latestAdmin = [
+  {name: "Amit Sharma", createdAt: "2025-02-18", status: "Active"},
+  {name: "Megha",createdAt: "2025-09-22",status: "InActive"}, 
+  {name: "Rohit Verma",createdAt: "2025-11-05",status: "Active"},
+  ];
+
+const getInitials = (name = "") => {
+  if (!name) return "";
+
+  const words = name.trim().split(" ");
+
+  if (words.length === 1) {
+    return words[0][0]?.toUpperCase() || "";
+  }
 
   return (
-    <div>
-      {/* Dashboard Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 px-4 py-4 gap-4 bg-gray-50">
+    (words[0][0] || "").toUpperCase() +
+    (words[1][0] || "").toUpperCase()
+  );
+};
 
-        <div className="bg-white border-2 border-gray-200 rounded-lg p-4">
-          <div className="flex items-center gap-2">
-            <UsersRound
-              className="text-green-500 bg-green-200 p-2 rounded"
-              size={35}
-            />
-            <div>Total Admin</div>
-          </div>
-          <div className="mt-2 text-xl font-medium">
-            {counts.total_employees}
-          </div>
-        </div>
 
-        <div className="bg-white border-2 border-gray-200 rounded-lg p-4">
-          <div className="flex items-center gap-2">
-            <UsersRound
-              className="text-blue-500 bg-blue-200 p-2 rounded"
-              size={35}
-            />
-            <div>Active Admin</div>
-          </div>
-          <div className="mt-2 text-xl font-medium">
-            {counts.active}
-          </div>
-        </div>
 
-        <div className="bg-white border-2 border-gray-200 rounded-lg p-4">
-          <div className="flex items-center gap-2">
-            <UsersRound
-              className="text-red-500 bg-red-200 p-2 rounded"
-              size={35}
-            />
-            <div>Inactive Admin</div>
-          </div>
-          <div className="mt-2 text-xl font-medium">
-            {counts.inactive}
-          </div>
-        </div>
+  return (
+   <div className="p-4 sm:p-6 md:p-8 bg-gray-100 min-h-screen">
+      <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-6 md:mb-8">
+        Dashboard</h1>
 
-        <div className="bg-white border-2 border-gray-200 rounded-lg p-4">
-          <div className="flex items-center gap-2">
-            <UsersRound
-              className="text-yellow-500 bg-yellow-200 p-2 rounded"
-              size={35}
-            />
-            <div>Suspended</div>
-          </div>
-          <div className="mt-2 text-xl font-medium">
-            {counts.suspended}
-          </div>
-        </div>
+      {/* Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6 mb-8">
+        {cards.map((card, i) => (
+          <div
+            key={i}
+           className={`bg-gradient-to-r ${card.color} text-white rounded-2xl p-4 sm:p-5 md:p-6 shadow-lg flex items-center gap-3 sm:gap-4`}
 
+          >
+            
+              <div className="opacity-90">{card.icon}</div>
+              <div>
+              <p className="text-sm opacity-90">{card.title}</p>
+              <h2 className="text-3xl font-bold mt-2">{card.value}</h2>
+            </div>
+            {/* <div className="opacity-90">{card.icon}</div> */}
+          </div>
+         
+        ))}
       </div>
 
-      <DashboardChart />
+      {/* Main Layout */}
+    <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 md:gap-6">
+        {/* Left Section */}
+         <div className="lg:col-span-3 space-y-6">
+          {/* Line Chart */}
+          <div className="bg-white p-6 rounded-2xl shadow">
+            <h2 className="text-lg font-semibold mb-4">
+              Active, Inactive Admins
+            </h2>
+           <ResponsiveContainer width="100%" height={200} className="sm:h-[250px]" >
+              <LineChart data={lineData}>
+                
+                <XAxis dataKey="day" />
+                <YAxis />
+                <Tooltip />
+                <Line
+                  type="monotone"
+                  dataKey="active"
+                  stroke="#3b82f6"
+                  strokeWidth={3}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="inactive"
+                  stroke="#f59e0b"
+                  strokeWidth={3}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* Bottom Section */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* Pie Chart */}
+            <div className="bg-white p-6 rounded-2xl shadow">
+              <h2 className="text-lg font-semibold mb-4">Project Status</h2>
+              <ResponsiveContainer width="100%" height={250}>
+                <PieChart>
+                  <Pie
+                    data={pieData}
+                    dataKey="value"
+                    innerRadius={40}
+                    outerRadius={90}
+                     paddingAngle={2}
+                  >
+                    {pieData.map((_, index) => (
+                      <Cell key={index} fill={pieColors[index]} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* Roles */}
+            <div className="bg-white p-6 rounded-2xl shadow">
+              <h2 className="text-lg font-semibold mb-4">
+                Employee Roles
+              </h2>
+              <div className="space-y-2">
+                {roles.map((role, i) => (
+                  <div
+                    key={i}
+                    className="flex justify-between items-center bg-gray-100 px-2 py-2.5 rounded-lg"
+                  >
+                    <div className="flex items-center gap-2">
+                      {role.icon}
+                      <span>{role.role}</span>
+                    </div>
+                    <span className="font-bold">{role.count}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Section  */}
+
+         <div className="lg:col-span-2 space-y-6">
+                 {/* table section */}
+        <div className="bg-white p-4 sm:p-4.5 rounded-2xl shadow">
+  <h2 className="text-sm sm:text-lg font-semibold mb-4">
+    Upcoming Deadlines
+  </h2>
+
+  <thead>
+    <tr className="text-gray-500 text-[10px] sm:text-sm flex gap-2 sm:gap-4 text-left w-full">
+      <th className="py-2 px-2 ">Project ID</th>
+      <th className="py-2 px-2 ">Admin ID</th>
+      <th className="py-2 px-2 ">Days</th>
+      <th className="py-2 px-2 ">Progress</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    {deadlines.map((item, i) => (
+      <tr
+        key={i}
+        className="last:border-none text-left text-[10px] sm:text-sm flex gap-2 sm:gap-8 border-b border-gray-200 w-full"
+      >
+        <td className="py-2 px-2  w-16 ">{item.pid}</td>
+
+        <td className="py-2 px-2  w-16 ">{item.aid}</td>
+
+        <td className="py-2 px-2   ">{item.days}</td>
+
+        <td className="py-2 px-2 w-12 ">
+          <div className="w-[80px] bg-gray-200 rounded-full h-2">
+            <div
+              className={`h-2 rounded-full ${
+                item.progress < 50
+                  ? "bg-red-500"
+                  : item.progress < 80
+                  ? "bg-yellow-400"
+                  : "bg-green-500"
+              }`}
+              style={{ width: `${item.progress}%` }}
+            ></div>
+          </div>
+
+          <div className="text-[9px] sm:text-xs text-gray-500 mt-1">
+            {item.progress}%
+          </div>
+        </td>
+      </tr>
+    ))}
+  </tbody>
+</div>
+
+         
+          {/* Latest Admin */}
+{/* Latest Admin */}
+<div className="bg-white p-6 rounded-2xl shadow">
+  <div className="flex justify-between items-center mb-4">
+    <h2 className="text-lg font-semibold">Latest Admin</h2>
+    <button className="text-gray-400 hover:text-gray-600">•••</button>
+  </div>
+
+  <div className="space-y-2.5">
+    {latestAdmin.map((admin, index) => (
+      <div
+        key={index}
+        className="flex items-center gap-4 bg-gray-50 p-3.5 rounded-xl"
+      >
+        {/* Initial Circle */}
+        <div className="w-12 h-12 flex items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-purple-500 text-white font-bold text-lg shadow">
+          {getInitials(admin.name)}
+        </div>
+
+        {/* Admin Info */}
+        <div className="flex-1">
+          <p className="font-semibold text-gray-800">
+            {admin.name}
+          </p>
+          <p className="text-sm text-gray-500">
+            @{admin.name.toLowerCase().replace(/\s/g, "")} •{" "}
+            {admin.createdAt}
+          </p>
+        </div>
+
+        {/* Status Badge */}
+        <span
+          className={`px-3 py-1 text-xs font-semibold rounded-full ${
+            admin.status === "Active"
+              ? "bg-green-100 text-green-600"
+              : "bg-red-100 text-red-600"
+          }`}
+        >
+          {admin.status}
+        </span>
+      </div>
+    ))}
+  </div>
+</div>
+
+            
+          </div>
+        
+        
+      </div>
     </div>
   );
 };

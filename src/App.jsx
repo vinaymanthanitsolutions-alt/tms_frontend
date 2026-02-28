@@ -15,15 +15,17 @@ import PMTask from "./pages/ProjectManagerPages/PMTask";
 import ProjectManagerProject from "./pages/ProjectManagerPages/ProjectManagerProject";
 // import PmProject from "./pages/pmPages/PmProject";
 
-import Dashboard from "./pages/superAdminPages/Dashboard";
-import UsersReport from "./pages/superAdminPages/UsersReport";
-import ProjectReport from "./pages/superAdminPages/ProjectReport";
+import Dashboard from "./pages/superadminPages/Dashboard";
+import UsersReport from "./pages/superadminPages/UsersReport";
+import ProjectReport from "./pages/superadminPages/ProjectReport";
 import TaskReport from "./pages/superAdminPages/TaskReport";
-import Admin from "./pages/superAdminPages/Admin";
+import Admin from "./pages/superadminPages/Admin";
 import AdminAuditHistory from "./pages/adminPages/AdminAuditHistory";
 import UserLogin from "./components/UserLogin";
 
 import { Navigate } from "react-router-dom";
+import PMProjectAnalysis from "./pages/ProjectManagerPages/PMProjectAnalysis";
+import TeamAndTaskAnalysis from "./pages/ProjectManagerPages/TeamAndTaskAnalysis";
 
 
 
@@ -49,8 +51,10 @@ export default function App(){
 
           <Route element={<RequireRole allowedRole="pm"/>}>
             <Route path="/pm/dashboard" element={<ProjectManagerDashboard/>}/>
-            <Route path="/pm/team" element={<PMTask/>}/>
+            <Route path="/pm/task" element={<PMTask/>}/>
             <Route path="/pm/projects" element={<ProjectManagerProject/>}/>
+             <Route path="/pm/projectAnalysis" element={<PMProjectAnalysis/>}/>
+               <Route path="/pm/teaminsight" element={<TeamAndTaskAnalysis/>}/>
 
             {/* <Route path="/pm/project" element={<PmProject/>}/> */}
           </Route>

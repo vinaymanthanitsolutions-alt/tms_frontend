@@ -76,19 +76,19 @@ const SIDEBAR_LINKS = {
         {
           label: "Task Team Insight",
           path: "/pm/teaminsight",
-          logo: <Users size={16} />,
+          logo:  <TrendingUp size={16} />,
         },
       ],
     },
     {
       label: "Task",
       path: "/pm/task",
-      logo: <House size={20} />,
+      logo: <ClipboardList size={20} />,
     },
     {
       label: "Projects",
       path: "/pm/projects",
-      logo: <House size={20} />,
+      logo: <ClipboardList size={20} />,
     },
   ],
   superadmin: [

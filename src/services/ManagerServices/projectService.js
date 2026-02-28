@@ -28,15 +28,18 @@ export const getEmployeesByPM = async (
   role = "TEAM_LEADER"
 ) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/emp`, {
-      params: {
-        emp_id: pmId,
-        role: role,
-      },
-    });
+    const response = await axios.get(
+      `${API_BASE_URL}/empAllUnderSameManager`,
+      {
+        params: {
+          emp_id: pmId,
+          filter_role: role,
+        },
+      }
+    );
 
-    // ✅ actual employee list
-    return response.data.data.data || [];
+    // ✅ Correct employee list
+    return response.data.data || [];
 
   } catch (error) {
     console.error("Error fetching employees:", error);
