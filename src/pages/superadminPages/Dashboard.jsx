@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   LineChart,
   Line,
@@ -30,29 +30,46 @@ import {
 } from "lucide-react";
 
 const Dashboard = () => {
+
+  //state for employee count
+  const [employeeCounts, setEmployeeCounts] = useState({
+  total: 0,
+  active: 0,
+  inactive: 0,
+  suspended: 0,
+});
+ 
+// state for project count
+const [projectCounts, setProjectCounts] = useState({
+  total: 0,
+  planning: 0,
+  active: 0,
+  completed: 0,
+});
+
   const cards = [
     {
       icon: <Users size={28} />,
       title: "Total Emp",
-      value: 150,
+      value: employeeCounts.total, 
       color: "from-blue-500 to-blue-400",
       // icon: <Users size={28} />,
     },
     {
       title: "Total Project",
-      value: 24,
+      value: projectCounts.total,
       color: "from-orange-500 to-orange-400",
       icon: <ClipboardList size={28} />,
     },
     {
       title: "Completed ",
-      value: 12,
+       value: projectCounts.completed,
       color: "from-green-500 to-green-400",
       icon: <CheckCircle size={28} />,
     },
     {
       title: "Pending ",
-      value: 8,
+       value: projectCounts.planning + projectCounts.active,
       color: "from-teal-500 to-teal-400",
       icon: <Hourglass size={28} />,
     },
@@ -74,14 +91,26 @@ const Dashboard = () => {
     // { day: "Week7", active: 92, inactive: 90 },
   ];
 
-  const pieData = [
-    { name: "Total Projects", value: 24 },
-    { name: "Completed", value: 12 },
-    { name: "Pending", value: 8 },
-    { name: "New", value: 4 },
-  ];
+ const pieData = [
+  {
+    name: "Completed",
+    value: projectCounts.completed,
+  },
+  {
+    name: "Active",
+    value: projectCounts.active,
+  },
+  {
+    name: "Planning",
+    value: projectCounts.planning,
+  },
+  {
+    name: "Total",
+    value: projectCounts.total,
+  },
+];  
 
-  const pieColors = ["#3b82f6", "#22c55e", "#f97316", "#8b5cf6"];
+  const pieColors = ["#22c55e", "#3b82f6", "#f97316", "#8b5cf6"];
 
   const deadlines = [
     { pid: "PR001", aid: "A001", days: 3, progress: 75 },
@@ -106,6 +135,8 @@ const Dashboard = () => {
   {name: "Rohit Verma",createdAt: "2025-11-05",status: "Active"},
   ];
 
+
+
 const getInitials = (name = "") => {
   if (!name) return "";
 
@@ -121,6 +152,54 @@ const getInitials = (name = "") => {
   );
 };
 
+
+useEffect(() => {
+  const fetchCounts = async () => {
+    try {
+      const res = await fetch("http://localhost:8080/empCounts");
+      const result = await res.json();
+
+      if (result.success) {
+        setEmployeeCounts({
+          total: result.data.total_employees,
+          active: result.data.active,
+          inactive: result.data.inactive,
+          suspended: result.data.suspended,
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching employee counts:", error);
+    }
+  };
+
+  fetchCounts();
+}, []);
+
+
+useEffect(() => {
+  const fetchProjectCounts = async () => {
+    try {
+      const res = await fetch(
+        "http://localhost:8080/projectCounts"
+      );
+
+      const result = await res.json();
+
+      if (result.success) {
+        setProjectCounts({
+          total: result.data.total_projects,
+          planning: result.data.planning,
+          active: result.data.active,
+          completed: result.data.completed,
+        });
+      }
+    } catch (error) {
+      console.error("Project Count Error:", error);
+    }
+  };
+
+  fetchProjectCounts();
+}, []);
 
 
   return (
@@ -153,8 +232,6 @@ const getInitials = (name = "") => {
         {/* Left Section */}
          <div className="lg:col-span-3 space-y-6">
           {/* Line Chart */}
-       
-
 <div className="bg-white p-6 rounded-2xl shadow">
   <h2 className="text-lg font-semibold mb-4">
     Active, Inactive Admins
@@ -212,7 +289,7 @@ const getInitials = (name = "") => {
                   <Pie
                     data={pieData}
                     dataKey="value"
-                    innerRadius={40}
+                    innerRadius={45}
                     outerRadius={90}
                     
                   >
@@ -259,7 +336,7 @@ const getInitials = (name = "") => {
   </h2>
 
   <thead>
-    <tr className="text-gray-500 text-[10px] sm:text-sm flex gap-2 sm:gap-4 text-left w-full">
+    <tr className="text-gray-500 text-[10px] sm:text-sm flex gap-2 sm:gap-4 text-left w-full border-b border-gray-200">
       <th className="py-2 px-2 ">Project ID</th>
       <th className="py-2 px-2 ">Admin ID</th>
       <th className="py-2 px-2 ">Days</th>

@@ -36,20 +36,20 @@ const Admin = () => {
     status: "ACTIVE",
   });
 
-   // Form state
-    const [formData, setFormData] = useState({
-      email: "",
-      contact: "",
-      password: "",
+  //  // Form state
+  //   const [formData, setFormData] = useState({
+  //     email: "",
+  //     contact: "",
+  //     password: "",
      
-    });
+  //   });
 
      // Error state
       const [error, setError] = useState({
-        email: "",
-        contact: "",
-        password: "",
-      });
+  email: "",
+  phone: "",
+  password: "",
+});
 
   /*  FETCH ADMINS  */
 
@@ -117,54 +117,55 @@ const Admin = () => {
   };
 
 
-
   const handleAddAdmin = async (e) => {
-    e.preventDefault();
-         // Validate all fields
-         const newError = {
-           email: validateEmail(formData.email),
-           contact: validatePhoneNumber(formData.contact),
-           password: validatePassword(formData.password),
-          //  deadline: validateProjectDeadline(formData.deadline),
-         };
-     
-         setError(newError);
-     
-         // Check if there are any errors
-         const hasError = Object.values(newError).some((error) => error !== "");
-         if (hasError) {
-           toast.error("Please fix all validation errors");
-           return;
-         }
-     
-         setSubmitting(true);
+  e.preventDefault();
 
-    try {
-      const response = await fetch("http://localhost:8080/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          emp_id: newAdmin.adminCode,
-          emp_name: newAdmin.name,
-          email: newAdmin.email,
-          phone: newAdmin.phone,
-          password: newAdmin.password,
-          department: newAdmin.department,
-          role: "ADMIN",
-          manager_id: "SA001",
-        }),
-      });
+  const emailValid = validateEmail(newAdmin.email);
+const phoneValid = validatePhoneNumber(newAdmin.phone);
+const passwordResult = validatePassword(newAdmin.password);
 
-      if (!response.ok) throw new Error("Failed");
+const newError = {
+  email: emailValid,
+  phone: phoneValid,
+  password: passwordResult.isValid,
+};
 
-      toast.success("Admin Registered Successfully");
-      fetchAdmins();
-      setIsAddOpen(false);
+  setError(newError);
 
-    } catch (error) {
-      toast.error("Registration Failed");
-    }
-  };
+ const hasError = Object.values(newError).some((err) => err === false);
+
+  if (hasError) {
+    // console.log("Validation Errors:", newError);
+    toast.error("Please fix all validation errors");
+    return;
+  }
+
+  try {
+    const response = await fetch("http://localhost:8080/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        emp_id: newAdmin.adminCode,
+        emp_name: newAdmin.name,
+        email: newAdmin.email,
+        phone: newAdmin.phone,
+        password: newAdmin.password,
+        department: newAdmin.department,
+        role: "ADMIN",
+        manager_id: "SA001",
+      }),
+    });
+
+    if (!response.ok) throw new Error("Failed");
+
+    toast.success("Admin Registered Successfully");
+    fetchAdmins();
+    setIsAddOpen(false);
+
+  } catch (error) {
+    toast.error("Registration Failed");
+  }
+};
 
   /* UPDATE  */
 
@@ -177,39 +178,57 @@ const Admin = () => {
     setEditAdmin({ ...editAdmin, [e.target.name]: e.target.value });
   };
 
-  const handleUpdate = async () => {
-    try {
-      if (!editAdmin) return;
+ const handleUpdate = async () => {
+  if (!editAdmin) return;
 
-      const response = await fetch(
-        `http://localhost:8080/emp/${editAdmin.adminCode}`,
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            emp_id: editAdmin.adminCode,
-            emp_name: editAdmin.name,
-            email: editAdmin.email,
-            phone: editAdmin.phone,
-            password: editAdmin.password || "Default@123",
-            department: editAdmin.department || "HEAD",
-            role: "ADMIN",
-            manager_id: "SA001",
-            status: editAdmin.status,
-          }),
-        }
-      );
+ const emailValid = validateEmail(editAdmin.email);
+const phoneValid = validatePhoneNumber(editAdmin.phone);
 
-      if (!response.ok) throw new Error("Update failed");
+const newError = {
+  email: emailValid,
+  phone: phoneValid,
+};
 
-      toast.success("Admin detail updated successfully");
-      fetchAdmins();
-      setIsEditOpen(false);
+  setError(newError);
 
-    } catch (error) {
-      toast.error("Update failed");
-    }
-  };
+  const hasError = Object.values(newError).some((err) => err === false);
+
+  if (hasError) {
+    // console.log("Validation Errors:", newError);
+    toast.error("Please fix all validation errors");
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      `http://localhost:8080/emp/${editAdmin.adminCode}`,
+      {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          emp_id: editAdmin.adminCode,
+          emp_name: editAdmin.name,
+          email: editAdmin.email,
+          phone: editAdmin.phone,
+          password: editAdmin.password || "Default@123",
+          department: editAdmin.department || "HEAD",
+          role: "ADMIN",
+          manager_id: "SA001",
+          status: editAdmin.status,
+        }),
+      }
+    );
+
+    if (!response.ok) throw new Error("Update failed");
+
+    toast.success("Admin updated successfully");
+    fetchAdmins();
+    setIsEditOpen(false);
+
+  } catch (error) {
+    toast.error("Update failed");
+  }
+};
 
   /*  DELETE  */
 
@@ -231,19 +250,22 @@ const Admin = () => {
   };
 
   const resetForm = () => {
-    setFormData({
-      email: "",
-      contact: "",
-      password: "",
-    });
-    // setSelectedManager("");
-    // setManagerId("");
-    setErrors({
-      email: "",
-      contact: "",
-      password: "",
-    });
-  }; 
+  setNewAdmin({
+    adminCode: "",
+    name: "",
+    email: "",
+    phone: "",
+    password: "",
+    department: "",
+    status: "ACTIVE",
+  });
+
+  setError({
+    email: "",
+    phone: "",
+    password: "",
+  });
+};
 
       
 
