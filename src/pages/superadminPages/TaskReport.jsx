@@ -17,6 +17,8 @@ const [showTeamDropdown, setShowTeamDropdown] = useState(false);
 const [loadingTeam, setLoadingTeam] = useState(false);
 
 const modalRef = useRef(null);
+const [debouncedSearch, setDebouncedSearch] = useState("");
+
 
  
 
@@ -66,6 +68,21 @@ const fetchTasks = async () => {
 
 
 
+//debounce 
+  useEffect(() => {
+  const timer = setTimeout(() => {
+    setDebouncedSearch(searchTerm);
+  }, 500); // 500ms delay
+
+  return () => clearTimeout(timer);
+}, [searchTerm]);
+
+useEffect(() => {
+  setCurrentPage(1);
+}, [debouncedSearch]);
+
+
+
  const fetchTeamMembers = async (teamId, role) => {
   try {
     setLoadingTeam(true);
@@ -95,13 +112,14 @@ const fetchTasks = async () => {
  
   // Filter Logic
   const filteredTasks = tasks.filter((task) => {
-  const search = searchTerm?.toLowerCase() || "";
+  const search = debouncedSearch?.toLowerCase() || "";
 
   return (
     (task.teamId || "").toLowerCase().includes(search) ||
     (task.projectId || "").toLowerCase().includes(search)
   );
 });
+
 
 
 
@@ -192,7 +210,8 @@ useEffect(() => {
           </thead>
 
           <tbody>
-            {currentTasks.map((task, index) => (
+            {currentTasks.length > 0 ? (
+            currentTasks.map((task, index) => (
               <tr
                 key={index}
                 className="border-t hover:bg-gray-50 transition border-gray-200  text-center"
@@ -241,7 +260,14 @@ useEffect(() => {
  
 
               </tr>
-            ))}
+            ))
+          ): (
+    <tr>
+      <td colSpan="7" className="text-center p-6 text-gray-500">
+        No Employees Found
+      </td>
+    </tr>
+       ) }
           </tbody>
         </table>
       </div>
@@ -455,41 +481,51 @@ useEffect(() => {
 
 
       {/* Pagination */}
-      <div className="flex justify-self-end items-center gap-2 mt-6">
-        <button
-          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-          disabled={currentPage === 1}
-          className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
-        >
-          Prev
-        </button>
+      <div className="flex justify-between items-center mt-6">
+  {/* LEFT TEXT */}
+  <div className="text-sm text-gray-600">
+    Showing {filteredTasks.length} task
+    {filteredTasks.length !== 1 ? "s" : ""}
+    {debouncedSearch && (
+      <span className="ml-1 text-emerald-600">
+        for "{debouncedSearch}"
+      </span>
+    )}
+  </div>
 
-        {[...Array(totalPages)].map((_, index) => (
-          <button
-            key={index}
-            onClick={() => setCurrentPage(index + 1)}
-            className={`px-3 py-1 rounded ${
-              currentPage === index + 1
-                ? "bg-emerald-500 text-white"
-                : "bg-gray-200"
-            }`}
-          >
-            {index + 1}
-          </button>
-        ))}
+  {/* RIGHT BUTTONS */}
+  <div className="flex gap-2 items-center">
+    <button
+      onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+      disabled={currentPage <= 1}
+      className={`px-4 py-2 rounded-md border ${
+        currentPage <= 1
+          ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+          : "bg-white text-gray-700 hover:bg-gray-50 border-gray-300"
+      }`}
+    >
+      Prev
+    </button>
 
-        <button
-          onClick={() =>
-            setCurrentPage((prev) =>
-              Math.min(prev + 1, totalPages)
-            )
-          }
-          disabled={currentPage === totalPages}
-          className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
-        >
-          Next
-        </button>
-      </div>
+    <div className="text-sm text-gray-700">
+      Page {currentPage} of {totalPages}
+    </div>
+
+    <button
+      onClick={() =>
+        setCurrentPage((prev) => Math.min(totalPages, prev + 1))
+      }
+      disabled={currentPage >= totalPages}
+      className={`px-4 py-2 rounded-md border ${
+        currentPage >= totalPages
+          ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+          : "bg-white text-gray-700 hover:bg-gray-50 border-gray-300"
+      }`}
+    >
+      Next
+    </button>
+  </div>
+</div>
     </div>
   );
 };

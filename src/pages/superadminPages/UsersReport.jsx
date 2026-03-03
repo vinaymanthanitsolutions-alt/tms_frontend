@@ -12,6 +12,8 @@ const User = () => {
   const dropdownRef = useRef(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const [debouncedSearch, setDebouncedSearch] = useState("");
    
 
   
@@ -48,6 +50,20 @@ const User = () => {
 }, []);
 
 
+//debouncing logic
+useEffect(() => {
+  const timer = setTimeout(() => {
+    setDebouncedSearch(search);
+  }, 500); // delay
+
+  return () => clearTimeout(timer);
+}, [search]);
+
+
+useEffect(() => {
+  setCurrentPage(1);
+}, [debouncedSearch, roleFilter]);
+
 
   // ✅ Close dropdown on outside click
   useEffect(() => {
@@ -64,7 +80,7 @@ const User = () => {
   const filteredUsers = users.filter((user) => {
     const matchesSearch = user.emp_name
       ?.toLowerCase()
-      .includes(search.toLowerCase());
+      .includes(debouncedSearch.toLowerCase())
 
     const matchesRole =
       roleFilter === "ALL" || user.role === roleFilter;
@@ -73,17 +89,20 @@ const User = () => {
   });
 
   // ✅ Pagination Based on Filtered Users
-  const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
+const totalPages = Math.max(
+  1,
+  Math.ceil(filteredUsers.length / itemsPerPage)
+);
   const indexOfLast = currentPage * itemsPerPage;
   const indexOfFirst = indexOfLast - itemsPerPage;
   const currentUsers = filteredUsers.slice(indexOfFirst, indexOfLast);
 
   // ✅ Auto reset page if filter reduces data
   useEffect(() => {
-    if (currentPage > totalPages) {
-      setCurrentPage(1);
-    }
-  }, [filteredUsers, totalPages, currentPage]);
+  if (currentPage > totalPages) {
+    setCurrentPage(1);
+  }
+}, [filteredUsers, totalPages, currentPage]);
 
   if (loading) {
     return <div className="p-6">Loading...</div>;
@@ -92,6 +111,9 @@ const User = () => {
   if (error) {
     return <div className="p-6 text-red-500">{error}</div>;
   }
+
+
+  
 
  
 
@@ -239,41 +261,51 @@ const User = () => {
 
 
       {/* PAGINATION */}
-      <div className="flex justify-self-end items-center gap-2 mt-6">
-        <button
-          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-          disabled={currentPage === 1}
-          className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
-        >
-          Prev
-        </button>
+      <div className="flex justify-between items-center mt-6">
+  {/* LEFT TEXT */}
+  <div className="text-sm text-gray-600">
+    Showing {filteredUsers.length} employee
+    {filteredUsers.length !== 1 ? "s" : ""}
+    {debouncedSearch && (
+      <span className="ml-1 text-emerald-600">
+        for "{debouncedSearch}"
+      </span>
+    )}
+  </div>
 
-        {[...Array(totalPages || 0)].map((_, index) => (
-          <button
-            key={index}
-            onClick={() => setCurrentPage(index + 1)}
-            className={`px-3 py-1 rounded ${
-              currentPage === index + 1
-                ? "bg-emerald-500 text-white"
-                : "bg-gray-200"
-            }`}
-          >
-            {index + 1}
-          </button>
-        ))}
+  {/* RIGHT BUTTONS */}
+  <div className="flex gap-2 items-center">
+    <button
+      onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+      disabled={currentPage <= 1}
+      className={`px-4 py-2 rounded-md border ${
+        currentPage <= 1
+          ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+          : "bg-white text-gray-700 hover:bg-gray-50 border-gray-300"
+      }`}
+    >
+      Prev
+    </button>
 
-        <button
-          onClick={() =>
-            setCurrentPage((prev) =>
-              Math.min(prev + 1, totalPages || 1)
-            )
-          }
-          disabled={currentPage === totalPages}
-          className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
-        >
-          Next
-        </button>
-      </div>
+    <div className="text-sm text-gray-700">
+      Page {currentPage} of {totalPages}
+    </div>
+
+    <button
+      onClick={() =>
+        setCurrentPage((prev) => Math.min(totalPages, prev + 1))
+      }
+      disabled={currentPage >= totalPages}
+      className={`px-4 py-2 rounded-md border ${
+        currentPage >= totalPages
+          ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+          : "bg-white text-gray-700 hover:bg-gray-50 border-gray-300"
+      }`}
+    >
+      Next
+    </button>
+  </div>
+</div>
     </div>
   );
 };

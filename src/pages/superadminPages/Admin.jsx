@@ -19,6 +19,10 @@ const Admin = () => {
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
   const [totalPages, setTotalPages] = useState(1);
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [totalCount, setTotalCount] = useState(0);
+
+  
 
   const addRef = useRef(null);
   const editRef = useRef(null);
@@ -80,11 +84,8 @@ const Admin = () => {
       setAdmins(formattedData);
 
       // backend se total count 
-      if (data?.data?.total) {
-        setTotalPages(Math.ceil(data.data.total / adminsPerPage));
-      } else {
-        setTotalPages(1);
-      }
+     const totalCount = data?.data?.total || 0;
+     setTotalPages(Math.ceil(totalCount / adminsPerPage) || 1);
 
     } catch (error) {
       console.error("Fetch Error:", error);
@@ -96,7 +97,7 @@ const Admin = () => {
 
   useEffect(() => {
     fetchAdmins();
-  }, [currentPage, search, statusFilter]);
+  }, [currentPage, debouncedSearch, statusFilter]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -289,6 +290,20 @@ const newError = {
 
 
 
+//debounce
+useEffect(() => {
+  const timer = setTimeout(() => {
+    setDebouncedSearch(search);
+  }, 500);
+
+  return () => clearTimeout(timer);
+}, [search]);
+
+useEffect(() => {
+  setCurrentPage(1);
+}, [debouncedSearch, statusFilter]);
+
+
   return (
     <div className=" min-h-screen bg-gray-50 p-4 sm:p-6">
       <Toaster position="top-right" />
@@ -311,9 +326,13 @@ const newError = {
     />
     <input
       type="text"
-      placeholder="Search Admin..."
+      placeholder="Search Admin..
+      ."
       value={search}
-      onChange={(e) => setSearch(e.target.value)}
+      onChange={(e) => {
+  setSearch(e.target.value);
+  setCurrentPage(1);
+}}
       className="border border-gray-200 pl-10 pr-3 py-2 rounded w-full focus:outline-none"
     />
   </div>
@@ -413,7 +432,8 @@ const newError = {
           </thead>
 
           <tbody>
-            {admins.map((admin, index) => (
+            {admins.length > 0 ? (
+            admins.map((admin, index) => (
               <tr key={index} className="text-center border-b border border-gray-200 hover:bg-gray-50">
                 <td className="px-4 py-3">{admin.adminCode}</td>
                 <td className="px-4 py-3">{admin.name}</td>
@@ -477,47 +497,65 @@ const newError = {
 
                 </td>
               </tr>
-            ))}
+            ))
+          ): (
+            <tr>
+              <td colSpan="7" className="text-center p-6 text-gray-500">
+                No Admins Found
+              </td>
+            </tr>
+          )}
+
           </tbody>
         </table>
       </div>
 
       {/* PAGINATION */}
-        <div className="flex justify-self-end items-center gap-2 mt-6">
-        <button
-          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-          disabled={currentPage === 1}
-          className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
-        >
-          Prev
-        </button>
+       <div className="flex justify-between items-center mt-6">
+  {/* LEFT TEXT */}
+  <div className="text-sm text-gray-600">
+    Showing {admins.length} admin
+    {admins.length !== 1 ? "s" : ""}
+    {debouncedSearch && (
+      <span className="ml-1 text-emerald-600">
+        for "{debouncedSearch}"
+      </span>
+    )}
+  </div>
 
-        {[...Array(totalPages || 0)].map((_, index) => (
-          <button
-            key={index}
-            onClick={() => setCurrentPage(index + 1)}
-            className={`px-3 py-1 rounded ${
-              currentPage === index + 1
-                ? "bg-emerald-500 text-white"
-                : "bg-gray-200"
-            }`}
-          >
-            {index + 1}
-          </button>
-        ))}
+  {/* RIGHT BUTTONS */}
+  <div className="flex gap-2 items-center">
+    <button
+      onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+      disabled={currentPage <= 1}
+      className={`px-4 py-2 rounded-md border ${
+        currentPage <= 1
+          ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+          : "bg-white text-gray-700 hover:bg-gray-50 border-gray-300"
+      }`}
+    >
+      Prev
+    </button>
 
-        <button
-          onClick={() =>
-            setCurrentPage((prev) =>
-              Math.min(prev + 1, totalPages || 1)
-            )
-          }
-          disabled={currentPage === totalPages}
-          className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
-        >
-          Next
-        </button>
-      </div>
+    <div className="text-sm text-gray-700">
+      Page {currentPage} of {totalPages}
+    </div>
+
+    <button
+      onClick={() =>
+        setCurrentPage((prev) => Math.min(totalPages, prev + 1))
+      }
+      disabled={currentPage >= totalPages}
+      className={`px-4 py-2 rounded-md border ${
+        currentPage >= totalPages
+          ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+          : "bg-white text-gray-700 hover:bg-gray-50 border-gray-300"
+      }`}
+    >
+      Next
+    </button>
+  </div>
+</div>
 
 
 
