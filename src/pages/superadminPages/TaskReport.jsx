@@ -67,7 +67,6 @@ const fetchTasks = async () => {
 
 
 
-
 //debounce 
   useEffect(() => {
   const timer = setTimeout(() => {
@@ -264,7 +263,7 @@ useEffect(() => {
           ): (
     <tr>
       <td colSpan="7" className="text-center p-6 text-gray-500">
-        No Employees Found
+        No Task Found
       </td>
     </tr>
        ) }
@@ -349,6 +348,7 @@ useEffect(() => {
         </div>
 
       </div>
+
 
       {/* Team Dropdown */}
 <div className="mb-6">

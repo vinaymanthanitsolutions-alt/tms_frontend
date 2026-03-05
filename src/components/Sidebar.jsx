@@ -91,7 +91,7 @@ const SIDEBAR_LINKS = {
       logo: <ClipboardList size={20} />,
     },
   ],
-  superadmin: [
+  super_admin: [
     {
     label: "Dashboard",
       path: "/superadmin/dashboard",
@@ -127,7 +127,7 @@ const SIDEBAR_LINKS = {
 };
 
 const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
-  const role = localStorage.getItem("role")?.toLowerCase() || ROLE;
+  const role = localStorage.getItem("role")?.toLowerCase() ;
   const menu = SIDEBAR_LINKS[role] || [];
   const navigate = useNavigate();
   const location = useLocation();
@@ -140,6 +140,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
   const selectedButtonStyle = "bg-gray-200 text-black";
 
   const [openSubMenu, setOpenSubMenu] = useState({});
+  
 
 
   const toggleSubMenu = (label) => {

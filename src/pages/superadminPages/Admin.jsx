@@ -84,9 +84,10 @@ const Admin = () => {
       setAdmins(formattedData);
 
       // backend se total count 
-     const totalCount = data?.data?.total || 0;
-     setTotalPages(Math.ceil(totalCount / adminsPerPage) || 1);
+    const total = data?.data?.total || 0;
 
+setTotalCount(total); 
+setTotalPages(Math.ceil(total / adminsPerPage) || 1);
     } catch (error) {
       console.error("Fetch Error:", error);
       toast.error("Failed to fetch admins");
@@ -311,7 +312,7 @@ useEffect(() => {
       {/*  HEADER SECTION */}
       <div className="mb-6">
         <h1 className="text-2xl font-bold">Admin Details</h1>
-        <p className="text-sm text-emerald-600 mt-1">Admin</p>
+        <p className="text-sm text-gray-500 mt-1">Admin</p>
       </div>
 
     
@@ -514,8 +515,8 @@ useEffect(() => {
        <div className="flex justify-between items-center mt-6">
   {/* LEFT TEXT */}
   <div className="text-sm text-gray-600">
-    Showing {admins.length} admin
-    {admins.length !== 1 ? "s" : ""}
+    Showing {totalCount} admin{totalCount !== 1 ? "s" : ""}
+   
     {debouncedSearch && (
       <span className="ml-1 text-emerald-600">
         for "{debouncedSearch}"

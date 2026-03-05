@@ -114,7 +114,7 @@ const Dashboard = () => {
       value: projectCounts.planning,
     },
     {
-      name: "Total",
+      name: "Total Project",
       value: projectCounts.total,
     },
   ];
@@ -325,7 +325,7 @@ const Dashboard = () => {
 
 
             </div>
-
+       {/*  pie chart project Status  */}
             <div className="bg-white p-4 sm:p-6 rounded-2xl shadow w-full">
               <h2 className="text-sm sm:text-lg font-semibold mb-4 text-center sm:text-left">
                 Project Status
@@ -362,9 +362,6 @@ const Dashboard = () => {
 
           {/* Bottom Section */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {/* Pie Chart */}
-
-
             {/* Roles */}
             <div className="bg-white p-6 sm:p-5 rounded-2xl shadow overflow-x-auto w-full">
               <h2 className="text-lg font-semibold mb-4">
