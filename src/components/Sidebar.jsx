@@ -1,5 +1,4 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
-// import { ROLE } from "../Role";
 
 import { House } from "lucide-react";
 import { ChartNoAxesCombined } from "lucide-react";
@@ -127,7 +126,7 @@ const SIDEBAR_LINKS = {
 };
 
 const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
-  const role = localStorage.getItem("role")?.toLowerCase() || ROLE;
+  const role = localStorage.getItem("role")?.toLowerCase();
   const menu = SIDEBAR_LINKS[role] || [];
   const navigate = useNavigate();
   const location = useLocation();
