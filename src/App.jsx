@@ -1,5 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import RequireRole from "./components/layout/RequireRole";
+import "./app.css";
 import MainLayout from "./components/layout/MainLayout";
 import Home from "./pages/Home";
 import { Toaster } from "react-hot-toast";
@@ -49,7 +50,7 @@ export default function App(){
           </Route>
 
 
-          <Route element={<RequireRole allowedRole="pm"/>}>
+          <Route element={<RequireRole allowedRole="project_manager"/>}>
             <Route path="/pm/dashboard" element={<ProjectManagerDashboard/>}/>
             <Route path="/pm/task" element={<PMTask/>}/>
             <Route path="/pm/projects" element={<ProjectManagerProject/>}/>
@@ -59,7 +60,7 @@ export default function App(){
             {/* <Route path="/pm/project" element={<PmProject/>}/> */}
           </Route>
 
-          <Route element={<RequireRole allowedRole="superadmin"/>}>
+          <Route element={<RequireRole allowedRole="super_admin"/>}>
             <Route path="/superadmin/dashboard" element={<Dashboard/>}/>
             <Route path="/superadmin/users" element={<UsersReport/>}/>
             <Route path="/superadmin/project" element={<ProjectReport/>}/>

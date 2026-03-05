@@ -1,16 +1,20 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   LineChart,
   Line,
   XAxis,
   YAxis,
   Tooltip,
+  AreaChart,
+  Area,
   ResponsiveContainer,
   PieChart,
   Pie,
   Cell,
   Legend,
 } from "recharts";
+
+
 
 import {
   Users,
@@ -26,29 +30,55 @@ import {
 } from "lucide-react";
 
 const Dashboard = () => {
+
+  //state for employee count
+  const [employeeCounts, setEmployeeCounts] = useState({
+  total: 0,
+  active: 0,
+  inactive: 0,
+  suspended: 0,
+});
+ 
+// state for project count
+const [projectCounts, setProjectCounts] = useState({
+  total: 0,
+  planning: 0,
+  active: 0,
+  completed: 0,
+});
+
+//state for role employee count
+const [roleCounts, setRoleCounts] = useState({
+  total: 0,
+  admin: 0,
+  projectManager: 0,
+  teamLeader: 0,
+  developer: 0,
+  tester: 0,
+});
   const cards = [
     {
       icon: <Users size={28} />,
       title: "Total Emp",
-      value: 150,
+      value: employeeCounts.total, 
       color: "from-blue-500 to-blue-400",
       // icon: <Users size={28} />,
     },
     {
       title: "Total Project",
-      value: 24,
+      value: projectCounts.total,
       color: "from-orange-500 to-orange-400",
       icon: <ClipboardList size={28} />,
     },
     {
       title: "Completed ",
-      value: 12,
+       value: projectCounts.completed,
       color: "from-green-500 to-green-400",
       icon: <CheckCircle size={28} />,
     },
     {
       title: "Pending ",
-      value: 8,
+       value: projectCounts.planning + projectCounts.active,
       color: "from-teal-500 to-teal-400",
       icon: <Hourglass size={28} />,
     },
@@ -61,23 +91,35 @@ const Dashboard = () => {
   ];
 
   const lineData = [
-    { day: "Week1", active: 80, inactive: 60 },
-    { day: "Week2", active: 70, inactive: 75 },
-    { day: "Week3", active: 78, inactive: 70 },
-    { day: "Week4", active: 85, inactive: 65 },
-    { day: "Week5", active: 72, inactive: 80 },
-    { day: "Week6", active: 88, inactive: 85 },
+    { day: "Week1", active: 80, inactive: 50 },
+    { day: "Week2", active: 70, inactive: 85 },
+    { day: "Week3", active: 80, inactive: 70 },
+    { day: "Week4", active: 60, inactive: 70 },
+    { day: "Week5", active: 90, inactive: 80 },
+    { day: "Week6", active: 65, inactive: 50 },
     // { day: "Week7", active: 92, inactive: 90 },
   ];
 
-  const pieData = [
-    { name: "Total Projects", value: 24 },
-    { name: "Completed", value: 12 },
-    { name: "Pending", value: 8 },
-    { name: "New", value: 4 },
-  ];
+ const pieData = [
+  {
+    name: "Completed",
+    value: projectCounts.completed,
+  },
+  {
+    name: "Active",
+    value: projectCounts.active,
+  },
+  {
+    name: "Planning",
+    value: projectCounts.planning,
+  },
+  {
+    name: "Total",
+    value: projectCounts.total,
+  },
+];  
 
-  const pieColors = ["#3b82f6", "#22c55e", "#f97316", "#8b5cf6"];
+  const pieColors = ["#22c55e", "#3b82f6", "#f97316", "#8b5cf6"];
 
   const deadlines = [
     { pid: "PR001", aid: "A001", days: 3, progress: 75 },
@@ -88,19 +130,23 @@ const Dashboard = () => {
     
   ];
 
-  const roles = [
-    { role: "Admins", count: 12, icon: <UserCog size={18} /> },
-     { role: "Project Managers", count: 4, icon: <Briefcase size={18} /> },
-    { role: "Team Leaders", count: 5, icon: <UserCheck size={18} /> },
-    { role: "Developers", count: 38, icon: <Code size={18} /> },
-     { role: "Testers", count: 18, icon: <Braces size={18} /> },
-  ];
+ 
+
+  const roles= [
+  { role: "Admins", value: roleCounts.admin, icon: <UserCog size={18} /> },
+  { role: "Project Managers", value: roleCounts.projectManager, icon: <Briefcase size={18} /> },
+  { role: "Team Leaders", value: roleCounts.teamLeader, icon: <UserCheck size={18} /> },
+  { role: "Developers", value: roleCounts.developer, icon: <Code size={18} /> },
+  { role: "Testers", value: roleCounts.tester, icon: <Braces size={18} /> },
+];
 
   const latestAdmin = [
   {name: "Amit Sharma", createdAt: "2025-02-18", status: "Active"},
   {name: "Megha",createdAt: "2025-09-22",status: "InActive"}, 
   {name: "Rohit Verma",createdAt: "2025-11-05",status: "Active"},
   ];
+
+
 
 const getInitials = (name = "") => {
   if (!name) return "";
@@ -117,7 +163,82 @@ const getInitials = (name = "") => {
   );
 };
 
+//employee count
+useEffect(() => {
+  const fetchCounts = async () => {
+    try {
+      const res = await fetch("http://localhost:8080/empCounts");
+      const result = await res.json();
 
+      if (result.success) {
+        setEmployeeCounts({
+          total: result.data.total_employees,
+          active: result.data.active,
+          inactive: result.data.inactive,
+          suspended: result.data.suspended,
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching employee counts:", error);
+    }
+  };
+
+  fetchCounts();
+}, []);
+
+//project count
+useEffect(() => {
+  const fetchProjectCounts = async () => {
+    try {
+      const res = await fetch(
+        "http://localhost:8080/projectCounts"
+      );
+
+      const result = await res.json();
+
+      if (result.success) {
+        setProjectCounts({
+          total: result.data.total_projects,
+          planning: result.data.planning,
+          active: result.data.active,
+          completed: result.data.completed,
+        });
+      }
+    } catch (error) {
+      console.error("Project Count Error:", error);
+    }
+  };
+
+  fetchProjectCounts();
+}, []);
+
+//role employee count
+useEffect(() => {
+  const fetchRoleCounts = async () => {
+    try {
+      const res = await fetch(
+        "http://localhost:8080/empRoleCount?role=SUPER_ADMIN"
+      );
+
+      const result = await res.json();
+
+      if (result.success) {
+        setRoleCounts({
+          total: result.data.total_employees,
+          admin: result.data.admin,
+          projectManager: result.data.project_manager,
+          teamLeader: result.data.team_leader,
+          developer: result.data.developer,
+          tester: result.data.tester,
+        });
+      }
+    } catch (error) {
+      console.error("Role Count Error:", error);
+    }
+  };
+
+  fetchRoleCounts();
+}, []);
 
   return (
    <div className="p-4 sm:p-6 md:p-8 bg-gray-100 min-h-screen">
@@ -125,11 +246,11 @@ const getInitials = (name = "") => {
         Dashboard</h1>
 
       {/* Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6 mb-8">
+      <div className=" grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-5 gap-4 md:gap-6 mb-8">
         {cards.map((card, i) => (
           <div
             key={i}
-           className={`bg-gradient-to-r ${card.color} text-white rounded-2xl p-4 sm:p-5 md:p-6 shadow-lg flex items-center gap-3 sm:gap-4`}
+          className={`bg-gradient-to-r ${card.color} text-white rounded-2xl p-4 sm:p-5 md:p-6 shadow-lg flex items-center gap-3 sm:gap-4 hover:shadow-xl min-w-0`}
 
           >
             
@@ -149,31 +270,52 @@ const getInitials = (name = "") => {
         {/* Left Section */}
          <div className="lg:col-span-3 space-y-6">
           {/* Line Chart */}
-          <div className="bg-white p-6 rounded-2xl shadow">
-            <h2 className="text-lg font-semibold mb-4">
-              Active, Inactive Admins
-            </h2>
-           <ResponsiveContainer width="100%" height={200} className="sm:h-[250px]" >
-              <LineChart data={lineData}>
-                
-                <XAxis dataKey="day" />
-                <YAxis />
-                <Tooltip />
-                <Line
-                  type="monotone"
-                  dataKey="active"
-                  stroke="#3b82f6"
-                  strokeWidth={3}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="inactive"
-                  stroke="#f59e0b"
-                  strokeWidth={3}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
+<div className="bg-white p-6 rounded-2xl shadow">
+  <h2 className="text-lg font-semibold mb-4">
+    Active, Inactive Admins
+  </h2>
+
+  <ResponsiveContainer width="100%" height={200} className="sm:h-[250px] text-sm">
+    <AreaChart data={lineData}>
+      
+      <defs>
+        {/* Active Gradient */}
+        <linearGradient id="colorActive" >
+          <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.4}/>
+          <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.2}/>
+        </linearGradient>
+
+        {/* Inactive Gradient */}
+        <linearGradient id="colorInactive" >
+          <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.4}/>
+          <stop offset="95%" stopColor="#f59e0b" stopOpacity={0.2}/>
+        </linearGradient>
+      </defs>
+
+      
+      <XAxis dataKey="day" />
+      <YAxis />
+      <Tooltip />
+
+      <Area
+        type="monotone"
+        dataKey="active"
+        stroke="#3b82f6"
+        fill="url(#colorActive)"
+        strokeWidth={2}
+      />
+
+      <Area
+        type="monotone"
+        dataKey="inactive"
+        stroke="#f59e0b"
+        fill="url(#colorInactive)"
+        strokeWidth={2}
+      />
+
+    </AreaChart>
+  </ResponsiveContainer>
+</div>
 
           {/* Bottom Section */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -185,9 +327,9 @@ const getInitials = (name = "") => {
                   <Pie
                     data={pieData}
                     dataKey="value"
-                    innerRadius={40}
+                    innerRadius={45}
                     outerRadius={90}
-                     paddingAngle={2}
+                    
                   >
                     {pieData.map((_, index) => (
                       <Cell key={index} fill={pieColors[index]} />
@@ -214,7 +356,7 @@ const getInitials = (name = "") => {
                       {role.icon}
                       <span>{role.role}</span>
                     </div>
-                    <span className="font-bold">{role.count}</span>
+                    <span className="font-bold">{role.value}</span>
                   </div>
                 ))}
               </div>
@@ -232,7 +374,7 @@ const getInitials = (name = "") => {
   </h2>
 
   <thead>
-    <tr className="text-gray-500 text-[10px] sm:text-sm flex gap-2 sm:gap-4 text-left w-full">
+    <tr className="text-gray-500 text-[10px] sm:text-sm flex gap-2 sm:gap-4 text-left w-full border-b border-gray-200">
       <th className="py-2 px-2 ">Project ID</th>
       <th className="py-2 px-2 ">Admin ID</th>
       <th className="py-2 px-2 ">Days</th>
@@ -281,7 +423,7 @@ const getInitials = (name = "") => {
 <div className="bg-white p-6 rounded-2xl shadow">
   <div className="flex justify-between items-center mb-4">
     <h2 className="text-lg font-semibold">Latest Admin</h2>
-    <button className="text-gray-400 hover:text-gray-600">•••</button>
+    <h2 className="text-gray-400 hover:text-gray-600">•••</h2>
   </div>
 
   <div className="space-y-2.5">
@@ -320,8 +462,6 @@ const getInitials = (name = "") => {
     ))}
   </div>
 </div>
-
-            
           </div>
         
         

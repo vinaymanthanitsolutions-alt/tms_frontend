@@ -23,20 +23,23 @@ export default function VerifyOtp({ empId, onClose, onVerified }) {
 
         toast.success(res.data.data.message || "OTP verified");
 
+
         localStorage.setItem("token", res.data.data.token);
         localStorage.setItem("role", res.data.data.role);
+
+        console.log(res.data.data.role.toLowerCase());
 
         const role = res.data.data.role?.trim().toUpperCase();
         console.log("ROLE:", role);
 
         if (role === "ADMIN") {
-          navigate("/admin-dashboard");
+          navigate("/admin/dashboard");
 
         } else if (role === "PROJECT_MANAGER") {
-          navigate("/projectmanager-dashboard");
+          navigate("/pm/dashboard");
 
         } else if (role === "SUPER_ADMIN") {
-          navigate("/superadmin-dashboard");
+          navigate("/superadmin/dashboard");
 
         } else {
           console.log("invalid role:", role);

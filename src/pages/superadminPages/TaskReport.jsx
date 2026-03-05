@@ -1,4 +1,4 @@
-import { useState,useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Search , Eye ,  X} from "lucide-react";
 
 
@@ -15,6 +15,8 @@ const [showTeamDropdown, setShowTeamDropdown] = useState(false);
  const [tasks, setTasks] = useState([]); 
  const [teamMembers, setTeamMembers] = useState([]);
 const [loadingTeam, setLoadingTeam] = useState(false);
+
+const modalRef = useRef(null);
 
  
 
@@ -122,14 +124,27 @@ useEffect(() => {
 
 
 
-   
-  
-
   const handleView = (task) => {
   setSelectedTask(task);
   setSelectedTeamType("");
   setShowModal(true);
 };
+
+useEffect(() => {
+  const handleClickOutside = (event) => {
+    if (modalRef.current && !modalRef.current.contains(event.target)) {
+      setShowModal(false);
+    }
+  };
+
+  if (showModal) {
+    document.addEventListener("mousedown", handleClickOutside);
+  }
+
+  return () => {
+    document.removeEventListener("mousedown", handleClickOutside);
+  };
+}, [showModal]);
 
 
   return (
@@ -233,7 +248,10 @@ useEffect(() => {
 
     {showModal && selectedTask && (
   <div className="fixed inset-0 bg-black/40 bg-opacity-40 flex justify-center items-center z-50">
-    <div className="bg-white w-[700px] rounded-xl shadow-lg p-6 relative max-h-[80vh] overflow-y-auto">
+    <div
+  ref={modalRef}
+  className="bg-white w-[700px] rounded-xl shadow-lg p-6 relative max-h-[80vh] overflow-y-auto"
+>
 
 
       {/* Close Button */}
@@ -437,7 +455,7 @@ useEffect(() => {
 
 
       {/* Pagination */}
-      <div className="flex justify-center items-center gap-2 mt-6">
+      <div className="flex justify-self-end items-center gap-2 mt-6">
         <button
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
           disabled={currentPage === 1}

@@ -12,13 +12,16 @@ const User = () => {
   const dropdownRef = useRef(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+   
+
+  
 
   // ✅ Fetch Data From API
  useEffect(() => {
   const fetchUsers = async () => {
     try {
       const response = await fetch(
-        `http://localhost:8080/emp?role=SUPER_ADMIN&limit=20&search=${search}&page=${currentPage}`
+        `http://localhost:8080/emp?role=SUPER_ADMIN&limit=50&search=${search}&page=${currentPage}`
       );
 
       if (!response.ok) {
@@ -236,7 +239,7 @@ const User = () => {
 
 
       {/* PAGINATION */}
-      <div className="flex justify-center items-center gap-2 mt-6">
+      <div className="flex justify-self-end items-center gap-2 mt-6">
         <button
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
           disabled={currentPage === 1}
