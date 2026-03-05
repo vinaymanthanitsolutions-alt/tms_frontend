@@ -1,9 +1,40 @@
-import React from "react";
+import React, { useEffect } from "react";
 import DonutChart from "../../components/AdminComponents/DonutChart";
 import PiChart from "../../components/AdminComponents/PiChart";
 import BlueBarChart from "../../components/AdminComponents/BlueBarChart";
+import { getRiskOverviewCounts } from "../../services/AdminServices";
 
 const AdminRiskOverview = () => {
+  const [getCount, setGetCount] = React.useState({
+      totalActive: 0,
+      pendingApprovals: 0,
+      overdueProjects: 0,
+      NearDeadline: 0,
+      activeQueries: 0,
+      CompletionRate: 0,
+  });
+
+  const fetchRiskOverviewCountData = async() => {
+    try{
+      const data = await getRiskOverviewCounts();
+      console.log("Risk Overview Counts:", data);
+      setGetCount({
+        totalActive: data.totalActive,
+        pendingApprovals: data.pendingApprovals,
+        overdueProjects: data.overdueProjects,
+        NearDeadline: data.NearDeadline,
+        activeQueries: data.activeQueries,
+        CompletionRate: data.CompletionRate,
+      });
+    } catch (error) {
+      console.error("Error fetching risk overview counts:", error);
+    }
+  }
+
+  useEffect(() => {
+    fetchRiskOverviewCountData();
+  }, []);
+
   return (
     <div className="bg-gray-100" style={{ minHeight: "calc(100vh - 4.4rem)" }}>
       <div className="flex justify-between bg-white px-4 pt-3 pb-4">
@@ -20,7 +51,7 @@ const AdminRiskOverview = () => {
         <div className="bg-white px-4 py-4 rounded-xl w-40 border border-gray-200">
           <h2 className="capitalize text-gray-600 text-sm">Total Active</h2>
           <div>
-            <div className="text-2xl font-medium">124</div>
+            <div className="text-2xl font-medium">{getCount.totalActive}</div>
           </div>
         </div>
         <div className="bg-white px-4 py-4 rounded-xl w-40 border border-gray-200">
@@ -28,33 +59,33 @@ const AdminRiskOverview = () => {
             Pending Approvals
           </h2>
           <div>
-            <div className="text-2xl font-medium">18</div>
+            <div className="text-2xl font-medium">{getCount.pendingApprovals}</div>
           </div>
         </div>
         <div className="bg-rose-100 border border-rose-200 px-4 py-4 rounded-xl w-40 ">
           <h2 className="capitalize text-rose-600 text-sm">Overdue Projects</h2>
           <div>
-            <div className="text-2xl text-rose-700 font-medium">7</div>
+            <div className="text-2xl text-rose-700 font-medium">{getCount.overdueProjects}</div>
           </div>
         </div>
         <div className="bg-orange-100 px-4 py-4 rounded-xl w-40  border border-orange-200 ">
           <h2 className="capitalize text-orange-600 text-sm">Near Deadline</h2>
           <div>
-            <div className="text-2xl text-orange-700 font-medium">12</div>
+            <div className="text-2xl text-orange-700 font-medium">{getCount.NearDeadline}</div>
           </div>
         </div>
         <div className="bg-white px-4 py-4 rounded-xl w-40 border border-gray-200">
           <h2 className="capitalize text-gray-600 text-sm">
-            Rejected Projects
+            Active Queries
           </h2>
           <div>
-            <div className="text-2xl font-medium">3</div>
+            <div className="text-2xl font-medium">{getCount.activeQueries}</div>
           </div>
         </div>
         <div className="bg-white px-4 py-4 rounded-xl w-40 border border-gray-200">
           <h2 className="capitalize text-gray-600 text-sm">Completion Rate</h2>
           <div>
-            <div className="text-2xl font-medium">93%</div>
+            <div className="text-2xl font-medium">{getCount.CompletionRate}%</div>
           </div>
         </div>
       </div>

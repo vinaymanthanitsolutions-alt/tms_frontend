@@ -6,7 +6,7 @@ import manthanLogo from "/manthanlogo.png";
 
 const Navbar = ({ isSidebarOpen, setIsSidebarOpen }) => {
   return (
-    <nav className="py-4 border-b-2 border-gray-200 w-full flex justify-start lg:justify-end items-center gap-4 pr-5 sticky top-0 bg-white z-50 border">
+    <nav className="py-4 border-b-2 border-gray-200 w-full flex justify-start lg:justify-end items-center gap-4 pr-5 sticky top-0 bg-white border">
       <div className="lg:hidden flex gap-2 items-center ml-2">
         <button
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}

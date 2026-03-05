@@ -2,22 +2,33 @@ import React from 'react'
 import { Outlet } from 'react-router-dom'
 import Sidebar from '../Sidebar'
 import Navbar from '../Navbar'
-import { Menu } from "lucide-react";
 
 const MainLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
+
   return (
-    <div className="flex">
-      <div className="sidebar">
-        <Sidebar isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
+    <div className="h-screen flex overflow-hidden">
+
+      <div className="shrink-0">
+        <Sidebar 
+          isSidebarOpen={isSidebarOpen} 
+          setIsSidebarOpen={setIsSidebarOpen} 
+        />
       </div>
-      <div className="content w-full">
-        <div >
-          <Navbar isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
+
+      <div className="flex flex-col flex-1 overflow-hidden">
+
+        <div className="shrink-0">
+          <Navbar 
+            isSidebarOpen={isSidebarOpen} 
+            setIsSidebarOpen={setIsSidebarOpen} 
+          />
         </div>
-        <main>
-            <Outlet />
+
+        <main className="flex-1 overflow-y-auto">
+          <Outlet />
         </main>
+
       </div>
     </div>
   )
