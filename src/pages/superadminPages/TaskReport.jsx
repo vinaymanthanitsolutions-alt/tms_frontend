@@ -192,7 +192,7 @@ useEffect(() => {
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-xl shadow border border-gray-200 overflow-x-auto">
+      <div className="bg-white rounded-xl  border border-gray-200 overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead className="bg-gray-100 text-gray-600 text-sm uppercase text-center">
             <tr>
@@ -233,7 +233,7 @@ useEffect(() => {
 
                 <td className="p-2">
         <span
-          className={`px-3 py-1 rounded-full text-sm font-semibold ${
+          className={`px-3 py-1 text-xs rounded-xl ${
             task.status === "COMPLETED"
               ? "bg-green-100 text-green-700"
               : task.status === "IN_PROGRESS"
@@ -423,7 +423,7 @@ useEffect(() => {
       <td className="p-2">{sub.title}</td>
       <td className="p-2">
         <span
-          className={`px-3 py-1 rounded-full text-sm font-semibold ${
+          className={`px-3 py-1 text-xs rounded-xl ${
             sub.status === "COMPLETED"
               ? "bg-green-100 text-green-700"
               : sub.status === "TEST_DONE"

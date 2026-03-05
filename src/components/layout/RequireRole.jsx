@@ -6,9 +6,6 @@ const RequireRole = ({ allowedRole }) => {
    const userRole = localStorage.getItem("role")?.toLowerCase();
 
 // const userRole = ROLE;
-
-   
-
    console.log("current role:", userRole, "allowed role:", allowedRole);
 
     if(userRole !== allowedRole){

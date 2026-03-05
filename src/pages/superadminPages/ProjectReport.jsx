@@ -111,7 +111,7 @@ const ProjectReport = () => {
       </div>
 
       {/* TABLE */}
-      <div className="bg-white rounded-xl shadow border border-gray-200 overflow-x-auto">
+      <div className="bg-white rounded-xl  border border-gray-200 overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead className="bg-gray-100 text-gray-600 text-sm uppercase">
             <tr>
@@ -147,7 +147,7 @@ const ProjectReport = () => {
 
         <td className="px-2 py-3 text-center">
           <span
-            className={`px-2 py-1 rounded-xl ${
+            className={`px-3 py-1 text-xs rounded-xl ${
               project.status === "COMPLETED"
                 ? "bg-green-200 text-green-700"
                 : project.status === "ACTIVE"

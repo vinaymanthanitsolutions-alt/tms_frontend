@@ -1,4 +1,6 @@
 import axios from "axios";
+import { calculateDeadline } from "../extraDataHandling/deadline";
+import { getQueryCount, taskCompletionRate } from "../extraDataHandling/queries";
 
 const API_BASE_URL = "http://localhost:8080";
 
@@ -466,23 +468,94 @@ export const reassignProjectManager = async (projectId, newManagerId) => {
 export const getDashboardCounts = async () => {
   try {
 
-    const [empresponse, projectresponse] = await Promise.all([
+    const [empresponse, projectresponse, taskresponse] = await Promise.all([
       axios.get(`${API_BASE_URL}/empCounts`, {
         params: { manager_id: "A001" }
       }),
       axios.get(`${API_BASE_URL}/projectCounts`, {
         params: { admin_id: "A001" }
+      }),
+      axios.get(`${API_BASE_URL}/taskCounts`, {
+
+        params: { 
+          role: "ADMIN",
+          employee_id: "A001" }
       })
     ]);
 
     const empData = empresponse.data.data;
     const projectData = projectresponse.data.data;
+    const taskData = taskresponse.data.data;
 
     return {
       employeeCount: empData.total_employees,
       projectCount: projectData.total_projects,
-      activeTaskCount: projectData.active,
+      activeTaskCount: taskData.total_tasks,
       pendingApprovalCount: projectData.planning,
+    };
+
+  } catch (error) {
+    console.error("Error fetching dashboard counts:", error);
+    throw error;
+  }
+};
+
+
+// Risk overview services
+
+export const getRiskOverviewCounts = async () => {
+  try {
+
+    const [empresponse, projectresponse, allProjectData, queryData] = await Promise.all([
+      axios.get(`${API_BASE_URL}/empCounts`, {
+        params: { manager_id: "A001" }
+      }),
+      axios.get(`${API_BASE_URL}/projectCounts`, {
+        params: { admin_id: "A001" }
+      }),
+      axios.get(`${API_BASE_URL}/project/admin`,{
+        params:{
+          admin_id: "A001",
+        }
+      }),
+      axios.get(`${API_BASE_URL}/queryCount`, {
+        params: {
+          role:"ADMIN",
+          employee_id: "A001",
+        }
+      })
+    ]);
+
+    //  const response = await axios.get(`${API_BASE_URL}/project/admin`, {
+    //   params: {
+    //     admin_id: adminId,
+    //     page: page,
+    //     limit: limit,
+    //     search: search,
+    //   },
+    // });
+
+    const empData = empresponse.data.data;
+    const projectData = projectresponse.data.data;
+    const allProjects = allProjectData.data.data || [];
+    const queryCountData = queryData.data.data || {};
+    const deadlineData = calculateDeadline(allProjects);
+
+    const finalQueriesRemaingCount = getQueryCount(queryCountData);
+
+    const completionRate = taskCompletionRate(projectData);
+
+
+    console.log(deadlineData.nearDeadlinesCount);
+    console.log("Active Queries:", queryCountData);
+
+    return {
+      totalActive: projectData.active ?? 0,
+      pendingApprovals: projectData.planning ?? 0,
+      overdueProjects: projectData.active ?? 0,
+      NearDeadline: deadlineData.nearDeadlinesCount ?? 0,
+      activeQueries: finalQueriesRemaingCount ?? 0,
+      CompletionRate: completionRate ?? 0,
     };
 
   } catch (error) {

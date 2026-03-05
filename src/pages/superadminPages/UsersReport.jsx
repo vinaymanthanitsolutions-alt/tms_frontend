@@ -181,7 +181,7 @@ const totalPages = Math.max(
     </div>
 
     {/* TABLE */}
-    <div className="bg-white rounded-xl shadow border border-gray-200 overflow-x-auto">
+    <div className="bg-white rounded-xl  border border-gray-200 overflow-x-auto">
       <table className="w-full text-left border-collapse">
         <thead className="bg-gray-100 text-gray-600 text-sm uppercase">
           <tr>
@@ -206,7 +206,7 @@ const totalPages = Math.max(
 
                 <td className="p-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center text-sm font-semibold">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 text-white font-bold  flex items-center justify-center text-sm font-semibold">
                       {user.emp_name
                         ?.match(/\b\w/g)
                         ?.join("")

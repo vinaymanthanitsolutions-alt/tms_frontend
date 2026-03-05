@@ -418,7 +418,7 @@ useEffect(() => {
 
 
       {/*  TABLE */}
-      <div className="w-full overflow-x-auto bg-white rounded-lg shadow">
+      <div className="w-full overflow-x-auto bg-white rounded-xl ">
        <table className="min-w-full border border-gray-200">
           <thead className="bg-gray-200 text-center">
             <tr>
@@ -566,7 +566,7 @@ useEffect(() => {
   <div className="fixed inset-0 bg-black/40 flex justify-center items-center p-4 z-50 overflow-y-auto">
      <div
       ref={addRef}
-      className="bg-white w-full max-w-4xl rounded-2xl border border-gray-200 shadow-md p-6 sm:p-8 relative"
+      className="bg-white w-full max-w-4xl rounded-lg border border-gray-200  p-6 sm:p-8 relative"
     >
 
       {/* CLOSE */}
@@ -725,7 +725,7 @@ useEffect(() => {
     
 <div
   ref={editRef}
-  className="bg-white w-full max-w-2xl rounded-2xl border border-gray-200 shadow-md p-6 sm:p-8 relative "
+  className="bg-white w-full max-w-2xl rounded-lg border border-gray-200  p-6 sm:p-8 relative "
 >
        {/* CLOSE */}
       <button

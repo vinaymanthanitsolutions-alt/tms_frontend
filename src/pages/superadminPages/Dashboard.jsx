@@ -91,12 +91,12 @@ const Dashboard = () => {
   ];
 
   const lineData = [
-    { day: "Week1", active: 80, inactive: 50 },
-    { day: "Week2", active: 70, inactive: 85 },
-    { day: "Week3", active: 80, inactive: 70 },
-    { day: "Week4", active: 60, inactive: 70 },
-    { day: "Week5", active: 90, inactive: 80 },
-    { day: "Week6", active: 65, inactive: 50 },
+    { day: "Week1", Active: 80, Inactive: 50 },
+    { day: "Week2", Active: 70, Inactive: 85 },
+    { day: "Week3", Active: 80, Inactive: 70 },
+    { day: "Week4", Active: 60, Inactive: 70 },
+    { day: "Week5", Active: 90, Inactive: 80 },
+    { day: "Week6", Active: 65, Inactive: 50 },
     // { day: "Week7", active: 92, inactive: 90 },
   ];
 
@@ -272,12 +272,12 @@ const Dashboard = () => {
         <div className=" space-y-6">
           {/* Line Chart */}
           <div className="grid sm:grid-cols-2 grid-cols-1 gap-4 mb-4 ">
-            <div className="bg-white p-6 rounded-2xl shadow">
+            <div className="bg-white p-6 rounded-xl   ">
               <h2 className="text-lg font-semibold mb-4">
-                Active, Inactive Admins
+                Admin Status
               </h2>
 
-              <ResponsiveContainer width="100%" height={200} className="sm:h-[250px] text-sm">
+              <ResponsiveContainer width="100%" height={200} className="sm:h-[250px] text-sm mt-12">
                 <AreaChart data={lineData}>
 
                   <defs>
@@ -299,9 +299,16 @@ const Dashboard = () => {
                   <YAxis />
                   <Tooltip />
 
+                   <Legend
+                      wrapperStyle={{
+                        fontSize: "16px",
+                        paddingTop: "10px",
+                      }}
+                    />
+
                   <Area
                     type="monotone"
-                    dataKey="active"
+                    dataKey="Active"
                     stroke="#3b82f6"
                     fill="url(#colorActive)"
                     strokeWidth={2}
@@ -309,7 +316,7 @@ const Dashboard = () => {
 
                   <Area
                     type="monotone"
-                    dataKey="inactive"
+                    dataKey="Inactive"
                     stroke="#f59e0b"
                     fill="url(#colorInactive)"
                     strokeWidth={2}
@@ -320,13 +327,9 @@ const Dashboard = () => {
 
 
 
-
-
-
-
             </div>
        {/*  pie chart project Status  */}
-            <div className="bg-white p-4 sm:p-6 rounded-2xl shadow w-full">
+            <div className="bg-white p-4 sm:p-6 rounded-xl  w-full">
               <h2 className="text-sm sm:text-lg font-semibold mb-4 text-center sm:text-left">
                 Project Status
               </h2>
@@ -363,7 +366,7 @@ const Dashboard = () => {
           {/* Bottom Section */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* Roles */}
-            <div className="bg-white p-6 sm:p-5 rounded-2xl shadow overflow-x-auto w-full">
+            <div className="bg-white p-6 sm:p-5 rounded-xl  overflow-x-auto w-full">
               <h2 className="text-lg font-semibold mb-4">
                 Employee Roles
               </h2>
@@ -377,13 +380,16 @@ const Dashboard = () => {
                       {role.icon}
                       <span>{role.role}</span>
                     </div>
-                    <span className="font-bold">{role.value}</span>
+                    <span className="font-semibold">{role.value}</span>
                   </div>
                 ))}
               </div>
             </div>
+   
 
-            <div className="bg-white p-4 sm:p-5 rounded-2xl shadow overflow-x-auto">
+   {/* upcoming deadline */}
+
+            <div className="bg-white p-4 sm:p-5 rounded-2xl  overflow-x-auto">
               <h2 className="text-sm sm:text-lg font-semibold mb-4">
                 Upcoming Deadlines
               </h2>
@@ -435,15 +441,10 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Right Section  */}
-
+       
+ {/* Latest Admin */}
         <div className="lg:col-span-2 space-y-6 mt-4">
-
-          {/* table section */}
-
-
-          {/* Latest Admin */}
-          <div className="bg-white p-6 sm:p-5 lg:p-6 rounded-2xl shadow w-full max-w-full">
+          <div className="bg-white p-6 sm:p-5 lg:p-6 rounded-2xl w-full max-w-full">
             <div className="flex justify-between items-center   ">
               <h2 className="text-lg  font-semibold  mb-4">
                 Latest Admin
@@ -457,7 +458,7 @@ const Dashboard = () => {
               {latestAdmin.map((admin, index) => (
                 <div
                   key={index}
-                  className="flex flex-col  bg-white p-4 rounded-xl shadow hover:shadow-lg transition w-full  "
+                  className="flex flex-col  bg-white p-4 rounded-xl shadow  transition w-full  "
                 >
                   {/* Top Section */}
                   <div className="sm:items-center gap-3  w-full ">
@@ -479,7 +480,6 @@ const Dashboard = () => {
                   </div>
 
                   {/* Name + Username */}
-
 
                   {/* Bottom Section */}
                   <div className="flex justify-between items-center mt-4">
