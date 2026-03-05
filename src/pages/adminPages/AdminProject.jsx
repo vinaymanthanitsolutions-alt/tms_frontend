@@ -31,6 +31,7 @@ import {
 import { Rocket } from "lucide-react";
 
 import { Plus } from "lucide-react";
+import OrangeButton from "../../components/OrangeButton";
 
 const AdminProject = () => {
   const [activeFilter, setActiveFilter] = useState(null);
@@ -422,17 +423,20 @@ const AdminProject = () => {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-semibold">Project Mangement</h1>
-          <p className="text-sm text-emerald-600">Project</p>
+          <p className="text-sm text-orange-600">Project</p>
         </div>
-        <div
-          className="px-4 py-2 text-[0.900rem] bg-emerald-600 text-white font-light rounded hover:bg-emerald-700 flex items-center gap-1 cursor-pointer"
+        {/* <div
+          className="px-4 py-2 text-[0.900rem] bg-orange-500 text-white font-light rounded hover:bg-orange-600 flex items-center gap-1 cursor-pointer"
           onClick={() => setIsSidebarOpen(true)}
         >
+         
+        </div> */}
+        <OrangeButton onClickFunction={() => setIsSidebarOpen(true)} style={{display:"flex", alignItems:"center", gap:"0.25rem"}}>
           <Plus size={16} />
           <button className="tracking-wide hidden xxs:block">
             Add Project
           </button>
-        </div>
+        </OrangeButton>
       </div>
 
       <div>
@@ -563,7 +567,7 @@ const AdminProject = () => {
                       <div className="flex items-center gap-3">
                         <Rocket
                           size={30}
-                          className="px-2 py-2 rounded bg-blue-200 text-blue-500 shrink-0"
+                          className="px-2 py-2 rounded bg-orange-200 text-orange-500 shrink-0"
                         />
                         <div>
                           <div>{project.name}</div>

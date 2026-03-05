@@ -182,7 +182,7 @@ const [refreshKey, setRefreshKey] = useState(0);
 
       <div className="p-5">
         <h1 className="text-2xl font-semibold">Employee Management List</h1>
-        <p className="text-sm text-emerald-600">Team</p>
+        <p className="text-sm text-orange-600">Team</p>
 
         {/* Status Filter Tabs */}
 
@@ -269,7 +269,7 @@ const [refreshKey, setRefreshKey] = useState(0);
             </div>
 
             <button
-              className="bg-emerald-600 text-white px-4 py-2 rounded-md font-light hover:bg-emerald-700 transition flex gap-1 items-center"
+              className="bg-orange-400 text-white px-4 py-2 rounded-md font-light hover:bg-orange-500 transition flex gap-1 items-center"
               onClick={() => {
                 setIsOpenAdminRegister(true);
               }}
@@ -279,7 +279,7 @@ const [refreshKey, setRefreshKey] = useState(0);
             </button>
           </div>
         </div>
-        <div className="mt-6 overflow-x-auto rounded-xl">
+        <div className=" overflow-x-auto rounded-xl">
           <table className="w-full border-separate border-spacing-0 border border-gray-200 mt-5 rounded-md overflow-hidden">
             <thead>
               <tr className="bg-gray-100">
