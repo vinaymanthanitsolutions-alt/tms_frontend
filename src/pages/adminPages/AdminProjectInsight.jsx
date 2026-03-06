@@ -144,7 +144,7 @@ const AdminProjectInsight = () => {
         <div className="relative flex flex-wrap justify-between gap-4">
           {/* Connecting line - simplified as background */}
           <div className="absolute top-6 left-0 right-0 h-0.5 bg-gray-200 z-0 hidden sm:block" style={{ marginLeft: '5%', marginRight: '5%' }} />
-          <div className="relative z-10 flex flex-col items-center text-center min-w-[80px] max-w-[120px]">
+          <div className="relative z-10 flex flex-col items-center text-center min-w-20 max-w-30">
             <div className={`w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white mb-2`}>
               <IconPoint size={20} />
             </div>
@@ -156,7 +156,7 @@ const AdminProjectInsight = () => {
               APPROVED
             </span>
           </div>
-          <div className="relative z-10 flex flex-col items-center text-center min-w-[80px] max-w-[120px]">
+          <div className="relative z-10 flex flex-col items-center text-center min-w-20 max-w-30">
             <div className={`w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white mb-2`}>
               <IconSearch size={20} />
             </div>
@@ -168,7 +168,7 @@ const AdminProjectInsight = () => {
               APPROVED
             </span>
           </div>
-          <div className="relative z-10 flex flex-col items-center text-center min-w-[80px] max-w-[120px]">
+          <div className="relative z-10 flex flex-col items-center text-center min-w-20 max-w-30">
             <div className={`w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white mb-2`}>
               <IconBolt size={20} />
             </div>
@@ -180,7 +180,7 @@ const AdminProjectInsight = () => {
               ONGOING
             </span>
           </div>
-          <div className="relative z-10 flex flex-col items-center text-center min-w-[80px] max-w-[120px]">
+          <div className="relative z-10 flex flex-col items-center text-center min-w-20 max-w-30">
             <div className={`w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-white mb-2`}>
               <IconSettings size={20} />
             </div>
@@ -192,7 +192,7 @@ const AdminProjectInsight = () => {
               PENDING
             </span>
           </div>
-          <div className="relative z-10 flex flex-col items-center text-center min-w-[80px] max-w-[120px]">
+          <div className="relative z-10 flex flex-col items-center text-center min-w-20 max-w-30">
             <div className={`w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-white mb-2`}>
               <IconFlag size={20} />
             </div>

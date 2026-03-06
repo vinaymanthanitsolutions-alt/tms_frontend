@@ -7,6 +7,7 @@ import { Users } from "lucide-react";
 import { Settings } from "lucide-react";
 import { MessageCircleQuestionMark } from "lucide-react";
 import { X } from "lucide-react";
+import { LogOut } from "lucide-react";
 import {
   ChevronDown,
   ChevronRight,
@@ -57,7 +58,7 @@ const SIDEBAR_LINKS = {
     },
   ],
 
-  pm: [
+  project_manager: [
     {
       label: "Dashboard",
       path: "/pm/dashboard",
@@ -148,6 +149,11 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
     }));
   };
 
+  const handleLogOutClick = () => {
+    localStorage.clear();
+    navigate("/login");
+  };
+
   return (
     <aside
       className={`fixed w-full md:w-64 lg:static inset-y-0 left-0 z-60 h-screen border-r-2 border-gray-200 bg-white transform transition-transform duration-300 ease-in-out flex flex-col ${
@@ -186,6 +192,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
                   } else if (item.path) {
                     // handleButtonClick(item.label);
                     navigate(item.path);
+                    setIsSidebarOpen(false);
                   }
                 }}
               >
@@ -217,6 +224,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
                       }`}
                       onClick={() => {
                         navigate(child.path);
+                        setIsSidebarOpen(false);
                         // handleButtonClick(child.label);
                       }}
                     >
@@ -248,9 +256,9 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen }) => {
           </div>
           <div
             className={`${menuItemsStyle} ${location.pathname === "/logout" ? selectedButtonStyle : ""}`}
-            // onClick={() => handleButtonClick("Logout")}
+            onClick={() => handleLogOutClick()}
           >
-            <MessageCircleQuestionMark size={20} />
+            <LogOut size={20} />
             <span>Logout</span>
           </div>
         </div>

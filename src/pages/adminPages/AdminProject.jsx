@@ -7,6 +7,8 @@ import {
   ChevronRight,
 } from "lucide-react";
 import React, { useState, useEffect, useRef } from "react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import {
   getEmployeesByRole,
   createProject,
@@ -63,7 +65,7 @@ const AdminProject = () => {
     projectId: "",
     name: "",
     description: "",
-    deadline: "",
+    deadline: null,
   });
 
   // Error state
@@ -285,12 +287,24 @@ const AdminProject = () => {
     }));
   };
 
+  const handleDateChange = (date) => {
+    setFormData((prev) => ({
+      ...prev,
+      deadline: date,
+    }));
+    // Clear error when date is selected
+    setErrors((prev) => ({
+      ...prev,
+      deadline: "",
+    }));
+  };
+
   const resetForm = () => {
     setFormData({
       projectId: "",
       name: "",
       description: "",
-      deadline: "",
+      deadline: null,
     });
     setSelectedManager("");
     setManagerId("");
@@ -381,7 +395,9 @@ const AdminProject = () => {
       projectId: validateProjectCode(formData.projectId),
       name: validateProjectTitle(formData.name),
       description: validateProjectDescription(formData.description),
-      deadline: validateProjectDeadline(formData.deadline),
+      deadline: validateProjectDeadline(
+        formData.deadline ? formData.deadline.toISOString().split("T")[0] : "",
+      ),
     };
 
     setErrors(newErrors);
@@ -399,7 +415,9 @@ const AdminProject = () => {
       projectId: formData.projectId,
       name: formData.name,
       description: formData.description,
-      deadline: formData.deadline,
+      deadline: formData.deadline
+        ? formData.deadline.toISOString().split("T")[0]
+        : "",
       pmId: managerId,
       createdBy: "A001", // Replace with actual admin ID from context/auth
     };
@@ -423,7 +441,7 @@ const AdminProject = () => {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-semibold">Project Mangement</h1>
-          <p className="text-sm text-orange-600">Project</p>
+          <p className="text-sm text-gray-600">Project</p>
         </div>
         {/* <div
           className="px-4 py-2 text-[0.900rem] bg-orange-500 text-white font-light rounded hover:bg-orange-600 flex items-center gap-1 cursor-pointer"
@@ -431,7 +449,10 @@ const AdminProject = () => {
         >
          
         </div> */}
-        <OrangeButton onClickFunction={() => setIsSidebarOpen(true)} style={{display:"flex", alignItems:"center", gap:"0.25rem"}}>
+        <OrangeButton
+          onClickFunction={() => setIsSidebarOpen(true)}
+          style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}
+        >
           <Plus size={16} />
           <button className="tracking-wide hidden xxs:block">
             Add Project
@@ -755,7 +776,7 @@ const AdminProject = () => {
                 onChange={handleInputChange}
                 className={`w-full px-3 py-2 border ${
                   errors.projectId ? "border-red-500" : "border-gray-300"
-                } rounded-md outline-none focus:border-emerald-600`}
+                } rounded-md outline-none focus:border-black`}
               />
               {errors.projectId && (
                 <p className="text-red-500 text-xs mt-1">{errors.projectId}</p>
@@ -773,7 +794,7 @@ const AdminProject = () => {
                 onChange={handleInputChange}
                 className={`w-full px-3 py-2 border ${
                   errors.name ? "border-red-500" : "border-gray-300"
-                } rounded-md outline-none focus:border-emerald-600`}
+                } rounded-md outline-none focus:border-black`}
               />
               {errors.name && (
                 <p className="text-red-500 text-xs mt-1">{errors.name}</p>
@@ -791,7 +812,7 @@ const AdminProject = () => {
                 onChange={handleInputChange}
                 className={`w-full px-3 py-2 border ${
                   errors.description ? "border-red-500" : "border-gray-300"
-                } rounded-md outline-none focus:border-emerald-600`}
+                } rounded-md outline-none focus:border-black`}
               ></textarea>
               {errors.description && (
                 <p className="text-red-500 text-xs mt-1">
@@ -803,14 +824,15 @@ const AdminProject = () => {
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Deadline Date <span className="text-red-500">*</span>
               </label>
-              <input
-                type="date"
-                name="deadline"
-                value={formData.deadline}
-                onChange={handleInputChange}
+              <DatePicker
+                selected={formData.deadline}
+                onChange={handleDateChange}
+                dateFormat="yyyy-MM-dd"
+                minDate={new Date()}
+                placeholderText="Select deadline date"
                 className={`w-full px-3 py-2 border ${
                   errors.deadline ? "border-red-500" : "border-gray-300"
-                } rounded-md outline-none focus:border-emerald-600 text-gray-500`}
+                } rounded-md outline-none focus:border-black text-gray-500`}
               />
               {errors.deadline && (
                 <p className="text-red-500 text-xs mt-1">{errors.deadline}</p>
@@ -821,7 +843,7 @@ const AdminProject = () => {
                 Select Project Manager
               </label>
               <select
-                className="w-full px-3 py-2 border border-gray-300 rounded-md outline-none focus:border-emerald-600 text-gray-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md outline-none focus:border-black text-gray-500"
                 value={selectedManager}
                 onChange={handleManagerChange}
                 disabled={loadingManagers}
@@ -870,7 +892,7 @@ const AdminProject = () => {
               type="submit"
               onClick={handleSubmit}
               disabled={submitting}
-              className="w-full bg-emerald-600 text-white py-2 rounded-md font-medium hover:bg-emerald-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-orange-500 text-white py-2 rounded-md font-medium hover:bg-orange-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {submitting ? "Creating..." : "Create Project"}
             </button>
