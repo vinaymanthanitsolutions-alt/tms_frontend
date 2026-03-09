@@ -82,9 +82,8 @@ useEffect(() => {
 }, [debouncedSearch]);
 
 
-useEffect(() => {
-    
- const fetchTeamMembers = async (teamId, role) => {
+// helper for fetching members; defined in component scope so callers can use it
+const fetchTeamMembers = async (teamId, role) => {
   try {
     setLoadingTeam(true);
 
@@ -106,9 +105,17 @@ useEffect(() => {
   } finally {
     setLoadingTeam(false);
   }
- };
-    fetchTeamMembers();
-}, [debouncedSearch]);
+};
+
+// whenever search text changes we may need to refetch the current team members
+useEffect(() => {
+  if (selectedTask && selectedTeamType) {
+    // map teamType to API role value
+    const roleParam =
+      selectedTeamType === "developer" ? "Developer" : "Tester";
+    fetchTeamMembers(selectedTask.teamId, roleParam);
+  }
+}, [debouncedSearch, selectedTask, selectedTeamType]);
 
 
 

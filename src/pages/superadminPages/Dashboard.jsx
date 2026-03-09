@@ -62,31 +62,35 @@ const Dashboard = () => {
       icon: <Users size={28} />,
       title: "Total Emp",
       value: employeeCounts.total,
-      color: "from-blue-500 to-blue-400",
-      // icon: <Users size={28} />,
+    iconColor: "text-blue-600",
+    bgColor: "bg-blue-100",
     },
     {
       title: "Total Project",
       value: projectCounts.total,
-      color: "from-orange-500 to-orange-400",
+      iconColor: "text-orange-500",
+      bgColor: "bg-orange-100",
       icon: <ClipboardList size={28} />,
     },
     {
       title: "Completed ",
       value: projectCounts.completed,
-      color: "from-green-500 to-green-400",
+      iconColor: "text-green-600",
+      bgColor: "bg-green-100",
       icon: <CheckCircle size={28} />,
     },
     {
       title: "Pending ",
       value: projectCounts.planning + projectCounts.active,
-      color: "from-teal-500 to-teal-400",
+     iconColor: "text-yellow-500",
+     bgColor: "bg-yellow-100",
       icon: <Hourglass size={28} />,
     },
     {
       title: "New Projects",
       value: 4,
-      color: "from-purple-500 to-purple-400",
+      iconColor: "text-purple-600",
+      bgColor: "bg-purple-100",
       icon: <Lightbulb size={28} />,
     },
   ];
@@ -114,10 +118,7 @@ const Dashboard = () => {
       name: "Planning",
       value: projectCounts.planning,
     },
-    {
-      name: "Total Project",
-      value: projectCounts.total,
-    },
+    
   ];
 
   const pieColors = ["#22c55e", "#3b82f6", "#f97316", "#8b5cf6"];
@@ -252,14 +253,16 @@ const Dashboard = () => {
         {cards.map((card, i) => (
           <div
             key={i}
-            className={`bg-gradient-to-r ${card.color} text-white rounded-2xl p-4 sm:p-5 md:p-6 shadow-lg flex items-center gap-3 sm:gap-4 hover:shadow-xl min-w-0`}
+            className={`bg-white  rounded-lg p-3 sm:p-3 md:p-3 flex items-center gap-3 sm:gap-4  min-w-0`}
 
           >
 
-            <div className="opacity-90">{card.icon}</div>
+            <div className={`${card.bgColor} ${card.iconColor} p-2 rounded-md ml-1 mt-1`}>
+  {card.icon}
+</div>
             <div>
-              <p className="text-sm opacity-90">{card.title}</p>
-              <h2 className="text-3xl font-bold mt-2">{card.value}</h2>
+              <p className="text-sm opacity-90 ">{card.title}</p>
+              <h2 className="text-2xl font-bold mt-2">{card.value}</h2>
             </div>
             {/* <div className="opacity-90">{card.icon}</div> */}
           </div>
