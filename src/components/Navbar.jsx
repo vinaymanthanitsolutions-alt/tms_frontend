@@ -28,7 +28,7 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen }) => {
         <User className="text-white w-5 h-5" />
       </div>
       {/* <div className="px-3 py-2 bg-gray-100 rounded"> */}
-        <div className="text-sm font-medium capitalize">
+        <div className="hidden lg:block text-sm font-medium capitalize">
           {role || "Unknown"}
         </div>
       {/* </div> */}

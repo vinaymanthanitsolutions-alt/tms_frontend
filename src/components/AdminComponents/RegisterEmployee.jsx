@@ -228,7 +228,7 @@ export default function RegisterEmployee({
                 value={formData.empCode}
                 onChange={handleChange}
                 disabled={editData ? true : false}
-                className={`w-full px-3 py-2 border rounded-md outline-none focus:ring-2 focus:ring-emerald-500 ${
+                className={`w-full px-3 py-2 border rounded-md outline-none focus:ring-1 focus:ring-black ${
                   errors.empCode ? "border-red-500" : "border-gray-300"
                 } ${editData ? "bg-gray-100 cursor-not-allowed" : ""}`}
                 placeholder="e.g., EMP001"
@@ -247,7 +247,7 @@ export default function RegisterEmployee({
                 name="empName"
                 value={formData.empName}
                 onChange={handleChange}
-                className={`w-full px-3 py-2 border rounded-md outline-none focus:ring-2 focus:ring-emerald-500 ${
+                className={`w-full px-3 py-2 border rounded-md outline-none focus:ring-1 focus:ring-black ${
                   errors.empName ? "border-red-500" : "border-gray-300"
                 }`}
                 placeholder="e.g., John Doe"
@@ -266,7 +266,7 @@ export default function RegisterEmployee({
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                className={`w-full px-3 py-2 border rounded-md outline-none focus:ring-2 focus:ring-emerald-500 ${
+                className={`w-full px-3 py-2 border rounded-md outline-none focus:ring-1 focus:ring-black ${
                   errors.email ? "border-red-500" : "border-gray-300"
                 }`}
                 placeholder="e.g., john.doe@example.com"
@@ -285,7 +285,7 @@ export default function RegisterEmployee({
                 name="phone"
                 value={formData.phone}
                 onChange={handleChange}
-                className={`w-full px-3 py-2 border rounded-md outline-none focus:ring-2 focus:ring-emerald-500 ${
+                className={`w-full px-3 py-2 border rounded-md outline-none focus:ring-1 focus:ring-black ${
                   errors.phone ? "border-red-500" : "border-gray-300"
                 }`}
                 placeholder="e.g., 62345....."
@@ -303,7 +303,7 @@ export default function RegisterEmployee({
                 name="department"
                 value={formData.department}
                 onChange={handleChange}
-                className={`w-full px-3 py-2 border rounded-md outline-none focus:ring-2 focus:ring-emerald-500 ${
+                className={`w-full px-3 py-2 border rounded-md outline-none focus:ring-1 focus:ring-black ${
                   errors.department ? "border-red-500" : "border-gray-300"
                 }`}
               >
@@ -326,7 +326,7 @@ export default function RegisterEmployee({
                 value={formData.role}
                 onChange={handleChange}
                 disabled={!formData.department}
-                className={`w-full px-3 py-2 border rounded-md outline-none focus:ring-2 focus:ring-emerald-500 ${
+                className={`w-full px-3 py-2 border rounded-md outline-none focus:ring-1 focus:ring-black ${
                   !formData.department
                     ? "bg-gray-100 cursor-not-allowed"
                     : errors.role
@@ -361,7 +361,7 @@ export default function RegisterEmployee({
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
-                className={`w-full px-3 py-2 border rounded-md outline-none focus:ring-2 focus:ring-emerald-500 ${
+                className={`w-full px-3 py-2 border rounded-md outline-none focus:ring-1 focus:ring-black ${
                   errors.password ? "border-red-500" : "border-gray-300"
                 }`}
                 placeholder={
@@ -386,7 +386,7 @@ export default function RegisterEmployee({
             </button>
             <button
               type="submit"
-              className="flex-1 bg-emerald-600 text-white px-4 py-2 rounded-md hover:bg-emerald-700 transition"
+              className="flex-1 bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600 transition"
             >
               {editData ? "Update" : "Register"}
             </button>

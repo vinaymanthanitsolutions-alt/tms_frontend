@@ -5,14 +5,15 @@ import { ChevronLeft } from "lucide-react";
 import { getEmployeeById, deleteEmployee } from "../../services/AdminServices";
 import toast from "react-hot-toast";
 import Confirmation from "../../components/AdminComponents/Confirmation";
-import RegisterEmployee from "../../components/AdminComponents/RegisterEmployee"; 
+import RegisterEmployee from "../../components/AdminComponents/RegisterEmployee";
+import OrangeButton from "../../components/OrangeButton";
 
 // const AdminTeam = ({ setIsOpenAdminRegister, setEditEmployee, refreshKey }) => {
 const AdminTeam = () => {
   const [openRegister, setOpenRegister] = React.useState(false);
   const [isOpenAdminRegister, setIsOpenAdminRegister] = useState(false);
-const [editEmployee, setEditEmployee] = useState(null);
-const [refreshKey, setRefreshKey] = useState(0);
+  const [editEmployee, setEditEmployee] = useState(null);
+  const [refreshKey, setRefreshKey] = useState(0);
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -171,19 +172,31 @@ const [refreshKey, setRefreshKey] = useState(0);
       )}
 
       <RegisterEmployee
-  isOpen={isOpenAdminRegister}
-  onClose={() => {
-    setIsOpenAdminRegister(false);
-    setEditEmployee(null);
-  }}
-  editData={editEmployee}
-  onSuccess={() => setRefreshKey(prev => prev + 1)}
-/>
+        isOpen={isOpenAdminRegister}
+        onClose={() => {
+          setIsOpenAdminRegister(false);
+          setEditEmployee(null);
+        }}
+        editData={editEmployee}
+        onSuccess={() => setRefreshKey((prev) => prev + 1)}
+      />
 
       <div className="p-5">
-        <h1 className="text-2xl font-semibold">Employee Management List</h1>
-        <p className="text-sm text-orange-600">Team</p>
-
+        <div className="flex w-full justify-between items-center">
+          <div>
+          <h1 className="text-2xl font-semibold">Employee Management List</h1>
+          <p className="text-sm text-gray-600">Team</p>
+        </div>
+        <OrangeButton
+          onClickFunction={() => setIsOpenAdminRegister(true)}
+          style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}
+        >
+          <Plus size={16} />
+          <button className="tracking-wide hidden xxs:block">
+            Add Employee
+          </button>
+        </OrangeButton>
+        </div>
         {/* Status Filter Tabs */}
 
         <div className="flex xxs:border-2 rounded-md border-gray-200 justify-between p-0 xxs:px-3 xxs:py-4 my-3 ">
@@ -210,7 +223,9 @@ const [refreshKey, setRefreshKey] = useState(0);
                 className="flex items-center gap-2 ml-1 px-4 py-2 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition"
               >
                 <Filter size={18} className="text-gray-600" />
-                <span className="hidden md:block text-sm font-medium">{getFilterLabel()}</span>
+                <span className="hidden md:block text-sm font-medium">
+                  {getFilterLabel()}
+                </span>
                 <ChevronDown
                   size={16}
                   className={`text-gray-600 transition-transform ${
@@ -268,7 +283,7 @@ const [refreshKey, setRefreshKey] = useState(0);
               )}
             </div>
 
-            <button
+            {/* <button
               className="bg-orange-400 text-white px-4 py-2 rounded-md font-light hover:bg-orange-500 transition flex gap-1 items-center"
               onClick={() => {
                 setIsOpenAdminRegister(true);
@@ -276,7 +291,7 @@ const [refreshKey, setRefreshKey] = useState(0);
             >
               <Plus size={19} />
               <div className="hidden md:block">Add Employee</div>
-            </button>
+            </button> */}
           </div>
         </div>
         <div className=" overflow-x-auto rounded-xl">
