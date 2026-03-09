@@ -13,6 +13,7 @@ const [selectedTask, setSelectedTask] = useState(null);
 const [selectedTeamType, setSelectedTeamType] = useState("");
 const [showTeamDropdown, setShowTeamDropdown] = useState(false);
  const [tasks, setTasks] = useState([]); 
+
  const [teamMembers, setTeamMembers] = useState([]);
 const [loadingTeam, setLoadingTeam] = useState(false);
 
@@ -81,13 +82,14 @@ useEffect(() => {
 }, [debouncedSearch]);
 
 
-
+useEffect(() => {
+    
  const fetchTeamMembers = async (teamId, role) => {
   try {
     setLoadingTeam(true);
 
     const response = await fetch(
-      `http://localhost:8080/team/members-subtasks?team_id=${teamId}&role=${role}`
+      `http://localhost:8080/team/members-subtasks?team_id=${teamId}&role=${role}&search=${searchTerm}`
     );
 
     const result = await response.json();
@@ -98,14 +100,17 @@ useEffect(() => {
       throw new Error("Failed to fetch team members");
     }
 
-    // ✅ Correct path
     setTeamMembers(result?.data?.members || []);
   } catch (error) {
     console.error("Team Fetch Error:", error);
   } finally {
     setLoadingTeam(false);
   }
-};
+ };
+    fetchTeamMembers();
+}, [debouncedSearch]);
+
+
 
 
  
@@ -137,7 +142,7 @@ useEffect(() => {
   if (currentPage > totalPages) {
     setCurrentPage(1);
   }
-}, [filteredTasks, totalPages, currentPage]);
+}, [filteredTasks, totalPages, currentPage,debouncedSearch]);
 
 
 
@@ -193,8 +198,8 @@ useEffect(() => {
 
       {/* Table */}
       <div className="bg-white rounded-xl  border border-gray-200 overflow-x-auto">
-        <table className="w-full text-left border-collapse">
-          <thead className="bg-gray-100 text-gray-600 text-sm uppercase text-center">
+        <table className="w-full text-left border-collapse ">
+          <thead className="bg-gray-100 text-gray-600 text-sm uppercase ">
             <tr>
               <th className="p-4">Team ID</th>
               <th className="p-4">Project ID</th>
@@ -213,17 +218,16 @@ useEffect(() => {
             currentTasks.map((task, index) => (
               <tr
                 key={index}
-                className="border-t hover:bg-gray-50 transition border-gray-200  text-center"
+                className="border-t hover:bg-gray-50 transition border-gray-200  "
               >
                 <td className="p-4">{task.teamId}</td>
-                <td className="p-4 font-medium">{task.projectId}</td>
-                <td className="p-4 font-medium">{task.teamLeader}</td>
-
-              
-
-                <td className="p-4">{task.managerId}</td>
-                <td className="p-4">{task.task}</td>
-
+                <td className="p-4 ">{task.projectId}</td>
+                <td className="p-4  ">{task.teamLeader}</td>
+                <td className="p-4 ">{task.managerId}</td>
+                 {/* <td className="p-4 ">{task.task}</td> */}
+                <td className="p-2 max-w-[150px]">
+                 <span className="block truncate">{task.task}</span>
+                    </td>
                  {/* {/* <td className="px-2 py-2 text-lg">
               <div className="px-2 py-0.5 bg-blue-100 text-sm mx-auto rounded-2xl w-20 text-center text-blue-500">
                 {task.department}

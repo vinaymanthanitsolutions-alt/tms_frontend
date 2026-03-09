@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Pencil, Trash2, X, Search, Filter, ChevronDown } from "lucide-react";
+import { Pencil, Trash2, X, Search, Filter, ChevronDown, } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
+import OrangeButton from "../../components/OrangeButton";
+import { Plus } from "lucide-react";
 
 import {
   
@@ -310,14 +312,25 @@ useEffect(() => {
       <Toaster position="top-right" />
 
       {/*  HEADER SECTION */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold">Admin Details</h1>
+      <div className="mb-6 flex justify-between items-center gap-4">
+        <div>
+        <h1 className="text-2xl font-bold ">Admin Details</h1>
         <p className="text-sm text-gray-500 mt-1">Admin</p>
-      </div>
+        </div>
+      
+
+       <button 
+      onClick={() => setIsAddOpen(true)}
+      className="bg-orange-500 flex text-white px-5 py-2 rounded-md  hover:bg-orange-600 transition-colors items-center gap-1  "
+    >
+       <Plus size={16} />
+      <div className="hidden xxs:block"> Add Admin</div>
+    </button> 
+    </div>
 
     
       {/*  SEARCH + FILTER + ADD BUTTON */}
-<div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4 bg-white border border-gray-200 p-4 rounded-lg">
+<div className="flex flex-row justify-between items-center gap-4 mb-4 bg-white border border-gray-200 p-4 rounded-lg">
 
   {/* SEARCH */}
   <div className="relative w-full sm:w-1/3 lg:w-1/4">
@@ -327,7 +340,7 @@ useEffect(() => {
     />
     <input
       type="text"
-      placeholder="Search Admin..
+      placeholder="Search Admin Id..
       ."
       value={search}
       onChange={(e) => {
@@ -347,7 +360,7 @@ useEffect(() => {
         className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition"
       >
         <Filter size={16} />
-        <span className="text-sm font-medium">
+        <span className="text-sm font-medium hidden xxs:block">
           {statusFilter === "ALL" ? "ALL ADMINS" : statusFilter}
         </span>
         <ChevronDown
@@ -405,12 +418,14 @@ useEffect(() => {
     </div>
 
     {/* ADD BUTTON */}
-    <button
-      onClick={() => setIsAddOpen(true)}
-      className="bg-emerald-500 text-white px-5 py-2 rounded-lg"
-    >
-      + Add Admin
-    </button>
+       {/* <OrangeButton onClickFunction={() => setIsAddOpen (true)} style={{display:"flex", alignItems:"center", gap:"0.25rem "}}>
+          <Plus size={16} />
+          <button className="tracking-wide hidden xxs:block">
+            Add Admin
+          </button>
+        </OrangeButton> */}
+
+      
   </div>
 </div>
 
@@ -438,7 +453,10 @@ useEffect(() => {
               <tr key={index} className="text-center border-b border border-gray-200 hover:bg-gray-50">
                 <td className="px-4 py-3">{admin.adminCode}</td>
                 <td className="px-4 py-3">{admin.name}</td>
-                <td className="px-4 py-3">{admin.email}</td>
+
+              <td className="px-4 py-3 w-[150px] max-w-[180px] overflow-hidden whitespace-nowrap truncate">
+               {admin.email}
+                </td>
                 <td className="px-4 py-3">{admin.phone}</td>
                 <td className="px-4 py-3">
                   <span
@@ -677,7 +695,7 @@ useEffect(() => {
             className="w-full h-11 px-3 border border-gray-300 rounded-lg outline-none"
             required
           />
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="text-xs text-gray-600 mt-1">
             Min 8 chars, 1 capital, 1 number, 1 special symbol
           </p>
         </div>
@@ -699,7 +717,7 @@ useEffect(() => {
             <option value="IT">IT</option>
             <option value="SALES">SALES</option>
           </select>
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="text-xs text-gray-600 mt-1">
             Select a department first
           </p>
         </div>
@@ -708,7 +726,7 @@ useEffect(() => {
         <div className="md:col-span-2 flex justify-end">
           <button
             type="submit"
-            className="bg-emerald-500 text-white px-8 py-2.5 rounded-lg hover:bg-emerald-600 transition"
+            className="bg-orange-500 text-white px-8 py-2.5 rounded-lg hover:bg-orange-600 transition"
           >
             Add Admin
           </button>
@@ -806,16 +824,24 @@ useEffect(() => {
         </div>
 
       </div>
-
+      <div className="flex gap-10">
+       <button
+        onClick={handleUpdate}
+        className="mt-6 w-full  bg-gray-200 text-gray-500 py-2 rounded-md  transition"
+      >
+        Cancel
+      </button>
       <button
         onClick={handleUpdate}
-        className="mt-6 w-full bg-emerald-500 text-white py-2 rounded-lg hover:bg-emerald-600 transition"
+        className="mt-6 w-full  bg-orange-500 text-white py-2 rounded-md hover:bg-orange-600 transition"
       >
         Update Admin
       </button>
 
+
     </div>
   </div>
+          </div>
 )}
 
     </div>

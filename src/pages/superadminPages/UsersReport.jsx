@@ -33,10 +33,10 @@ const User = () => {
       const result = await response.json();
       console.log("API Response:", result);
 
-      // ✅ CORRECT PATH
+     
       const employeeArray = result?.data?.data || [];
 
-      setUsers(employeeArray);   // No need to re-map, keys already match
+      setUsers(employeeArray);   
 
       setLoading(false);
     } catch (err) {
@@ -47,7 +47,7 @@ const User = () => {
   };
 
   fetchUsers();
-}, []);
+}, [debouncedSearch]);
 
 
 //debouncing logic
@@ -65,7 +65,7 @@ useEffect(() => {
 }, [debouncedSearch, roleFilter]);
 
 
-  // ✅ Close dropdown on outside click
+  //  Close dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -76,7 +76,7 @@ useEffect(() => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // ✅ Filter Logic
+  // Filter Logic
   const filteredUsers = users.filter((user) => {
     const matchesSearch = user.emp_name
       ?.toLowerCase()
@@ -88,7 +88,7 @@ useEffect(() => {
     return matchesSearch && matchesRole;
   });
 
-  // ✅ Pagination Based on Filtered Users
+  //  Pagination Based on Filtered Users
 const totalPages = Math.max(
   1,
   Math.ceil(filteredUsers.length / itemsPerPage)
@@ -97,7 +97,7 @@ const totalPages = Math.max(
   const indexOfFirst = indexOfLast - itemsPerPage;
   const currentUsers = filteredUsers.slice(indexOfFirst, indexOfLast);
 
-  // ✅ Auto reset page if filter reduces data
+  // Auto reset page if filter reduces data
   useEffect(() => {
   if (currentPage > totalPages) {
     setCurrentPage(1);
@@ -123,7 +123,7 @@ const totalPages = Math.max(
     <h2 className="text-sm text-gray-500 mb-6">Employee's</h2>
 
     {/* SEARCH + FILTER */}
-    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4 bg-white border border-gray-200 p-4 rounded-lg">
+    <div className="flex flex-row justify-between items-center gap-4 mb-4 bg-white border border-gray-200 p-4 rounded-lg">
       <div className="relative w-full sm:w-1/3 lg:w-1/4">
         <Search
           size={18}
@@ -147,7 +147,7 @@ const totalPages = Math.max(
           className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition"
         >
           <Filter size={16} />
-          <span className="text-sm font-medium">
+          <span className="text-sm font-medium hidden xxs:block ">
             {roleFilter === "ALL" ? "All employee's" : roleFilter}
           </span>
           <ChevronDown
@@ -206,15 +206,15 @@ const totalPages = Math.max(
 
                 <td className="p-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 text-white font-bold  flex items-center justify-center text-sm font-semibold">
+                    <div className=" w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 text-white font-bold  flex items-center justify-center text-sm font-semibold">
                       {user.emp_name
                         ?.match(/\b\w/g)
                         ?.join("")
                         ?.toUpperCase()}
                     </div>
                     <div>
-                      <div className="font-medium">{user.emp_name}</div>
-                      <div className="text-sm text-gray-500">
+                      <div className="font-medium truncate w-30">{user.emp_name}</div>
+                      <div className="text-sm text-gray-500 truncate w-30">
                         {user.email}
                       </div>
                     </div>

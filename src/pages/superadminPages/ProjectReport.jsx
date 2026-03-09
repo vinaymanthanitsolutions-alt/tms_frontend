@@ -37,7 +37,7 @@ const ProjectReport = () => {
     };
 
     fetchProjects();
-  }, [currentPage]);
+  }, [currentPage,debouncedSearch]);
 
   // ✅ Debounce
   useEffect(() => {
@@ -138,7 +138,7 @@ const ProjectReport = () => {
             className="px-2 py-2 rounded bg-blue-200 text-blue-500"
           />
           <div>
-            <div>{project.projectName}</div>
+            <div className="truncate w-40">{project.projectName}</div>
             <div className="text-[0.60rem] text-gray-500 mt-1">
               ID: {project.projectCode}
             </div>
