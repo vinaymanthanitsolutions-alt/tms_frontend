@@ -13,10 +13,13 @@ const [selectedTask, setSelectedTask] = useState(null);
 const [selectedTeamType, setSelectedTeamType] = useState("");
 const [showTeamDropdown, setShowTeamDropdown] = useState(false);
  const [tasks, setTasks] = useState([]); 
+
  const [teamMembers, setTeamMembers] = useState([]);
 const [loadingTeam, setLoadingTeam] = useState(false);
 
 const modalRef = useRef(null);
+const [debouncedSearch, setDebouncedSearch] = useState("");
+
 
  
 
@@ -65,13 +68,28 @@ const fetchTasks = async () => {
 
 
 
+//debounce 
+  useEffect(() => {
+  const timer = setTimeout(() => {
+    setDebouncedSearch(searchTerm);
+  }, 500); // 500ms delay
 
+  return () => clearTimeout(timer);
+}, [searchTerm]);
+
+useEffect(() => {
+  setCurrentPage(1);
+}, [debouncedSearch]);
+
+
+useEffect(() => {
+    
  const fetchTeamMembers = async (teamId, role) => {
   try {
     setLoadingTeam(true);
 
     const response = await fetch(
-      `http://localhost:8080/team/members-subtasks?team_id=${teamId}&role=${role}`
+      `http://localhost:8080/team/members-subtasks?team_id=${teamId}&role=${role}&search=${searchTerm}`
     );
 
     const result = await response.json();
@@ -82,26 +100,30 @@ const fetchTasks = async () => {
       throw new Error("Failed to fetch team members");
     }
 
-    // ✅ Correct path
     setTeamMembers(result?.data?.members || []);
   } catch (error) {
     console.error("Team Fetch Error:", error);
   } finally {
     setLoadingTeam(false);
   }
-};
+ };
+    fetchTeamMembers();
+}, [debouncedSearch]);
+
+
 
 
  
   // Filter Logic
   const filteredTasks = tasks.filter((task) => {
-  const search = searchTerm?.toLowerCase() || "";
+  const search = debouncedSearch?.toLowerCase() || "";
 
   return (
     (task.teamId || "").toLowerCase().includes(search) ||
     (task.projectId || "").toLowerCase().includes(search)
   );
 });
+
 
 
 
@@ -120,7 +142,7 @@ useEffect(() => {
   if (currentPage > totalPages) {
     setCurrentPage(1);
   }
-}, [filteredTasks, totalPages, currentPage]);
+}, [filteredTasks, totalPages, currentPage,debouncedSearch]);
 
 
 
@@ -175,9 +197,9 @@ useEffect(() => {
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-xl shadow border border-gray-200 overflow-x-auto">
-        <table className="w-full text-left border-collapse">
-          <thead className="bg-gray-100 text-gray-600 text-sm uppercase text-center">
+      <div className="bg-white rounded-xl  border border-gray-200 overflow-x-auto">
+        <table className="w-full text-left border-collapse ">
+          <thead className="bg-gray-100 text-gray-600 text-sm uppercase ">
             <tr>
               <th className="p-4">Team ID</th>
               <th className="p-4">Project ID</th>
@@ -192,20 +214,20 @@ useEffect(() => {
           </thead>
 
           <tbody>
-            {currentTasks.map((task, index) => (
+            {currentTasks.length > 0 ? (
+            currentTasks.map((task, index) => (
               <tr
                 key={index}
-                className="border-t hover:bg-gray-50 transition border-gray-200  text-center"
+                className="border-t hover:bg-gray-50 transition border-gray-200  "
               >
                 <td className="p-4">{task.teamId}</td>
-                <td className="p-4 font-medium">{task.projectId}</td>
-                <td className="p-4 font-medium">{task.teamLeader}</td>
-
-              
-
-                <td className="p-4">{task.managerId}</td>
-                <td className="p-4">{task.task}</td>
-
+                <td className="p-4 ">{task.projectId}</td>
+                <td className="p-4  ">{task.teamLeader}</td>
+                <td className="p-4 ">{task.managerId}</td>
+                 {/* <td className="p-4 ">{task.task}</td> */}
+                <td className="p-2 max-w-[150px]">
+                 <span className="block truncate">{task.task}</span>
+                    </td>
                  {/* {/* <td className="px-2 py-2 text-lg">
               <div className="px-2 py-0.5 bg-blue-100 text-sm mx-auto rounded-2xl w-20 text-center text-blue-500">
                 {task.department}
@@ -215,7 +237,7 @@ useEffect(() => {
 
                 <td className="p-2">
         <span
-          className={`px-3 py-1 rounded-full text-sm font-semibold ${
+          className={`px-3 py-1 text-xs rounded-xl ${
             task.status === "COMPLETED"
               ? "bg-green-100 text-green-700"
               : task.status === "IN_PROGRESS"
@@ -241,7 +263,14 @@ useEffect(() => {
  
 
               </tr>
-            ))}
+            ))
+          ): (
+    <tr>
+      <td colSpan="7" className="text-center p-6 text-gray-500">
+        No Task Found
+      </td>
+    </tr>
+       ) }
           </tbody>
         </table>
       </div>
@@ -324,6 +353,7 @@ useEffect(() => {
 
       </div>
 
+
       {/* Team Dropdown */}
 <div className="mb-6">
   <label className="block text-sm font-medium mb-2 ">
@@ -397,7 +427,7 @@ useEffect(() => {
       <td className="p-2">{sub.title}</td>
       <td className="p-2">
         <span
-          className={`px-3 py-1 rounded-full text-sm font-semibold ${
+          className={`px-3 py-1 text-xs rounded-xl ${
             sub.status === "COMPLETED"
               ? "bg-green-100 text-green-700"
               : sub.status === "TEST_DONE"
@@ -455,41 +485,51 @@ useEffect(() => {
 
 
       {/* Pagination */}
-      <div className="flex justify-self-end items-center gap-2 mt-6">
-        <button
-          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-          disabled={currentPage === 1}
-          className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
-        >
-          Prev
-        </button>
+      <div className="flex justify-between items-center mt-6">
+  {/* LEFT TEXT */}
+  <div className="text-sm text-gray-600">
+    Showing {filteredTasks.length} task
+    {filteredTasks.length !== 1 ? "s" : ""}
+    {debouncedSearch && (
+      <span className="ml-1 text-emerald-600">
+        for "{debouncedSearch}"
+      </span>
+    )}
+  </div>
 
-        {[...Array(totalPages)].map((_, index) => (
-          <button
-            key={index}
-            onClick={() => setCurrentPage(index + 1)}
-            className={`px-3 py-1 rounded ${
-              currentPage === index + 1
-                ? "bg-emerald-500 text-white"
-                : "bg-gray-200"
-            }`}
-          >
-            {index + 1}
-          </button>
-        ))}
+  {/* RIGHT BUTTONS */}
+  <div className="flex gap-2 items-center">
+    <button
+      onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+      disabled={currentPage <= 1}
+      className={`px-4 py-2 rounded-md border ${
+        currentPage <= 1
+          ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+          : "bg-white text-gray-700 hover:bg-gray-50 border-gray-300"
+      }`}
+    >
+      Prev
+    </button>
 
-        <button
-          onClick={() =>
-            setCurrentPage((prev) =>
-              Math.min(prev + 1, totalPages)
-            )
-          }
-          disabled={currentPage === totalPages}
-          className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
-        >
-          Next
-        </button>
-      </div>
+    <div className="text-sm text-gray-700">
+      Page {currentPage} of {totalPages}
+    </div>
+
+    <button
+      onClick={() =>
+        setCurrentPage((prev) => Math.min(totalPages, prev + 1))
+      }
+      disabled={currentPage >= totalPages}
+      className={`px-4 py-2 rounded-md border ${
+        currentPage >= totalPages
+          ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+          : "bg-white text-gray-700 hover:bg-gray-50 border-gray-300"
+      }`}
+    >
+      Next
+    </button>
+  </div>
+</div>
     </div>
   );
 };

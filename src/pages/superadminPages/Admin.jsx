@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Pencil, Trash2, X, Search, Filter, ChevronDown } from "lucide-react";
+import { Pencil, Trash2, X, Search, Filter, ChevronDown, } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
+import OrangeButton from "../../components/OrangeButton";
+import { Plus } from "lucide-react";
 
 import {
   
@@ -19,6 +21,10 @@ const Admin = () => {
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
   const [totalPages, setTotalPages] = useState(1);
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [totalCount, setTotalCount] = useState(0);
+
+  
 
   const addRef = useRef(null);
   const editRef = useRef(null);
@@ -80,12 +86,10 @@ const Admin = () => {
       setAdmins(formattedData);
 
       // backend se total count 
-      if (data?.data?.total) {
-        setTotalPages(Math.ceil(data.data.total / adminsPerPage));
-      } else {
-        setTotalPages(1);
-      }
+    const total = data?.data?.total || 0;
 
+setTotalCount(total); 
+setTotalPages(Math.ceil(total / adminsPerPage) || 1);
     } catch (error) {
       console.error("Fetch Error:", error);
       toast.error("Failed to fetch admins");
@@ -96,7 +100,7 @@ const Admin = () => {
 
   useEffect(() => {
     fetchAdmins();
-  }, [currentPage, search, statusFilter]);
+  }, [currentPage, debouncedSearch, statusFilter]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -289,19 +293,44 @@ const newError = {
 
 
 
+//debounce
+useEffect(() => {
+  const timer = setTimeout(() => {
+    setDebouncedSearch(search);
+  }, 500);
+
+  return () => clearTimeout(timer);
+}, [search]);
+
+useEffect(() => {
+  setCurrentPage(1);
+}, [debouncedSearch, statusFilter]);
+
+
   return (
     <div className=" min-h-screen bg-gray-50 p-4 sm:p-6">
       <Toaster position="top-right" />
 
       {/*  HEADER SECTION */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold">Admin Details</h1>
-        <p className="text-sm text-emerald-600 mt-1">Admin</p>
-      </div>
+      <div className="mb-6 flex justify-between items-center gap-4">
+        <div>
+        <h1 className="text-2xl font-bold ">Admin Details</h1>
+        <p className="text-sm text-gray-500 mt-1">Admin</p>
+        </div>
+      
+
+       <button 
+      onClick={() => setIsAddOpen(true)}
+      className="bg-orange-500 flex text-white px-5 py-2 rounded-md  hover:bg-orange-600 transition-colors items-center gap-1  "
+    >
+       <Plus size={16} />
+      <div className="hidden xxs:block"> Add Admin</div>
+    </button> 
+    </div>
 
     
       {/*  SEARCH + FILTER + ADD BUTTON */}
-<div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4 bg-white border border-gray-200 p-4 rounded-lg">
+<div className="flex flex-row justify-between items-center gap-4 mb-4 bg-white border border-gray-200 p-4 rounded-lg">
 
   {/* SEARCH */}
   <div className="relative w-full sm:w-1/3 lg:w-1/4">
@@ -311,9 +340,13 @@ const newError = {
     />
     <input
       type="text"
-      placeholder="Search Admin..."
+      placeholder="Search Admin Id..
+      ."
       value={search}
-      onChange={(e) => setSearch(e.target.value)}
+      onChange={(e) => {
+  setSearch(e.target.value);
+  setCurrentPage(1);
+}}
       className="border border-gray-200 pl-10 pr-3 py-2 rounded w-full focus:outline-none"
     />
   </div>
@@ -327,7 +360,7 @@ const newError = {
         className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition"
       >
         <Filter size={16} />
-        <span className="text-sm font-medium">
+        <span className="text-sm font-medium hidden xxs:block">
           {statusFilter === "ALL" ? "ALL ADMINS" : statusFilter}
         </span>
         <ChevronDown
@@ -385,12 +418,14 @@ const newError = {
     </div>
 
     {/* ADD BUTTON */}
-    <button
-      onClick={() => setIsAddOpen(true)}
-      className="bg-emerald-500 text-white px-5 py-2 rounded-lg"
-    >
-      + Add Admin
-    </button>
+       {/* <OrangeButton onClickFunction={() => setIsAddOpen (true)} style={{display:"flex", alignItems:"center", gap:"0.25rem "}}>
+          <Plus size={16} />
+          <button className="tracking-wide hidden xxs:block">
+            Add Admin
+          </button>
+        </OrangeButton> */}
+
+      
   </div>
 </div>
 
@@ -398,7 +433,7 @@ const newError = {
 
 
       {/*  TABLE */}
-      <div className="w-full overflow-x-auto bg-white rounded-lg shadow">
+      <div className="w-full overflow-x-auto bg-white rounded-xl ">
        <table className="min-w-full border border-gray-200">
           <thead className="bg-gray-200 text-center">
             <tr>
@@ -413,11 +448,15 @@ const newError = {
           </thead>
 
           <tbody>
-            {admins.map((admin, index) => (
+            {admins.length > 0 ? (
+            admins.map((admin, index) => (
               <tr key={index} className="text-center border-b border border-gray-200 hover:bg-gray-50">
                 <td className="px-4 py-3">{admin.adminCode}</td>
                 <td className="px-4 py-3">{admin.name}</td>
-                <td className="px-4 py-3">{admin.email}</td>
+
+              <td className="px-4 py-3 w-[150px] max-w-[180px] overflow-hidden whitespace-nowrap truncate">
+               {admin.email}
+                </td>
                 <td className="px-4 py-3">{admin.phone}</td>
                 <td className="px-4 py-3">
                   <span
@@ -477,47 +516,65 @@ const newError = {
 
                 </td>
               </tr>
-            ))}
+            ))
+          ): (
+            <tr>
+              <td colSpan="7" className="text-center p-6 text-gray-500">
+                No Admins Found
+              </td>
+            </tr>
+          )}
+
           </tbody>
         </table>
       </div>
 
       {/* PAGINATION */}
-        <div className="flex justify-self-end items-center gap-2 mt-6">
-        <button
-          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-          disabled={currentPage === 1}
-          className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
-        >
-          Prev
-        </button>
+       <div className="flex justify-between items-center mt-6">
+  {/* LEFT TEXT */}
+  <div className="text-sm text-gray-600">
+    Showing {totalCount} admin{totalCount !== 1 ? "s" : ""}
+   
+    {debouncedSearch && (
+      <span className="ml-1 text-emerald-600">
+        for "{debouncedSearch}"
+      </span>
+    )}
+  </div>
 
-        {[...Array(totalPages || 0)].map((_, index) => (
-          <button
-            key={index}
-            onClick={() => setCurrentPage(index + 1)}
-            className={`px-3 py-1 rounded ${
-              currentPage === index + 1
-                ? "bg-emerald-500 text-white"
-                : "bg-gray-200"
-            }`}
-          >
-            {index + 1}
-          </button>
-        ))}
+  {/* RIGHT BUTTONS */}
+  <div className="flex gap-2 items-center">
+    <button
+      onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+      disabled={currentPage <= 1}
+      className={`px-4 py-2 rounded-md border ${
+        currentPage <= 1
+          ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+          : "bg-white text-gray-700 hover:bg-gray-50 border-gray-300"
+      }`}
+    >
+      Prev
+    </button>
 
-        <button
-          onClick={() =>
-            setCurrentPage((prev) =>
-              Math.min(prev + 1, totalPages || 1)
-            )
-          }
-          disabled={currentPage === totalPages}
-          className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
-        >
-          Next
-        </button>
-      </div>
+    <div className="text-sm text-gray-700">
+      Page {currentPage} of {totalPages}
+    </div>
+
+    <button
+      onClick={() =>
+        setCurrentPage((prev) => Math.min(totalPages, prev + 1))
+      }
+      disabled={currentPage >= totalPages}
+      className={`px-4 py-2 rounded-md border ${
+        currentPage >= totalPages
+          ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+          : "bg-white text-gray-700 hover:bg-gray-50 border-gray-300"
+      }`}
+    >
+      Next
+    </button>
+  </div>
+</div>
 
 
 
@@ -527,7 +584,7 @@ const newError = {
   <div className="fixed inset-0 bg-black/40 flex justify-center items-center p-4 z-50 overflow-y-auto">
      <div
       ref={addRef}
-      className="bg-white w-full max-w-4xl rounded-2xl border border-gray-200 shadow-md p-6 sm:p-8 relative"
+      className="bg-white w-full max-w-4xl rounded-lg border border-gray-200  p-6 sm:p-8 relative"
     >
 
       {/* CLOSE */}
@@ -638,7 +695,7 @@ const newError = {
             className="w-full h-11 px-3 border border-gray-300 rounded-lg outline-none"
             required
           />
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="text-xs text-gray-600 mt-1">
             Min 8 chars, 1 capital, 1 number, 1 special symbol
           </p>
         </div>
@@ -660,7 +717,7 @@ const newError = {
             <option value="IT">IT</option>
             <option value="SALES">SALES</option>
           </select>
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="text-xs text-gray-600 mt-1">
             Select a department first
           </p>
         </div>
@@ -669,7 +726,7 @@ const newError = {
         <div className="md:col-span-2 flex justify-end">
           <button
             type="submit"
-            className="bg-emerald-500 text-white px-8 py-2.5 rounded-lg hover:bg-emerald-600 transition"
+            className="bg-orange-500 text-white px-8 py-2.5 rounded-lg hover:bg-orange-600 transition"
           >
             Add Admin
           </button>
@@ -686,7 +743,7 @@ const newError = {
     
 <div
   ref={editRef}
-  className="bg-white w-full max-w-2xl rounded-2xl border border-gray-200 shadow-md p-6 sm:p-8 relative "
+  className="bg-white w-full max-w-2xl rounded-lg border border-gray-200  p-6 sm:p-8 relative "
 >
        {/* CLOSE */}
       <button
@@ -767,16 +824,24 @@ const newError = {
         </div>
 
       </div>
-
+      <div className="flex gap-10">
+       <button
+        onClick={handleUpdate}
+        className="mt-6 w-full  bg-gray-200 text-gray-500 py-2 rounded-md  transition"
+      >
+        Cancel
+      </button>
       <button
         onClick={handleUpdate}
-        className="mt-6 w-full bg-emerald-500 text-white py-2 rounded-lg hover:bg-emerald-600 transition"
+        className="mt-6 w-full  bg-orange-500 text-white py-2 rounded-md hover:bg-orange-600 transition"
       >
         Update Admin
       </button>
 
+
     </div>
   </div>
+          </div>
 )}
 
     </div>

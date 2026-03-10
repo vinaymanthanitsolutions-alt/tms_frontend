@@ -12,6 +12,8 @@ const User = () => {
   const dropdownRef = useRef(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const [debouncedSearch, setDebouncedSearch] = useState("");
    
 
   
@@ -31,10 +33,10 @@ const User = () => {
       const result = await response.json();
       console.log("API Response:", result);
 
-      // ✅ CORRECT PATH
+     
       const employeeArray = result?.data?.data || [];
 
-      setUsers(employeeArray);   // No need to re-map, keys already match
+      setUsers(employeeArray);   
 
       setLoading(false);
     } catch (err) {
@@ -45,11 +47,25 @@ const User = () => {
   };
 
   fetchUsers();
-}, []);
+}, [debouncedSearch]);
 
 
+//debouncing logic
+useEffect(() => {
+  const timer = setTimeout(() => {
+    setDebouncedSearch(search);
+  }, 500); // delay
 
-  // ✅ Close dropdown on outside click
+  return () => clearTimeout(timer);
+}, [search]);
+
+
+useEffect(() => {
+  setCurrentPage(1);
+}, [debouncedSearch, roleFilter]);
+
+
+  //  Close dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -60,11 +76,11 @@ const User = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // ✅ Filter Logic
+  // Filter Logic
   const filteredUsers = users.filter((user) => {
     const matchesSearch = user.emp_name
       ?.toLowerCase()
-      .includes(search.toLowerCase());
+      .includes(debouncedSearch.toLowerCase())
 
     const matchesRole =
       roleFilter === "ALL" || user.role === roleFilter;
@@ -72,18 +88,21 @@ const User = () => {
     return matchesSearch && matchesRole;
   });
 
-  // ✅ Pagination Based on Filtered Users
-  const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
+  //  Pagination Based on Filtered Users
+const totalPages = Math.max(
+  1,
+  Math.ceil(filteredUsers.length / itemsPerPage)
+);
   const indexOfLast = currentPage * itemsPerPage;
   const indexOfFirst = indexOfLast - itemsPerPage;
   const currentUsers = filteredUsers.slice(indexOfFirst, indexOfLast);
 
-  // ✅ Auto reset page if filter reduces data
+  // Auto reset page if filter reduces data
   useEffect(() => {
-    if (currentPage > totalPages) {
-      setCurrentPage(1);
-    }
-  }, [filteredUsers, totalPages, currentPage]);
+  if (currentPage > totalPages) {
+    setCurrentPage(1);
+  }
+}, [filteredUsers, totalPages, currentPage]);
 
   if (loading) {
     return <div className="p-6">Loading...</div>;
@@ -93,6 +112,9 @@ const User = () => {
     return <div className="p-6 text-red-500">{error}</div>;
   }
 
+
+  
+
  
 
   return (
@@ -101,7 +123,7 @@ const User = () => {
     <h2 className="text-sm text-gray-500 mb-6">Employee's</h2>
 
     {/* SEARCH + FILTER */}
-    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4 bg-white border border-gray-200 p-4 rounded-lg">
+    <div className="flex flex-row justify-between items-center gap-4 mb-4 bg-white border border-gray-200 p-4 rounded-lg">
       <div className="relative w-full sm:w-1/3 lg:w-1/4">
         <Search
           size={18}
@@ -125,7 +147,7 @@ const User = () => {
           className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition"
         >
           <Filter size={16} />
-          <span className="text-sm font-medium">
+          <span className="text-sm font-medium hidden xxs:block ">
             {roleFilter === "ALL" ? "All employee's" : roleFilter}
           </span>
           <ChevronDown
@@ -159,7 +181,7 @@ const User = () => {
     </div>
 
     {/* TABLE */}
-    <div className="bg-white rounded-xl shadow border border-gray-200 overflow-x-auto">
+    <div className="bg-white rounded-xl  border border-gray-200 overflow-x-auto">
       <table className="w-full text-left border-collapse">
         <thead className="bg-gray-100 text-gray-600 text-sm uppercase">
           <tr>
@@ -184,15 +206,15 @@ const User = () => {
 
                 <td className="p-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center text-sm font-semibold">
+                    <div className=" w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 text-white font-bold  flex items-center justify-center text-sm font-semibold">
                       {user.emp_name
                         ?.match(/\b\w/g)
                         ?.join("")
                         ?.toUpperCase()}
                     </div>
                     <div>
-                      <div className="font-medium">{user.emp_name}</div>
-                      <div className="text-sm text-gray-500">
+                      <div className="font-medium truncate w-30">{user.emp_name}</div>
+                      <div className="text-sm text-gray-500 truncate w-30">
                         {user.email}
                       </div>
                     </div>
@@ -239,41 +261,51 @@ const User = () => {
 
 
       {/* PAGINATION */}
-      <div className="flex justify-self-end items-center gap-2 mt-6">
-        <button
-          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-          disabled={currentPage === 1}
-          className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
-        >
-          Prev
-        </button>
+      <div className="flex justify-between items-center mt-6">
+  {/* LEFT TEXT */}
+  <div className="text-sm text-gray-600">
+    Showing {filteredUsers.length} employee
+    {filteredUsers.length !== 1 ? "s" : ""}
+    {debouncedSearch && (
+      <span className="ml-1 text-emerald-600">
+        for "{debouncedSearch}"
+      </span>
+    )}
+  </div>
 
-        {[...Array(totalPages || 0)].map((_, index) => (
-          <button
-            key={index}
-            onClick={() => setCurrentPage(index + 1)}
-            className={`px-3 py-1 rounded ${
-              currentPage === index + 1
-                ? "bg-emerald-500 text-white"
-                : "bg-gray-200"
-            }`}
-          >
-            {index + 1}
-          </button>
-        ))}
+  {/* RIGHT BUTTONS */}
+  <div className="flex gap-2 items-center">
+    <button
+      onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+      disabled={currentPage <= 1}
+      className={`px-4 py-2 rounded-md border ${
+        currentPage <= 1
+          ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+          : "bg-white text-gray-700 hover:bg-gray-50 border-gray-300"
+      }`}
+    >
+      Prev
+    </button>
 
-        <button
-          onClick={() =>
-            setCurrentPage((prev) =>
-              Math.min(prev + 1, totalPages || 1)
-            )
-          }
-          disabled={currentPage === totalPages}
-          className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
-        >
-          Next
-        </button>
-      </div>
+    <div className="text-sm text-gray-700">
+      Page {currentPage} of {totalPages}
+    </div>
+
+    <button
+      onClick={() =>
+        setCurrentPage((prev) => Math.min(totalPages, prev + 1))
+      }
+      disabled={currentPage >= totalPages}
+      className={`px-4 py-2 rounded-md border ${
+        currentPage >= totalPages
+          ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+          : "bg-white text-gray-700 hover:bg-gray-50 border-gray-300"
+      }`}
+    >
+      Next
+    </button>
+  </div>
+</div>
     </div>
   );
 };
