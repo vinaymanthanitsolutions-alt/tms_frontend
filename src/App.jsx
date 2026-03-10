@@ -55,7 +55,7 @@ export default function App(){
             <Route path="/pm/task" element={<PMTask/>}/>
             <Route path="/pm/projects" element={<ProjectManagerProject/>}/>
              <Route path="/pm/projectAnalysis" element={<PMProjectAnalysis/>}/>
-               <Route path="/pm/teaminsight" element={<TeamAndTaskAnalysis/>}/>
+            <Route path="/pm/teaminsight" element={<TeamAndTaskAnalysis/>}/>
 
             {/* <Route path="/pm/project" element={<PmProject/>}/> */}
           </Route>

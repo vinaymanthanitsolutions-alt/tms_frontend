@@ -23,6 +23,7 @@ import {
   validateProjectDescription,
   validateProjectDeadline,
 } from "../../validation/validators";
+import { getProjectStatus } from "../../extraDataHandling/projectFiltering";
 import {
   IconBoltFilled,
   IconStarFilled,
@@ -65,6 +66,7 @@ const AdminProject = () => {
     projectId: "",
     name: "",
     description: "",
+    progress: "",
     deadline: null,
   });
 
@@ -73,6 +75,7 @@ const AdminProject = () => {
     projectId: "",
     name: "",
     description: "",
+    progress: "",
     deadline: "",
   });
 
@@ -166,50 +169,6 @@ const AdminProject = () => {
     } finally {
       setLoadingProjects(false);
     }
-  };
-
-  const getProjectStatus = (project) => {
-    // If no manager, return "No Manager"
-    if (!project.pm_id || project.pm_id === "") {
-      return {
-        label: "No Manager",
-        className: "bg-orange-200 text-orange-700",
-      };
-    }
-
-    // If deadline exists, check for overdue or high priority
-    if (project.deadline) {
-      const deadlineDate = new Date(project.deadline);
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      deadlineDate.setHours(0, 0, 0, 0);
-
-      // Check if overdue
-      if (deadlineDate < today) {
-        return {
-          label: "Overdue",
-          className: "bg-red-200 text-red-700",
-        };
-      }
-
-      // Check if high priority (within 1 month)
-      const oneMonthFromNow = new Date();
-      oneMonthFromNow.setMonth(oneMonthFromNow.getMonth() + 1);
-      oneMonthFromNow.setHours(0, 0, 0, 0);
-
-      if (deadlineDate <= oneMonthFromNow) {
-        return {
-          label: "High Priority",
-          className: "bg-purple-200 text-purple-700",
-        };
-      }
-    }
-
-    // Default: Active
-    return {
-      label: "Active",
-      className: "bg-green-200 text-green-700",
-    };
   };
 
   const formatDate = (dateString) => {
@@ -591,7 +550,7 @@ const AdminProject = () => {
                           className="px-2 py-2 rounded bg-orange-200 text-orange-500 shrink-0"
                         />
                         <div>
-                          <div>{project.name}</div>
+                          <div className="truncate w-35">{project.name}</div>
                           <div className="text-[0.60rem] text-gray-500 mt-1">
                             ID: {project.project_id}
                           </div>
@@ -614,12 +573,18 @@ const AdminProject = () => {
                     <td className="px-4 py-3 text-sm border-b border-gray-200 whitespace-nowrap">
                       <div className="w-full bg-gray-200 rounded-full h-2">
                         <div
-                          className="bg-gray-400 h-2 rounded-full"
-                          style={{ width: "0%" }}
+                          className={`h-2 rounded-full ${
+                            project.progress <= 45
+                              ? "bg-red-500"
+                              : project.progress <= 80
+                                ? "bg-yellow-500"
+                                : "bg-green-500"
+                          }`}
+                          style={{ width: `${project.progress || 0}%` }}
                         ></div>
                       </div>
                       <div className="text-[0.60rem] text-gray-500 mt-1">
-                        0%
+                        {project.progress}%
                       </div>
                     </td>
                     <td className="px-4 py-3 text-sm border-b border-gray-200 whitespace-nowrap">

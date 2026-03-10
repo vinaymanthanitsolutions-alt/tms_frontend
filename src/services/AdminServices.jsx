@@ -1,6 +1,9 @@
 import axios from "axios";
 import { calculateDeadline } from "../extraDataHandling/deadline";
-import { getQueryCount, taskCompletionRate } from "../extraDataHandling/queries";
+import {
+  getQueryCount,
+  taskCompletionRate,
+} from "../extraDataHandling/queries";
 
 const API_BASE_URL = "http://localhost:8080";
 
@@ -462,104 +465,123 @@ export const reassignProjectManager = async (projectId, newManagerId) => {
   }
 };
 
-
 // Dashboard counts Service
 
-export const getDashboardCounts = async () => {
+export const getDashboardData = async () => {
   try {
-
-    const [empresponse, projectresponse, taskresponse] = await Promise.all([
-      axios.get(`${API_BASE_URL}/empCounts`, {
-        params: { manager_id: "A001" }
-      }),
-      axios.get(`${API_BASE_URL}/projectCounts`, {
-        params: { admin_id: "A001" }
-      }),
-      axios.get(`${API_BASE_URL}/taskCounts`, {
-
-        params: { 
-          role: "ADMIN",
-          employee_id: "A001" }
-      })
-    ]);
+    const [empresponse, projectCountResponse, taskresponse, projectResponse] =
+      await Promise.all([
+        axios.get(`${API_BASE_URL}/empCounts`, {
+          params: { manager_id: "A001" },
+        }),
+        axios.get(`${API_BASE_URL}/projectCounts`, {
+          params: { admin_id: "A001" },
+        }),
+        axios.get(`${API_BASE_URL}/taskCounts`, {
+          params: {
+            role: "ADMIN",
+            employee_id: "A001",
+          },
+        }),
+        axios.get(`${API_BASE_URL}/project/admin`, {
+          params: {
+            admin_id: "A001",
+          },
+        }),
+      ]);
 
     const empData = empresponse.data.data;
-    const projectData = projectresponse.data.data;
+    const projectData = projectCountResponse.data.data;
     const taskData = taskresponse.data.data;
-
+    const allProjects = projectResponse.data.data || {};
     return {
       employeeCount: empData.total_employees,
       projectCount: projectData.total_projects,
       activeTaskCount: taskData.total_tasks,
       pendingApprovalCount: projectData.planning,
+      projectData: allProjects.projects || [],
     };
-
   } catch (error) {
     console.error("Error fetching dashboard counts:", error);
     throw error;
   }
 };
 
-
 // Risk overview services
 
-export const getRiskOverviewCounts = async () => {
+export const getRiskOverviewData = async () => {
   try {
-
-    const [empresponse, projectresponse, allProjectData, queryData] = await Promise.all([
-      axios.get(`${API_BASE_URL}/empCounts`, {
-        params: { manager_id: "A001" }
-      }),
+    const [projectresponse, allProjectData, queryData] = await Promise.all([
+      // axios.get(`${API_BASE_URL}/empCounts`, {
+      //   params: { manager_id: "A001" },
+      // }),
       axios.get(`${API_BASE_URL}/projectCounts`, {
-        params: { admin_id: "A001" }
+        params: { admin_id: "A001" },
       }),
-      axios.get(`${API_BASE_URL}/project/admin`,{
-        params:{
+      axios.get(`${API_BASE_URL}/project/admin`, {
+        params: {
           admin_id: "A001",
-        }
+          page: 1,
+          limit: 1000, // Get all projects, not just 5
+        },
       }),
       axios.get(`${API_BASE_URL}/queryCount`, {
         params: {
-          role:"ADMIN",
+          role: "ADMIN",
           employee_id: "A001",
-        }
-      })
+        },
+      }),
     ]);
 
-    //  const response = await axios.get(`${API_BASE_URL}/project/admin`, {
-    //   params: {
-    //     admin_id: adminId,
-    //     page: page,
-    //     limit: limit,
-    //     search: search,
-    //   },
-    // });
-
-    const empData = empresponse.data.data;
+    // const empData = empresponse.data.data;
     const projectData = projectresponse.data.data;
-    const allProjects = allProjectData.data.data || [];
+    const allProjects = allProjectData.data.data || {};
     const queryCountData = queryData.data.data || {};
+    const projectAllData = allProjects.projects || [];
+
     const deadlineData = calculateDeadline(allProjects);
 
     const finalQueriesRemaingCount = getQueryCount(queryCountData);
 
     const completionRate = taskCompletionRate(projectData);
 
-
+    console.log("Projects for risk overview:", projectAllData);
     console.log(deadlineData.nearDeadlinesCount);
     console.log("Active Queries:", queryCountData);
 
     return {
+      totalProjects: projectData.total_projects ?? 0,
       totalActive: projectData.active ?? 0,
       pendingApprovals: projectData.planning ?? 0,
-      overdueProjects: projectData.active ?? 0,
+      overdueProjects: projectData.overdue ?? 0,
+      completedProjects: projectData.completed ?? 0,
       NearDeadline: deadlineData.nearDeadlinesCount ?? 0,
       activeQueries: finalQueriesRemaingCount ?? 0,
       CompletionRate: completionRate ?? 0,
+      projectAllData: projectAllData,
+      upcomingDeadlineProjects: deadlineData.upcomingDeadlineProjects ?? [],
     };
-
   } catch (error) {
     console.error("Error fetching dashboard counts:", error);
     throw error;
+  }
+};
+
+// Get monthly project stats
+export const getMonthlyProjectStats = async () => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/project/monthlyStats`);
+    console.log("Monthly stats response:", response.data);
+    return {
+      success: true,
+      data: response.data.data || [],
+    };
+  } catch (error) {
+    console.error("Error fetching monthly project stats:", error);
+    return {
+      success: false,
+      error: error.message || "Failed to fetch monthly stats",
+      data: [],
+    };
   }
 };

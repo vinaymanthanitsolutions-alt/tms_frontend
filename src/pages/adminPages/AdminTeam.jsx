@@ -339,8 +339,8 @@ const AdminTeam = () => {
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-800 border-b border-gray-200">
                       <div>
-                        <div className="font-medium">{employee.emp_name}</div>
-                        <div className="text-sm text-gray-500">
+                        <div className="font-medium truncate w-40">{employee.emp_name}</div>
+                        <div className="text-sm text-gray-500 truncate w-40">
                           {employee.email || "N/A"}
                         </div>
                       </div>
