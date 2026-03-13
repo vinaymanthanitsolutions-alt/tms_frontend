@@ -8,6 +8,33 @@ export const validateEmail = (email) => {
   return emailRegex.test(email);
 };
 
+
+
+/**
+ * Validates employee name
+ * @param {string} name - The name to validate
+ * @returns {string} - Error message or empty string if valid
+ */
+export const validateName = (name) => {
+  if (!name || name.trim() === "") {
+    return "Name is required";
+  }
+
+  // Only letters and spaces allowed
+  const nameRegex = /^[A-Za-z\s]+$/;
+
+  if (!nameRegex.test(name.trim())) {
+    return "Name can contain only letters and spaces";
+  }
+
+  if (name.trim().length < 3) {
+    return "Name must be at least 3 characters long";
+  }
+
+  return "";
+};
+
+
 /**
  * Validates password strength
  * @param {string} password - The password to validate

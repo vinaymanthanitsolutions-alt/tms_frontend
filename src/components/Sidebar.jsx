@@ -4,10 +4,11 @@ import { House } from "lucide-react";
 import { ChartNoAxesCombined } from "lucide-react";
 import { ClipboardList } from "lucide-react";
 import { Users } from "lucide-react";
+import { ClipboardMinus } from "lucide-react";
 import { Settings } from "lucide-react";
 import { MessageCircleQuestionMark } from "lucide-react";
 import { X } from "lucide-react";
-import { LogOut } from "lucide-react";
+import { LogOut,BookOpenCheck } from "lucide-react";
 import {
   ChevronDown,
   ChevronRight,
@@ -99,7 +100,7 @@ const SIDEBAR_LINKS = {
   },        
   {
       label: "Report",
-      logo: <Users size={20} />,
+      logo: < ClipboardMinus size={20} />,
       children: [
         {
           label: "Users",
@@ -109,12 +110,12 @@ const SIDEBAR_LINKS = {
         {
           label: "Project",
           path: "/superadmin/project",
-          logo: <Users size={16} />,
+          logo: <ClipboardList size={16} />,
         },
         {
           label: "Task",
           path: "/superadmin/task",
-          logo: <Users size={16} />,
+          logo: <BookOpenCheck size={16} />,
         },
       ],
     },

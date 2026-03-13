@@ -5,7 +5,7 @@ import OrangeButton from "../../components/OrangeButton";
 import { Plus } from "lucide-react";
 
 import {
-  
+  validateName,
   validatePassword,
   validateEmail ,
   validatePhoneNumber,
@@ -124,22 +124,26 @@ setTotalPages(Math.ceil(total / adminsPerPage) || 1);
   const handleAddAdmin = async (e) => {
   e.preventDefault();
 
-  const emailValid = validateEmail(newAdmin.email);
-const phoneValid = validatePhoneNumber(newAdmin.phone);
-const passwordResult = validatePassword(newAdmin.password);
+  // validate name, email, phone and password
+  const nameError = validateName(newAdmin.name);
+  const emailError = validateEmail(newAdmin.email) ? "" : "Invalid email";
+  const phoneError = validatePhoneNumber(newAdmin.phone) ? "" : "Invalid phone";
+  const passwordResult = validatePassword(newAdmin.password);
 
-const newError = {
-  email: emailValid,
-  phone: phoneValid,
-  password: passwordResult.isValid,
-};
+  // store messages (empty when valid)
+  const newError = {
+    name: nameError,
+    email: emailError,
+    phone: phoneError,
+    password: passwordResult.isValid ? "" : passwordResult.errors.join(", "),
+  };
 
   setError(newError);
 
- const hasError = Object.values(newError).some((err) => err === false);
+  // any non-empty string indicates an error
+  const hasError = Object.values(newError).some((msg) => msg);
 
   if (hasError) {
-    // console.log("Validation Errors:", newError);
     toast.error("Please fix all validation errors");
     return;
   }
@@ -185,20 +189,21 @@ const newError = {
  const handleUpdate = async () => {
   if (!editAdmin) return;
 
- const emailValid = validateEmail(editAdmin.email);
-const phoneValid = validatePhoneNumber(editAdmin.phone);
+  const nameError = validateName(editAdmin.name);
+  const emailError = validateEmail(editAdmin.email) ? "" : "Invalid email";
+  const phoneError = validatePhoneNumber(editAdmin.phone) ? "" : "Invalid phone";
 
-const newError = {
-  email: emailValid,
-  phone: phoneValid,
-};
+  const newError = {
+    name: nameError,
+    email: emailError,
+    phone: phoneError,
+  };
 
   setError(newError);
 
-  const hasError = Object.values(newError).some((err) => err === false);
+  const hasError = Object.values(newError).some((msg) => msg);
 
   if (hasError) {
-    // console.log("Validation Errors:", newError);
     toast.error("Please fix all validation errors");
     return;
   }
@@ -640,6 +645,9 @@ useEffect(() => {
             className="w-full h-11 px-3 border border-gray-300 rounded-lg outline-none"
             required
           />
+          {error.name && (
+            <p className="text-xs text-red-500 mt-1">{error.name}</p>
+          )}
         </div>
 
         {/* Email */}
@@ -776,6 +784,9 @@ useEffect(() => {
             onChange={handleEditChange}
             className="border border-gray-200 p-2 rounded w-full outline-gray-300"
           />
+          {error.name && (
+            <p className="text-xs text-red-500 mt-1">{error.name}</p>
+          )}
         </div>
 
         <div>
@@ -798,18 +809,14 @@ useEffect(() => {
           />
         </div>
 
-        <div>
+         <div>
           <label className="block mb-1 text-sm">Status *</label>
-          <select
+          <input
             name="status"
             value={editAdmin.status}
-            onChange={handleEditChange}
-            className="border border-gray-200 p-2 rounded w-full outline-gray-300"
-          >
-            <option>ACTIVE</option>
-            <option>INACTIVE</option>
-            <option>SUSPENDED</option>
-          </select>
+            disabled
+            className="border border-gray-200 p-2 rounded w-full bg-gray-100"
+          />
         </div>
 
         <div>
